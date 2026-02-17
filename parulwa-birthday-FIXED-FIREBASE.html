@@ -1,0 +1,1916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday Parulwa!</title>
+
+<!--
+=======================================================================
+  PARULWA.COM - EXACT EDIT GUIDE
+  Open this file in Notepad++ or VS Code to use these line numbers
+=======================================================================
+
+  MUSIC / SONGS (Radio Parul)
+  Line 1017 -- var songs=[
+  Replace the url: values with Cloudinary MP3 links.
+  HOW TO GET A CLOUDINARY LINK:
+    1. Go to cloudinary.com - sign up FREE (no card needed, 25GB free)
+    2. Click "Upload" - choose your MP3 file
+    3. Once uploaded, click the file - copy the URL that ends in .mp3
+    4. Paste that URL between the quotes in url:"PASTE HERE"
+
+  GALLERY PHOTOS
+  Line 1039 -- var photos=[
+  Replace the src: values with Cloudinary image links.
+  HOW: Same Cloudinary account - upload your JPG or PNG photo
+    - Copy the URL ending in .jpg or .png
+    - Paste it in src:"PASTE HERE"
+    - Change caption:"your funny caption here"
+
+  VIDEOS (inside gallery)
+  Line 1039 -- same photos array
+  To add a video, add a new entry like this:
+    {type:"video", src:"YOUR_CLOUDINARY_MP4_URL", caption:"LOL moment"}
+  OR use YouTube (no upload needed):
+    {type:"youtube", src:"YOUTUBE_VIDEO_ID", caption:"Watch this!"}
+  The YouTube ID is the part after ?v= in the URL
+  Example: youtube.com/watch?v=dQw4w9WgXcQ - the ID is dQw4w9WgXcQ
+
+  BIRTHDAY DATE (Countdown clock)
+  Line 1474 -- var target=new Date(
+  Change the numbers. Format: (YEAR, MONTH-1, DAY, 0, 0, 0)
+  Month numbers: Jan=0 Feb=1 Mar=2 Apr=3 May=4 Jun=5
+                 Jul=6 Aug=7 Sep=8 Oct=9 Nov=10 Dec=11
+  Example - April 15 2026: new Date(2026, 3, 15, 0, 0, 0)
+  Example - August 22 2026: new Date(2026, 7, 22, 0, 0, 0)
+
+  LIVE BIRTHDAY WISHES (all visitors see same messages)
+  Line 1056 -- var JSONBIN={
+    Step 1: Go to jsonbin.io - click Sign Up - it is free
+    Step 2: Click "Create Bin"
+    Step 3: In the content box paste:  {"wishes":[]}
+    Step 4: Click Save
+    Step 5: Look at the URL - it will say /v3/b/XXXXXXXXX
+            That XXXXXXXXX is your BIN_ID - copy it
+    Step 6: Click "API Keys" in the left sidebar
+    Step 7: Click "Create Access Key" - give it any name - copy the key
+    Step 8: Open this file, go to line 1012
+            Replace YOUR_BIN_ID_HERE with your BIN_ID (line 1057)
+            Replace YOUR_API_KEY_HERE with your API key (line 1058)
+    Done! Now all visitors will see each other's wishes in real time.
+
+  WHY NOT GOOGLE DRIVE OR GOOGLE PHOTOS?
+  Google Drive and Google Photos block websites from loading their
+  files directly. This is called a CORS block - the file simply
+  will not appear or play no matter what you try.
+  Cloudinary is the correct free alternative:
+    - 100% free, no credit card
+    - 25GB storage
+    - Direct links that work in any website
+    - Supports photos, MP3s, MP4 videos
+    - Sign up at: cloudinary.com
+
+=======================================================================
+-->
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Changa+One&family=Comic+Neue:wght@400;700&family=Bangers&family=VT323&family=Poiret+One&family=Abril+Fatface&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --orange:#FF5500; --green:#D4E009; --blue:#00AEEF;
+  --pink:#FF3399;   --purple:#9933CC; --slime:#B8E000;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  background-color:var(--green);
+  background-image:
+    linear-gradient(45deg,rgba(0,0,0,.07) 25%,transparent 25%,transparent 75%,rgba(0,0,0,.07) 75%),
+    linear-gradient(45deg,rgba(0,0,0,.07) 25%,transparent 25%,transparent 75%,rgba(0,0,0,.07) 75%);
+  background-size:20px 20px;background-position:0 0,10px 10px;
+  font-family:'Comic Neue',sans-serif;overflow-x:hidden;
+}
+.fh{font-family:'Changa One',impact,sans-serif;}
+.fb{font-family:'Bangers',cursive;}
+.fp{font-family:'VT323',monospace;}
+.rb{border:3px solid #000;}
+.hs{box-shadow:6px 6px 0 #000;}
+/* RETRO BUTTON */
+.btn{
+  background:linear-gradient(180deg,#fff 0%,#ddd 100%);
+  border:2px solid #000;box-shadow:3px 3px 0 #000;
+  cursor:pointer;transition:all .1s;font-family:'Changa One',sans-serif;
+  display:inline-block;
+}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #000;}
+.btn:hover{background:linear-gradient(180deg,#fffbe0,#ffe066);}
+/* ORANGE SPLAT */
+.splat{
+  background:var(--orange);
+  clip-path:polygon(20% 0%,80% 0%,100% 20%,100% 80%,80% 100%,20% 100%,0% 80%,0% 20%);
+  animation:pulse-splat 2s infinite;
+}
+@keyframes pulse-splat{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+@keyframes blink{50%{opacity:0}}
+.blink{animation:blink 1s step-start infinite;}
+/* RAINBOW */
+@keyframes rainbow-shift{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+.rainbow-text{
+  background:linear-gradient(90deg,#FF5500,#FF3399,#9933CC,#00AEEF,#D4E009,#FF5500);
+  background-size:200%;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  animation:rainbow-shift 2s linear infinite;
+}
+/* TICKER */
+.ticker-wrap{overflow:hidden;background:#d0d0d0;border-top:4px solid #000;border-bottom:4px solid #000;height:46px;display:flex;align-items:center;}
+.ticker-label{background:#1a1a1a;color:var(--green);font-family:'Changa One',sans-serif;font-size:.8rem;padding:0 10px;height:100%;display:flex;align-items:center;border-right:4px solid #000;flex-shrink:0;white-space:nowrap;}
+#ticker-track{display:inline-flex;align-items:center;white-space:nowrap;will-change:transform;}
+/* LOCK OVERLAY */
+#lock-overlay{position:absolute;inset:0;backdrop-filter:blur(10px);background:rgba(255,255,255,.42);z-index:30;display:flex;align-items:center;justify-content:center;pointer-events:all;transition:opacity .7s;}
+#lock-overlay.gone{opacity:0;pointer-events:none;}
+/* VINYL SPIN */
+@keyframes vspin{100%{transform:rotate(360deg)}}
+.vs{animation:vspin 1.8s linear infinite;}
+/* SECTION STRUCTURE */
+.sh{display:flex;justify-content:space-between;align-items:center;padding:5px 10px;font-family:'Changa One',sans-serif;font-size:.95rem;border:3px solid #000;border-bottom:0;border-radius:8px 8px 0 0;}
+.sb{border:3px solid #000;border-top:0;border-radius:0 0 8px 8px;display:flex;gap:8px;align-items:center;padding:8px;}
+/* MODALS */
+.gm{position:fixed;display:none;z-index:500;background:#ececec;border:4px solid #000;border-radius:12px;box-shadow:12px 12px 0 rgba(0,0,0,.5);overflow:hidden;flex-direction:column;}
+.wb{width:13px;height:13px;border-radius:50%;border:1px solid rgba(0,0,0,.4);cursor:pointer;flex-shrink:0;}
+/* RESPONSIVE GRID */
+#mg{display:grid;grid-template-columns:210px 1fr 190px;min-height:700px;}
+@media(max-width:860px){
+  #mg{grid-template-columns:1fr;}
+  #ls{border-right:0!important;border-bottom:4px solid #000;}
+  #cc{border-right:0!important;}
+  .htt>div{padding:4px 7px!important;font-size:.68rem!important;}
+}
+@media(max-width:460px){.htt>div{padding:3px 5px!important;font-size:.6rem!important;}}
+/* SCROLLBARS */
+::-webkit-scrollbar{width:10px;background:#000;}
+::-webkit-scrollbar-thumb{background:var(--orange);border:2px solid #fff;border-radius:5px;}
+.ns::-webkit-scrollbar{display:none;}.ns{-ms-overflow-style:none;scrollbar-width:none;}
+/* CHASE */
+.chase-scene{
+  background:linear-gradient(to bottom,#5BB8F5 0%,#5BB8F5 55%,#78C850 55%,#78C850 80%,#5a9e2f 80%);
+  border:4px solid #000;border-radius:8px;overflow:hidden;
+  position:relative;height:140px;
+}
+.runner{position:absolute;bottom:15px;display:flex;align-items:flex-end;gap:4px;}
+/* ACHIEVEMENT */
+.ach{background:#eee;border:1px solid #ccc;padding:3px 6px;border-radius:3px;opacity:.3;transition:all .4s;font-size:.68rem;font-weight:700;}
+.ach.done{opacity:1;}
+/* POLL BUTTON */
+.poll-btn{width:100%;text-align:center;font-size:.82rem;padding:7px;border-radius:4px;margin-bottom:5px;transition:background .2s,color .2s;}
+/* WISH ANIMATION */
+@keyframes fadeInWish{
+  0%{opacity:0;transform:translateY(-10px);}
+  100%{opacity:1;transform:translateY(0);}
+}
+.wish-item{transition:background 0.3s ease;}
+.wish-item:hover{background:#e8f5e9!important;}
+
+/* ═══ MOBILE MODAL SYSTEM ═══ */
+/* Gallery and game modals: full-screen sheet on mobile */
+@media(max-width:600px){
+  /* Gallery modal — full screen on mobile */
+  #mac-modal{
+    position:fixed!important;
+    top:0!important;left:0!important;
+    width:100vw!important;height:100vh!important;
+    border-radius:0!important;
+    border:0!important;
+    box-shadow:none!important;
+  }
+  /* Game modals — full width, scroll if needed */
+  .gm{
+    position:fixed!important;
+    top:0!important;left:0!important;
+    width:100vw!important;
+    max-height:100vh!important;
+    border-radius:0!important;
+    border-left:0!important;border-right:0!important;
+    overflow-y:auto!important;
+  }
+  #gm-snake,#gm-memory,#gm-whack,#gm-menu{
+    width:100vw!important;
+    height:100vh!important;
+    max-height:100vh!important;
+  }
+  /* Snake canvas scales to fit */
+  #s-canvas{
+    width:calc(100vw - 40px)!important;
+    height:calc(100vw - 40px)!important;
+    max-width:280px!important;
+    max-height:280px!important;
+  }
+  /* Vinyl player smaller on mobile */
+  #vinyl-disc{width:58px!important;height:58px!important;}
+  #song-bubble{max-width:120px!important;font-size:.65rem!important;}
+  /* Body padding for vinyl */
+  body{padding-bottom:80px!important;}
+  /* Touch controls for snake */
+  #snake-touch-controls{display:grid!important;}
+  /* Bday ticker smaller text */
+  #ticker-track .fp{font-size:1rem!important;}
+  /* Chase scene height */
+  .chase-scene{height:120px!important;}
+}
+@media(min-width:601px){
+  #snake-touch-controls{display:none!important;}
+}
+</style>
+</head>
+
+<!-- ═══════════════ AUDIO ELEMENTS ═══════════════
+     HOW TO REPLACE SOUNDS:
+     - sfx-login  = plays when login succeeds
+     - sfx-ok     = plays when correct poll answer
+     - sfx-wrong  = plays when wrong poll answer
+     Replace src="" with your own sound URL
+-->
+<body style="padding-bottom:110px;">
+<audio id="radio-player" preload="none"></audio>
+
+<!-- LOGIN SUCCESS SOUND → replace src with your URL -->
+<audio id="sfx-login" preload="auto">
+  <source src="https://cdn.freesound.org/previews/341/341695_5858296-lq.mp3" type="audio/mpeg">
+</audio>
+
+<!-- CORRECT ANSWER SOUND → replace src with your URL -->
+<audio id="sfx-ok" preload="auto">
+  <source src="https://cdn.freesound.org/previews/320/320775_5260872-lq.mp3" type="audio/mpeg">
+</audio>
+
+<!-- WRONG ANSWER SOUND → replace src with your URL -->
+<audio id="sfx-wrong" preload="auto">
+  <source src="https://cdn.freesound.org/previews/142/142608_1840739-lq.mp3" type="audio/mpeg">
+</audio>
+
+<!-- ═══ START OVERLAY ═══ -->
+<div id="start-overlay" style="position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.96);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;user-select:none;">
+  <div class="splat" style="width:240px;height:240px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;">
+    <h1 class="fh" style="color:#fff;font-size:3.2rem;text-align:center;line-height:1.1;">CLICK<br>TO<br>ENTER!</h1>
+  </div>
+  <p class="fp blink" style="color:var(--green);font-size:1.8rem;">▶▶ HAPPY BIRTHDAY PARULWA! ◀◀</p>
+  <p style="color:rgba(255,255,255,.4);font-size:.75rem;margin-top:12px;font-family:'Comic Neue',sans-serif;">Hint: login as  parul / sakshi</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     HEADER NAV BAR
+     Each tab calls goTo(id) to scroll to that section
+     or opens a modal. IDs must match section IDs below.
+═══════════════════════════════════════════════════ -->
+<div id="site-header" style="background:#000;position:sticky;top:0;z-index:200;border-bottom:4px solid #fff;">
+  <div style="max-width:960px;margin:0 auto;padding:0 8px;display:flex;justify-content:space-between;align-items:flex-end;height:50px;padding-bottom:4px;">
+    <div class="htt ns" style="display:flex;gap:3px;height:38px;overflow-x:auto;align-items:flex-end;">
+      <!-- HOME tab → scrolls to top of center column -->
+      <div onclick="goTo('sec-home')"    style="background:var(--green);   padding:6px 12px;font-family:'Changa One',sans-serif;font-size:.78rem;border-radius:6px 6px 0 0;border:2px solid #666;cursor:pointer;white-space:nowrap;display:flex;align-items:center;transition:filter .15s;" onmouseover="this.style.filter='brightness(1.15)'" onmouseout="this.style.filter=''">HOME</div>
+      <!-- ALL PARUL tab → scrolls to birthday section -->
+      <div onclick="goTo('sec-bday')"   style="background:var(--blue);    padding:6px 12px;font-family:'Changa One',sans-serif;font-size:.78rem;border-radius:6px 6px 0 0;border:2px solid #666;cursor:pointer;white-space:nowrap;display:flex;align-items:center;transition:filter .15s;" onmouseover="this.style.filter='brightness(1.15)'" onmouseout="this.style.filter=''">ALL PARUL</div>
+      <!-- GAMES tab → opens game menu modal -->
+      <div onclick="openGameMenu()"     style="background:var(--pink);    padding:6px 12px;font-family:'Changa One',sans-serif;font-size:.78rem;border-radius:6px 6px 0 0;border:2px solid #666;cursor:pointer;color:#fff;white-space:nowrap;display:flex;align-items:center;transition:filter .15s;" onmouseover="this.style.filter='brightness(1.15)'" onmouseout="this.style.filter=''">GAMES</div>
+      <!-- MUSIC tab → scrolls to music section -->
+      <div onclick="goTo('sec-music')"  style="background:var(--purple);  padding:6px 12px;font-family:'Changa One',sans-serif;font-size:.78rem;border-radius:6px 6px 0 0;border:2px solid #666;cursor:pointer;color:#fff;white-space:nowrap;display:flex;align-items:center;transition:filter .15s;" onmouseover="this.style.filter='brightness(1.15)'" onmouseout="this.style.filter=''">MUSIC</div>
+      <!-- GALLERY tab → scrolls and opens gallery -->
+      <div onclick="goToAndOpenGallery()" style="background:var(--orange); padding:6px 12px;font-family:'Changa One',sans-serif;font-size:.78rem;border-radius:6px 6px 0 0;border:2px solid #666;cursor:pointer;color:#fff;white-space:nowrap;display:flex;align-items:center;transition:filter .15s;" onmouseover="this.style.filter='brightness(1.15)'" onmouseout="this.style.filter=''">GALLERY</div>
+      <!-- BLAB tab → scrolls to wishes section -->
+      <div onclick="goTo('sec-blab')"   style="background:#fff;           padding:6px 12px;font-family:'Changa One',sans-serif;font-size:.78rem;border-radius:6px 6px 0 0;border:2px solid #666;cursor:pointer;white-space:nowrap;display:flex;align-items:center;transition:filter .15s;" onmouseover="this.style.filter='brightness(1.15)'" onmouseout="this.style.filter=''">BLAB</div>
+    </div>
+    <!-- Search box -->
+    <div style="display:flex;background:#ffe066;padding:4px 10px;border-radius:20px;border:2px solid #aaa;align-items:center;gap:4px;flex-shrink:0;margin-left:6px;">
+      <span style="font-size:.9rem;">🔍</span>
+      <input type="text" placeholder="SEARCH…" style="width:70px;outline:none;background:transparent;font-size:.72rem;font-weight:700;border:0;font-family:'Comic Neue',sans-serif;">
+    </div>
+  </div>
+</div>
+
+<!-- ═══ BREAKING NEWS TICKER ═══ -->
+<div style="max-width:960px;margin:0 auto;" class="ticker-wrap">
+  <div style="background:red;color:#fff;font-family:'Changa One',sans-serif;font-size:.75rem;padding:0 10px;height:100%;display:flex;align-items:center;border-right:4px solid #000;flex-shrink:0;white-space:nowrap;gap:5px;">
+    <span class="blink" style="background:#fff;color:red;padding:1px 5px;font-size:.65rem;font-weight:900;border-radius:2px;">LIVE</span>
+    BREAKING
+  </div>
+  <div style="overflow:hidden;flex:1;height:100%;display:flex;align-items:center;">
+    <div id="ticker-track">
+      <span class="fp" style="font-size:1.3rem;color:#111;">&nbsp;&nbsp;*** BREAKING: PARUL OFFICIALLY TURNS ANOTHER YEAR OLDER *** &nbsp;|&nbsp; SOURCES CONFIRM: SHE IS STILL THE BETTER SISTER &nbsp;|&nbsp; CAKE IN DANGER AS SAKSHI SPOTTED NEARBY &nbsp;|&nbsp; EYEWITNESSES SAY PARUL IS RUNNING &nbsp;|&nbsp; CONFETTI CANNON ON STANDBY &nbsp;|&nbsp; EXPERTS SAY PARULWA IS SIMPLY UNMATCHED &nbsp;|&nbsp; YOU ARE SO LOVED!! &nbsp;|&nbsp;</span>
+      <!-- PARUL in ticker -->
+      <span id="t-parul" style="display:inline-flex;flex-direction:column;align-items:center;position:relative;margin:0 6px;vertical-align:middle;">
+        <span style="font-size:.5rem;font-weight:900;background:#ffe066;border:1px solid #000;padding:0 3px;position:absolute;top:-13px;white-space:nowrap;border-radius:2px;">PARUL</span>
+        <svg width="28" height="36" viewBox="0 0 50 65" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="25" cy="10" r="9" fill="#FFCB77" stroke="#000" stroke-width="2"/>
+          <circle cx="22" cy="9" r="1.5" fill="#000"/><circle cx="28" cy="9" r="1.5" fill="#000"/>
+          <path d="M21 13 Q25 17 29 13" stroke="#000" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <path d="M25 19 L20 38 L23 38 L25 30 L27 38 L30 38 L25 19Z" fill="#FF5500" stroke="#000" stroke-width="1.5"/>
+          <path d="M21 23 L10 18" stroke="#FFCB77" stroke-width="3" stroke-linecap="round"/>
+          <path d="M29 23 L40 27" stroke="#FFCB77" stroke-width="3" stroke-linecap="round"/>
+          <path d="M22 38 L17 55 L20 55 L24 44" stroke="#4444aa" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <path d="M28 38 L34 52 L31 54" stroke="#4444aa" stroke-width="3" stroke-linecap="round" fill="none"/>
+        </svg>
+      </span>
+      <span style="display:inline-block;width:40px;"></span>
+      <!-- SAKSHI in ticker -->
+      <span id="t-sakshi" style="display:inline-flex;flex-direction:column;align-items:center;position:relative;margin:0 6px;vertical-align:middle;">
+        <span style="font-size:.5rem;font-weight:900;background:red;color:#fff;border:1px solid #000;padding:0 3px;position:absolute;top:-13px;white-space:nowrap;border-radius:2px;">SAKSHI</span>
+        <svg width="30" height="38" viewBox="0 0 55 68" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="27" cy="11" r="10" fill="#BDE0FE" stroke="#000" stroke-width="2"/>
+          <path d="M20 7 L25 10" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+          <path d="M34 7 L29 10" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+          <ellipse cx="22" cy="12" rx="2" ry="1.8" fill="#000"/><ellipse cx="32" cy="12" rx="2" ry="1.8" fill="#000"/>
+          <path d="M22 16 Q27 14 32 16" stroke="#000" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+          <path d="M27 21 L21 43 L24 43 L27 33 L30 43 L33 43 L27 21Z" fill="#9933CC" stroke="#000" stroke-width="1.5"/>
+          <path d="M22 26 L8 35" stroke="#BDE0FE" stroke-width="3.5" stroke-linecap="round"/>
+          <path d="M32 25 L46 19" stroke="#BDE0FE" stroke-width="3.5" stroke-linecap="round"/>
+          <path d="M23 43 L17 60 L21 60 L25 48" stroke="#555" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+          <path d="M31 43 L38 57 L34 59" stroke="#555" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+        </svg>
+      </span>
+      <!-- DUPLICATE for seamless loop -->
+      <span class="fp" style="font-size:1.3rem;color:#111;">&nbsp;&nbsp;*** BREAKING: PARUL OFFICIALLY TURNS ANOTHER YEAR OLDER *** &nbsp;|&nbsp; SOURCES CONFIRM: SHE IS STILL THE BETTER SISTER &nbsp;|&nbsp; CAKE IN DANGER AS SAKSHI SPOTTED NEARBY &nbsp;|&nbsp; EYEWITNESSES SAY PARUL IS RUNNING &nbsp;|&nbsp; CONFETTI CANNON ON STANDBY &nbsp;|&nbsp; EXPERTS SAY PARULWA IS SIMPLY UNMATCHED &nbsp;|&nbsp; YOU ARE SO LOVED!! &nbsp;|&nbsp;</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MAIN 3-COLUMN GRID ═══ -->
+<div style="max-width:960px;margin:8px auto 0;background:#fff;" id="mg" class="rb hs">
+
+  <!-- ░░ LEFT SIDEBAR ░░ -->
+  <div id="ls" style="background:var(--green);border-right:4px solid #000;padding:10px;display:flex;flex-direction:column;gap:10px;">
+
+    <!-- QUICK LINKS -->
+    <div style="background:#fff;border:3px solid #000;padding:8px;box-shadow:3px 3px 0 #000;">
+      <div class="fb" style="font-size:1.3rem;border-bottom:2px solid #000;margin-bottom:5px;">QUICK LINKS</div>
+      <div onclick="goTo('sec-home')"      style="font-size:.75rem;font-weight:700;line-height:2.1;padding:0 5px;cursor:pointer;border-radius:3px;" onmouseover="this.style.background='#ffe0b2'" onmouseout="this.style.background=''">&gt;&gt; Home</div>
+      <div onclick="openGameMenu()"        style="font-size:.75rem;font-weight:700;line-height:2.1;padding:0 5px;cursor:pointer;border-radius:3px;color:var(--pink);" onmouseover="this.style.background='#fce4ec'" onmouseout="this.style.background=''">&gt;&gt; Games</div>
+      <div onclick="goToAndOpenGallery()"  style="font-size:.75rem;font-weight:700;line-height:2.1;padding:0 5px;cursor:pointer;border-radius:3px;color:var(--purple);" onmouseover="this.style.background='#f3e5f5'" onmouseout="this.style.background=''">&gt;&gt; Gallery</div>
+      <div onclick="goTo('sec-music')"     style="font-size:.75rem;font-weight:700;line-height:2.1;padding:0 5px;cursor:pointer;border-radius:3px;color:navy;" onmouseover="this.style.background='#e3f2fd'" onmouseout="this.style.background=''">&gt;&gt; Music</div>
+      <div onclick="goTo('sec-blab')"      style="font-size:.75rem;font-weight:700;line-height:2.1;padding:0 5px;cursor:pointer;border-radius:3px;color:var(--orange);" onmouseover="this.style.background='#fff3e0'" onmouseout="this.style.background=''">&gt;&gt; Message Board</div>
+      <div onclick="toggleRadio()"         style="font-size:.75rem;font-weight:700;line-height:2.1;padding:0 5px;cursor:pointer;border-radius:3px;color:#333;" onmouseover="this.style.background='#f5f5f5'" onmouseout="this.style.background=''">&gt;&gt; Radio Parul</div>
+    </div>
+
+    <!-- LOGIN PANEL -->
+    <div id="login-panel" style="background:#3a3a3a;border:3px solid #000;box-shadow:3px 3px 0 #000;padding:10px;color:#fff;">
+      <div class="fh" style="color:var(--green);font-size:.95rem;margin-bottom:8px;letter-spacing:1px;">&#128274; MEMBER LOGIN</div>
+      <input id="usr" type="text"     placeholder="NickName" autocomplete="off" style="width:100%;padding:5px 7px;font-weight:700;font-size:.75rem;border:2px solid #000;margin-bottom:5px;color:#000;background:#fff;font-family:'Comic Neue',sans-serif;">
+      <input id="pwd" type="password" placeholder="Password" autocomplete="off" style="width:100%;padding:5px 7px;font-weight:700;font-size:.75rem;border:2px solid #000;margin-bottom:6px;color:#000;background:#fff;font-family:'Comic Neue',sans-serif;">
+      <div style="display:flex;align-items:center;gap:5px;font-size:.65rem;margin-bottom:8px;">
+        <input type="checkbox" id="rem"><label for="rem">Remember Me</label>
+      </div>
+      <button onclick="doLogin()" class="btn fh" style="width:100%;padding:5px;font-size:.85rem;">LOG IN &gt;</button>
+      <div id="login-err" class="blink" style="font-size:.65rem;color:#ff8888;margin-top:5px;text-align:center;display:none;">&#10060; ACCESS DENIED!</div>
+    </div>
+
+    <!-- PROFILE PANEL (shown after login) -->
+    <div id="profile-panel" style="display:none;background:#fff;border:3px solid #000;box-shadow:3px 3px 0 #000;padding:8px;text-align:center;">
+      <!-- Birthday girl illustration — crown + happy face, no emoji -->
+      <svg width="68" height="72" viewBox="0 0 68 72" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:0 auto 4px;">
+        <!-- Party crown -->
+        <polygon points="34,4 42,18 52,10 50,24 18,24 16,10 26,18" fill="#FFD700" stroke="#000" stroke-width="2" stroke-linejoin="round"/>
+        <!-- Crown gems -->
+        <circle cx="34" cy="8" r="3" fill="#FF3399" stroke="#000" stroke-width="1.2"/>
+        <circle cx="24" cy="16" r="2.5" fill="#00AEEF" stroke="#000" stroke-width="1.2"/>
+        <circle cx="44" cy="16" r="2.5" fill="#FF5500" stroke="#000" stroke-width="1.2"/>
+        <!-- Crown base band -->
+        <rect x="16" y="22" width="36" height="5" rx="2" fill="#FFD700" stroke="#000" stroke-width="1.5"/>
+        <!-- Head -->
+        <circle cx="34" cy="46" r="20" fill="#FFCB77" stroke="#000" stroke-width="2.5"/>
+        <!-- Big happy eyes -->
+        <ellipse cx="26" cy="43" rx="4" ry="4.5" fill="#fff" stroke="#000" stroke-width="1.5"/>
+        <ellipse cx="42" cy="43" rx="4" ry="4.5" fill="#fff" stroke="#000" stroke-width="1.5"/>
+        <circle cx="27" cy="44" r="2.2" fill="#000"/>
+        <circle cx="43" cy="44" r="2.2" fill="#000"/>
+        <!-- Shiny glints in eyes -->
+        <circle cx="28" cy="42.5" r=".9" fill="#fff"/>
+        <circle cx="44" cy="42.5" r=".9" fill="#fff"/>
+        <!-- Big cheerful smile -->
+        <path d="M22 53 Q34 63 46 53" stroke="#000" stroke-width="2.2" fill="#FF9999" stroke-linecap="round"/>
+        <!-- Rosy cheeks -->
+        <ellipse cx="20" cy="52" rx="5" ry="3" fill="#FFB3C6" opacity=".55"/>
+        <ellipse cx="48" cy="52" rx="5" ry="3" fill="#FFB3C6" opacity=".55"/>
+        <!-- Hair bits peeking out -->
+        <path d="M14 40 Q12 30 18 26" stroke="#6b4300" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path d="M54 40 Q56 30 50 26" stroke="#6b4300" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <!-- Confetti dots -->
+        <circle cx="8" cy="20" r="2.5" fill="#FF3399"/>
+        <circle cx="60" cy="15" r="2.5" fill="#00AEEF"/>
+        <circle cx="62" cy="30" r="2" fill="#D4E009"/>
+        <circle cx="6" cy="35" r="2" fill="#FF5500"/>
+        <rect x="5" y="55" width="5" height="5" rx="1" fill="#9933CC" transform="rotate(20 7 57)"/>
+        <rect x="58" y="50" width="5" height="5" rx="1" fill="#FF5500" transform="rotate(-15 60 52)"/>
+      </svg>
+      <div class="fb" style="font-size:1.9rem;color:var(--orange);">PARUL</div>
+      <div style="background:#000;color:var(--green);font-size:.6rem;font-weight:900;padding:2px 8px;display:inline-block;transform:rotate(-2deg);">** VIP BIRTHDAY MEMBER **</div>
+    </div>
+
+    <!-- DAILY POLL
+         ✅ Parul = correct sound + green
+         ❌ Sakshi = wrong sound + red
+    -->
+    <div style="background:#fff;border:3px solid #000;padding:8px;box-shadow:3px 3px 0 #000;">
+      <div class="fb" style="font-size:1.3rem;border-bottom:2px solid #000;margin-bottom:6px;">DAILY POLL &#128499;</div>
+      <p style="font-size:.72rem;font-weight:700;margin-bottom:8px;">Who is the better sister?</p>
+      <button id="pp" onclick="vote('p')" class="btn poll-btn">&#11088; PARUL (Obviously)</button>
+      <button id="ps" onclick="vote('s')" class="btn poll-btn" style="margin-bottom:0;">&#129300; Sakshi (Maybe?)</button>
+      <div id="poll-res" style="display:none;font-size:.72rem;font-weight:900;text-align:center;margin-top:6px;padding:5px;border-radius:4px;border:2px solid #000;"></div>
+    </div>
+
+    <!-- AD BOX -->
+    <div style="background:#ddf;border:3px solid #000;padding:6px;box-shadow:3px 3px 0 #000;">
+      <div style="font-size:.55rem;font-weight:900;text-align:right;">ADVERTISEMENT</div>
+      <div style="background:#fff;border:2px solid #000;padding:8px;text-align:center;">
+        <div class="fb" style="color:blue;font-size:1.3rem;line-height:1.1;">FREE<br>RINGTONES</div>
+        <p style="font-size:.62rem;font-weight:700;margin:4px 0;">Get the Birthday theme for Nokia!</p>
+        <button class="btn" style="font-size:.65rem;padding:2px 8px;">CLICK!</button>
+      </div>
+    </div>
+
+  </div><!-- /left sidebar -->
+
+  <!-- ░░ CENTER COLUMN ░░ -->
+  <div id="cc" style="border-right:4px solid #000;position:relative;">
+
+    <!-- BLUR/LOCK OVERLAY — removed on login -->
+    <div id="lock-overlay">
+      <div style="background:#000;color:#fff;border:4px solid var(--green);padding:22px 30px;text-align:center;box-shadow:8px 8px 0 #444;transform:rotate(-2deg);">
+        <div class="fh" style="color:var(--green);font-size:2.5rem;">&#128274; LOCKED</div>
+        <div class="fp" style="font-size:1.3rem;margin-top:6px;">Login to unlock the site!</div>
+        <div style="font-size:.8rem;margin-top:4px;opacity:.6;">Use the form on the left ←</div>
+      </div>
+    </div>
+
+    <div style="padding:12px;display:flex;flex-direction:column;gap:12px;" id="sec-home">
+
+      <!-- ══ HAPPY BIRTHDAY BANNER — retro site theme ══ -->
+      <style>
+        @keyframes banner-shimmer{0%{transform:translateX(-120%)}100%{transform:translateX(220%)}}
+        @keyframes banner-pop{0%,100%{transform:scale(1) rotate(-1deg)}50%{transform:scale(1.03) rotate(1deg)}}
+        @keyframes confetti-rain{0%{background-position:0 0,30px 30px,60px 10px}100%{background-position:0 80px,30px 110px,60px 90px}}
+        .bday-banner{
+          background:#000;
+          border:4px solid #000;
+          border-radius:4px;
+          padding:0;
+          cursor:pointer;
+          position:relative;
+          overflow:hidden;
+          box-shadow:6px 6px 0 #000;
+        }
+        .bday-banner-inner{
+          background:var(--orange);
+          padding:14px 16px 12px;
+          position:relative;
+          overflow:hidden;
+          text-align:center;
+        }
+        /* Diagonal stripe overlay */
+        .bday-banner-inner::before{
+          content:'';
+          position:absolute;inset:0;
+          background:repeating-linear-gradient(
+            -45deg,
+            rgba(0,0,0,.06) 0,rgba(0,0,0,.06) 8px,
+            transparent 8px,transparent 16px
+          );
+          pointer-events:none;
+        }
+        /* Shimmer sweep */
+        .bday-banner-inner::after{
+          content:'';
+          position:absolute;inset:0;
+          background:linear-gradient(120deg,rgba(255,255,255,0) 30%,rgba(255,255,255,.18) 50%,rgba(255,255,255,0) 70%);
+          animation:banner-shimmer 2.8s ease-in-out infinite;
+          pointer-events:none;
+        }
+        .banner-top-strip{
+          background:#000;height:8px;
+          background-image:repeating-linear-gradient(90deg,var(--green) 0,var(--green) 14px,#000 14px,#000 20px);
+        }
+        .banner-bot-strip{
+          background:#000;height:8px;
+          background-image:repeating-linear-gradient(90deg,var(--pink) 0,var(--pink) 14px,#000 14px,#000 20px);
+        }
+        .banner-title{
+          font-family:'Changa One',impact,sans-serif;
+          color:#000;
+          font-size:1.05rem;
+          letter-spacing:.55em;
+          text-transform:uppercase;
+          line-height:1;
+          position:relative;z-index:1;
+          margin-bottom:2px;
+        }
+        .banner-name{
+          font-family:'Bangers',cursive;
+          color:#fff;
+          font-size:3.4rem;
+          line-height:.95;
+          letter-spacing:.06em;
+          text-shadow:4px 4px 0 #000, -1px -1px 0 #000;
+          position:relative;z-index:1;
+          display:block;
+        }
+        .banner-sub{
+          font-family:'VT323',monospace;
+          color:#000;
+          font-size:1rem;
+          letter-spacing:.12em;
+          margin-top:4px;
+          position:relative;z-index:1;
+        }
+        .banner-stars{
+          position:absolute;top:6px;right:10px;
+          font-family:'Changa One',sans-serif;
+          color:#000;font-size:1.1rem;
+          writing-mode:vertical-lr;
+          letter-spacing:.2em;
+          line-height:1;
+          opacity:.25;
+          z-index:0;
+        }
+      </style>
+      <div class="bday-banner" onclick="triggerConfetti()">
+        <div class="banner-top-strip"></div>
+        <div class="bday-banner-inner">
+          <div class="banner-stars">* * * * * *</div>
+          <div class="banner-title">-- Happy Birthday --</div>
+          <span class="banner-name">PARULWA!</span>
+          <div class="banner-sub blink">[ CLICK ANYWHERE TO CELEBRATE! ]</div>
+        </div>
+        <div class="banner-bot-strip"></div>
+      </div>
+
+      <!-- ══ PARUL + SAKSHI CHASE SCENE ══ -->
+      <div id="sec-bday">
+        <div class="sh" style="background:#FFEE00;">
+          <span class="fh">The Great Cake Chase!</span>
+          <span style="font-size:.7rem;font-weight:900;cursor:pointer;" onclick="triggerConfetti()">CLICK TO CHEER !!</span>
+        </div>
+        <style>
+          @keyframes run-legs{0%,100%{transform:rotate(15deg)}50%{transform:rotate(-15deg)}}
+          @keyframes bob{0%,100%{transform:translateY(0px)}50%{transform:translateY(-5px)}}
+          @keyframes shake-fight{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px) rotate(-5deg)}40%{transform:translateX(5px) rotate(5deg)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+          @keyframes star-pop{0%{opacity:1;transform:scale(.3) rotate(0deg)}60%{opacity:1;transform:scale(1.2) rotate(180deg)}100%{opacity:0;transform:scale(0.8) rotate(360deg)}}
+          @keyframes cloud-drift{0%{transform:translateX(0)}100%{transform:translateX(18px)}}
+          @keyframes cake-wobble{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
+          .runner-parul-body{animation:bob .38s ease-in-out infinite;}
+          .runner-sakshi-body{animation:bob .34s ease-in-out infinite;}
+          .fight-mode .runner-parul-body{animation:shake-fight .22s ease-in-out infinite;}
+          .fight-mode .runner-sakshi-body{animation:shake-fight .22s ease-in-out infinite reverse;}
+          .chase-bubble{
+            position:absolute;background:#fff;border:2px solid #000;
+            border-radius:10px 10px 10px 2px;
+            padding:3px 7px;font-size:.58rem;font-weight:900;
+            white-space:nowrap;font-family:'Changa One',sans-serif;
+            pointer-events:none;opacity:0;transition:opacity .3s;
+            box-shadow:2px 2px 0 #000;
+          }
+          .chase-bubble.show{opacity:1;}
+          .fight-star{
+            position:absolute;font-size:1.4rem;pointer-events:none;
+            animation:star-pop .6s ease-out forwards;z-index:10;
+          }
+        </style>
+        <!-- Fighting sound (Web Audio generated) -->
+        <div class="chase-scene" id="chase-main" onclick="triggerConfetti()" style="cursor:pointer;height:160px;">
+          <!-- Sky gradient -->
+          <div style="position:absolute;inset:0;background:linear-gradient(to bottom,#87CEEB 0%,#b0dff0 55%,#78C850 55%,#78C850 80%,#5a9e2f 80%);"></div>
+          <!-- Animated clouds -->
+          <div style="position:absolute;top:10px;left:40px;background:#fff;border-radius:50px;width:55px;height:18px;opacity:.9;box-shadow:18px -5px 0 12px #fff,35px -2px 0 8px #fff;animation:cloud-drift 8s ease-in-out infinite alternate;"></div>
+          <div style="position:absolute;top:18px;right:120px;background:#fff;border-radius:50px;width:42px;height:14px;opacity:.8;box-shadow:14px -4px 0 10px #fff,26px -1px 0 7px #fff;animation:cloud-drift 11s ease-in-out infinite alternate-reverse;"></div>
+          <!-- Sun -->
+          <div style="position:absolute;top:10px;right:16px;width:30px;height:30px;background:#FFD700;border-radius:50%;border:3px solid #000;box-shadow:0 0 12px 3px rgba(255,215,0,.4);"></div>
+          <!-- Ground details -->
+          <div style="position:absolute;bottom:0;left:0;right:0;height:13px;background:#3a7d1c;border-top:3px solid #000;"></div>
+          <div style="position:absolute;bottom:13px;left:0;right:0;height:3px;background:rgba(0,0,0,.1);"></div>
+
+          <!-- PARUL runner -->
+          <div id="runner-parul" class="runner" style="left:-180px;z-index:5;">
+            <!-- Speech bubble -->
+            <div id="bubble-parul" class="chase-bubble" style="top:-40px;left:0;">MY CAKE!!</div>
+            <!-- Name tag -->
+            <div style="position:absolute;top:-24px;left:50%;transform:translateX(-50%);background:#ffe066;border:2px solid #000;font-size:.55rem;font-weight:900;padding:1px 5px;border-radius:3px;white-space:nowrap;font-family:'Changa One',sans-serif;box-shadow:1px 1px 0 #000;">PARUL</div>
+            <div class="runner-parul-body">
+              <!-- Birthday cake she is holding -->
+              <div style="position:absolute;top:-18px;left:-4px;z-index:6;animation:cake-wobble .5s ease-in-out infinite;">
+                <svg width="22" height="22" viewBox="0 0 40 40">
+                  <rect x="4" y="18" width="32" height="18" rx="3" fill="#FF3399" stroke="#000" stroke-width="2"/>
+                  <rect x="10" y="10" width="20" height="12" rx="2" fill="#fffbe0" stroke="#000" stroke-width="2"/>
+                  <line x1="20" y1="10" x2="20" y2="4" stroke="#FF5500" stroke-width="2"/>
+                  <circle cx="20" cy="3" r="2.5" fill="#FFD700" stroke="#000" stroke-width="1"/>
+                  <rect x="8" y="22" width="5" height="10" rx="1" fill="#fff" stroke="#FF3399" stroke-width="1"/>
+                  <rect x="18" y="22" width="5" height="10" rx="1" fill="#fff" stroke="#FF3399" stroke-width="1"/>
+                  <rect x="28" y="22" width="5" height="10" rx="1" fill="#fff" stroke="#FF3399" stroke-width="1"/>
+                </svg>
+              </div>
+              <svg width="38" height="72" viewBox="0 0 50 90" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="25" cy="12" r="11" fill="#FFCB77" stroke="#000" stroke-width="2.5"/>
+                <circle cx="21" cy="10" r="2" fill="#000"/><circle cx="22" cy="9" r=".7" fill="#fff"/>
+                <circle cx="29" cy="10" r="2" fill="#000"/><circle cx="30" cy="9" r=".7" fill="#fff"/>
+                <path d="M19 15 Q25 20 31 15" stroke="#000" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                <path d="M14 8 Q15 2 25 1 Q35 2 36 8" stroke="#4a3000" stroke-width="3" fill="#6b4300" stroke-linecap="round"/>
+                <path d="M14 8 Q10 14 13 20" stroke="#6b4300" stroke-width="2.5" fill="none"/>
+                <path d="M25 23 L18 50 L22 50 L25 37 L28 50 L32 50 L25 23Z" fill="#FF5500" stroke="#000" stroke-width="2"/>
+                <path id="parul-arm-l" d="M20 27 L6 20" stroke="#FFCB77" stroke-width="4" stroke-linecap="round"/>
+                <path d="M30 27 L44 35" stroke="#FFCB77" stroke-width="4" stroke-linecap="round"/>
+                <path id="parul-leg-l" d="M22 50 L15 70 L19 70 L24 55" stroke="#4444aa" stroke-width="4" stroke-linecap="round" fill="none"/>
+                <path id="parul-leg-r" d="M28 50 L36 65 L32 68" stroke="#4444aa" stroke-width="4" stroke-linecap="round" fill="none"/>
+                <ellipse cx="16" cy="71" rx="6" ry="3" fill="#333" stroke="#000" stroke-width="1.5"/>
+                <ellipse cx="31" cy="69" rx="6" ry="3" fill="#333" stroke="#000" stroke-width="1.5"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- SAKSHI runner -->
+          <div id="runner-sakshi" class="runner" style="left:-380px;z-index:4;">
+            <!-- Speech bubble -->
+            <div id="bubble-sakshi" class="chase-bubble" style="top:-40px;left:0;border-radius:10px 10px 2px 10px;background:#ffdddd;">GIVE IT!!</div>
+            <!-- Name tag -->
+            <div style="position:absolute;top:-24px;left:50%;transform:translateX(-50%);background:red;color:#fff;border:2px solid #000;font-size:.55rem;font-weight:900;padding:1px 5px;border-radius:3px;white-space:nowrap;font-family:'Changa One',sans-serif;box-shadow:1px 1px 0 #000;">SAKSHI</div>
+            <div class="runner-sakshi-body">
+              <svg width="44" height="75" viewBox="0 0 55 90" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="27" cy="13" r="12" fill="#BDE0FE" stroke="#000" stroke-width="2.5"/>
+                <path d="M18 8 L24 11" stroke="#000" stroke-width="2.5" stroke-linecap="round"/>
+                <path d="M36 8 L30 11" stroke="#000" stroke-width="2.5" stroke-linecap="round"/>
+                <ellipse cx="22" cy="13" rx="2.5" ry="2" fill="#000"/><circle cx="23" cy="12" r=".7" fill="#fff"/>
+                <ellipse cx="32" cy="13" rx="2.5" ry="2" fill="#000"/><circle cx="33" cy="12" r=".7" fill="#fff"/>
+                <path d="M20 19 Q27 16 34 19" stroke="#000" stroke-width="2" fill="none" stroke-linecap="round"/>
+                <path d="M15 9 Q16 2 27 1 Q38 2 39 9" stroke="#4a3000" stroke-width="3" fill="#8B4513" stroke-linecap="round"/>
+                <path d="M27 25 L20 54 L24 54 L27 40 L30 54 L34 54 L27 25Z" fill="#9933CC" stroke="#000" stroke-width="2"/>
+                <path d="M22 30 L5 42" stroke="#BDE0FE" stroke-width="4.5" stroke-linecap="round"/>
+                <path d="M32 29 L48 22" stroke="#BDE0FE" stroke-width="4.5" stroke-linecap="round"/>
+                <path d="M24 54 L18 75 L22 75 L26 60" stroke="#555" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+                <path d="M30 54 L39 70 L35 73" stroke="#555" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+                <ellipse cx="19" cy="76" rx="7" ry="3.5" fill="#222" stroke="#000" stroke-width="1.5"/>
+                <ellipse cx="35" cy="74" rx="7" ry="3.5" fill="#222" stroke="#000" stroke-width="1.5"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Fight explosion container -->
+          <div id="fight-cloud" style="position:absolute;display:none;z-index:8;pointer-events:none;"></div>
+
+          <!-- Status label -->
+          <div id="chase-status" style="position:absolute;top:6px;left:50%;transform:translateX(-50%);background:#fff;border:2px solid #000;font-size:.58rem;font-weight:900;padding:2px 8px;white-space:nowrap;border-radius:3px;font-family:'Changa One',sans-serif;box-shadow:2px 2px 0 #000;z-index:9;">
+            PARUL RUNS!! SAKSHI CHASES!!
+          </div>
+        </div>
+      </div>
+
+      <!-- BIRTHDAY HEADING — retro site theme, no rainbow, no modern fonts -->
+      <div style="background:var(--blue);border:3px solid #000;box-shadow:3px 3px 0 #000;position:relative;overflow:hidden;">
+        <!-- Top strip -->
+        <div style="height:5px;background:repeating-linear-gradient(90deg,#000 0,#000 10px,var(--pink) 10px,var(--pink) 20px);"></div>
+        <div style="padding:10px 14px;text-align:center;position:relative;">
+          <div style="font-family:'VT323',monospace;color:#000;font-size:.9rem;letter-spacing:.3em;">-- BIRTHDAY ALERT --</div>
+          <div style="font-family:'Changa One',impact,sans-serif;color:#fff;font-size:1.3rem;letter-spacing:.08em;text-shadow:3px 3px 0 #000;line-height:1.1;">HAPPY BIRTHDAY,</div>
+          <div style="font-family:'Bangers',cursive;color:var(--orange);font-size:3rem;line-height:.95;letter-spacing:.05em;text-shadow:4px 4px 0 #000;">PARULWA!</div>
+          <div style="font-family:'VT323',monospace;color:#000;font-size:.85rem;letter-spacing:.15em;margin-top:3px;">** THE BIRTHDAY GIRL HAS ARRIVED **</div>
+        </div>
+        <!-- Bottom strip -->
+        <div style="height:5px;background:repeating-linear-gradient(90deg,#000 0,#000 10px,var(--green) 10px,var(--green) 20px);"></div>
+      </div>
+
+      <!-- COUNTDOWN -->
+      <div>
+        <div class="sh" style="background:var(--blue);">
+          <span style="font-style:italic;">All Parul — Birthday Countdown!</span>
+          <span style="font-size:.7rem;font-weight:700;">MORE &gt;&gt;</span>
+        </div>
+        <div class="sb" style="background:#e0f7ff;">
+          <div style="width:58px;height:58px;background:var(--blue);border:2px solid #000;flex-shrink:0;overflow:hidden;border-radius:4px;">
+            <img src="https://images.unsplash.com/photo-1513201099705-a9746e1e201f?w=120&q=80" style="width:100%;height:100%;object-fit:cover;" alt="">
+          </div>
+          <div style="flex:1;">
+            <div class="fb" style="color:var(--blue);font-size:1.15rem;">BIRTHDAY COUNTDOWN!</div>
+            <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;margin-top:3px;">
+              <span id="cd" class="fp" style="background:#000;color:var(--green);padding:1px 6px;font-size:1.4rem;">00</span><span style="font-weight:900;font-size:.8rem;">d</span>
+              <span id="ch" class="fp" style="background:#000;color:var(--green);padding:1px 6px;font-size:1.4rem;">00</span><span style="font-weight:900;font-size:.8rem;">h</span>
+              <span id="cm" class="fp" style="background:#000;color:var(--green);padding:1px 6px;font-size:1.4rem;">00</span><span style="font-weight:900;font-size:.8rem;">m</span>
+              <span id="cs" class="fp" style="background:#000;color:var(--green);padding:1px 6px;font-size:1.4rem;">00</span><span style="font-weight:900;font-size:.8rem;">s</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GALLERY SECTION -->
+      <div style="position:relative;" id="sec-gallery">
+        <div class="sh" id="gallery-bar" onclick="openGallery(this)" style="background:var(--pink);color:#fff;cursor:pointer;" onmouseover="this.style.filter='brightness(1.1)'" onmouseout="this.style.filter=''">
+          <span style="font-style:italic;">&#128248; Memories — Secret Gallery</span>
+          <span style="font-size:.7rem;font-weight:700;">OPEN &gt;&gt;</span>
+        </div>
+        <div class="sb" style="background:#fff0f8;">
+          <div style="width:58px;height:58px;background:#ffcce6;border:2px solid #000;flex-shrink:0;overflow:hidden;border-radius:4px;">
+            <img id="gallery-thumb" src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=120&q=80" style="width:100%;height:100%;object-fit:cover;filter:grayscale(1);opacity:.4;transition:all .5s;" alt="">
+          </div>
+          <div style="flex:1;">
+            <div class="fb" style="color:var(--pink);font-size:1.15rem;">SECRET GALLERY &#128274;</div>
+            <p style="font-size:.72rem;font-weight:700;">Login to unlock the vault of embarrassing memories!</p>
+          </div>
+          <button onclick="openGallery(document.getElementById('gallery-bar'))" class="btn fh" style="padding:5px 14px;transform:skew(-8deg);">GO!</button>
+        </div>
+        <!-- Gallery lock -->
+        <div id="gallery-lock" style="position:absolute;inset:0;background:rgba(255,255,255,.55);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;border:3px solid #000;border-top:0;border-radius:0 0 8px 8px;">
+          <div style="background:#000;color:#fff;padding:5px 14px;font-size:.75rem;font-weight:900;border:2px solid var(--green);transform:rotate(-3deg);font-family:'Changa One',sans-serif;">&#128273; LOGIN REQUIRED</div>
+        </div>
+      </div>
+
+      <!-- GAMES SECTION -->
+      <div id="sec-games">
+        <div class="sh" onclick="openGameMenu()" style="background:var(--pink);color:#fff;cursor:pointer;" onmouseover="this.style.filter='brightness(1.1)'" onmouseout="this.style.filter=''">
+          <span style="font-style:italic;">&#127918; Games — Parul's Arcade</span>
+          <span style="font-size:.7rem;font-weight:700;">PLAY NOW &gt;&gt;</span>
+        </div>
+        <div class="sb" style="background:#fff0f4;flex-wrap:wrap;gap:8px;justify-content:space-around;">
+          <div onclick="startGame('snake')"  class="btn" style="flex:1;min-width:75px;padding:10px 6px;text-align:center;border-radius:8px;background:var(--green);">
+            <div style="font-size:1.7rem;">&#127822;</div><div class="fb" style="font-size:.95rem;">SNAKE</div>
+          </div>
+          <div onclick="startGame('memory')" class="btn" style="flex:1;min-width:75px;padding:10px 6px;text-align:center;border-radius:8px;background:var(--blue);">
+            <div style="font-size:1.7rem;">&#129504;</div><div class="fb" style="font-size:.95rem;">MEMORY</div>
+          </div>
+          <div onclick="startGame('whack')"  class="btn" style="flex:1;min-width:75px;padding:10px 6px;text-align:center;border-radius:8px;background:var(--purple);color:#fff;">
+            <div style="font-size:1.7rem;">&#127919;</div><div class="fb" style="font-size:.95rem;">WHACK!</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MUSIC SECTION -->
+      <div id="sec-music">
+        <div class="sh" style="background:var(--purple);color:#fff;">
+          <span style="font-style:italic;">&#127925; Music — Radio Parul</span>
+          <span style="font-size:.7rem;font-weight:700;">MORE MUSIC &gt;&gt;</span>
+        </div>
+        <div class="sb" style="background:#f5ecff;">
+          <div onclick="toggleRadio()" style="width:58px;height:58px;background:var(--purple);border:2px solid #000;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;position:relative;">
+            <div style="width:18px;height:18px;background:var(--orange);border-radius:50%;border:2px solid #fff;"></div>
+            <div style="position:absolute;inset:7px;border-radius:50%;border:2px solid rgba(255,255,255,.25);pointer-events:none;"></div>
+          </div>
+          <div style="flex:1;">
+            <div class="fb" style="color:var(--purple);font-size:1.15rem;">RADIO PARUL &#128251;</div>
+            <p style="font-size:.72rem;font-weight:700;">Broadcasting random bops 24/7. Click the vinyl below!</p>
+            <div id="np-text" style="font-size:.65rem;color:var(--purple);font-weight:900;margin-top:3px;"></div>
+          </div>
+          <button onclick="playNextSong()" class="btn fh" style="padding:5px 12px;transform:skew(-8deg);">SKIP &#9197;</button>
+        </div>
+      </div>
+
+      <!-- YOUR WORLD SECTION -->
+      <div id="sec-world">
+        <div class="sh" style="background:var(--orange);color:#fff;">
+          <span class="fh">Parul's Universe</span>
+          <span style="font-size:.7rem;font-weight:700;">EXPLORE &gt;&gt;</span>
+        </div>
+        <div style="border:3px solid #000;border-top:0;border-radius:0 0 8px 8px;background:#fff8ee;padding:8px;display:flex;flex-direction:column;gap:5px;">
+          <div style="display:flex;align-items:center;gap:10px;padding:6px 8px;background:#fff;border:2px solid #000;border-radius:4px;box-shadow:2px 2px 0 #000;">
+            <div style="font-size:1.5rem;flex-shrink:0;width:36px;text-align:center;">&#127968;</div>
+            <div>
+              <div class="fb" style="color:var(--orange);font-size:1rem;">Family Territory</div>
+              <div style="font-size:.65rem;font-weight:700;color:#555;">Home is wherever Parul eats the cake first</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:6px 8px;background:#fff;border:2px solid #000;border-radius:4px;box-shadow:2px 2px 0 #000;">
+            <div style="font-size:1.5rem;flex-shrink:0;width:36px;text-align:center;">&#127881;</div>
+            <div>
+              <div class="fb" style="color:var(--blue);font-size:1rem;">Birthday Wishes Live</div>
+              <div style="font-size:.65rem;font-weight:700;color:#555;">See what everyone's saying below!</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:6px 8px;background:#fff;border:2px solid #000;border-radius:4px;box-shadow:2px 2px 0 #000;">
+            <div style="font-size:1.5rem;flex-shrink:0;width:36px;text-align:center;">&#127874;</div>
+            <div>
+              <div class="fb" style="color:var(--pink);font-size:1rem;">Cake Theft Report</div>
+              <div style="font-size:.65rem;font-weight:700;color:#555;">Sakshi strikes again. Authorities notified.</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:6px 8px;background:#fff;border:2px solid #000;border-radius:4px;box-shadow:2px 2px 0 #000;cursor:pointer;" onclick="openGameMenu()">
+            <div style="font-size:1.5rem;flex-shrink:0;width:36px;text-align:center;">&#127918;</div>
+            <div>
+              <div class="fb" style="color:var(--purple);font-size:1rem;">Parul's Arcade</div>
+              <div style="font-size:.65rem;font-weight:700;color:#555;">Snake, Memory, Whack-A-Sakshi &gt;&gt;</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ BIRTHDAY WISHES / BLAB SECTION ═══
+           Uses JSONBin.io for FREE shared storage.
+           Setup instructions in the JS section below.
+           All visitors can post and see each other's wishes!
+      -->
+      <div id="sec-blab">
+        <div class="sh" style="background:#009900;color:#fff;">
+          <span style="font-style:italic;">Birthday Wishes for Parul!</span>
+          <span style="font-size:.7rem;font-weight:700;">LIVE &gt;&gt;</span>
+        </div>
+        <div style="border:3px solid #000;border-top:0;border-radius:0 0 0 0;padding:8px;background:#efffef;display:flex;gap:6px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:140px;">
+            <input id="w-name" type="text" placeholder="Your name" style="width:100%;padding:4px 6px;border:2px solid #000;font-size:.72rem;margin-bottom:4px;font-family:'Comic Neue',sans-serif;">
+            <textarea id="w-msg" placeholder="Write a birthday wish for Parul!" rows="2" style="width:100%;padding:4px 6px;border:2px solid #000;font-size:.72rem;resize:none;font-family:'Comic Neue',sans-serif;"></textarea>
+          </div>
+          <div style="display:flex;flex-direction:column;justify-content:flex-end;">
+            <button onclick="postWish()" class="btn fh" style="padding:6px 14px;font-size:.9rem;">POST &gt;&gt;</button>
+          </div>
+        </div>
+        <!-- Wishes display -->
+        <div id="wishes-board" style="border:3px solid #000;border-top:2px dashed #009900;border-radius:0 0 8px 8px;padding:8px;background:#f0fff4;min-height:120px;max-height:350px;overflow-y:auto;scroll-behavior:smooth;">
+          <div style="text-align:center;color:#999;font-size:.75rem;font-style:italic;">Loading wishes...</div>
+        </div>
+        <!-- Backend status -->
+        <div id="wishes-status" style="font-size:.62rem;color:#888;padding:3px 8px;font-style:italic;text-align:right;border:3px solid #000;border-top:0;border-radius:0 0 8px 8px;background:#e8f5e9;display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:.58rem;">🔄 Auto-refreshing every 5 seconds</span>
+          <span id="wishes-status-text"></span>
+        </div>
+      </div>
+
+    </div><!-- /center inner -->
+  </div><!-- /center col -->
+
+  <!-- ░░ RIGHT SIDEBAR ░░ -->
+  <div id="rs" style="background:var(--blue);padding:10px;display:flex;flex-direction:column;gap:10px;">
+
+    <!-- AD -->
+    <div class="rb bg-white" style="padding:5px;box-shadow:3px 3px 0 #000;background:#fff;">
+      <div style="background:red;color:#fff;font-size:.55rem;font-weight:900;padding:1px 4px;">ADVERTISEMENT</div>
+      <div style="border:2px solid #000;padding:8px;text-align:center;">
+        <div class="fh" style="color:navy;font-size:1.05rem;line-height:1.1;">RALPH LAUREN<br>BOYS &amp; GIRLS</div>
+        <div style="background:var(--blue);height:88px;width:88px;border:3px solid #fff;border-radius:50%;overflow:hidden;margin:6px auto;">
+          <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&q=80" style="width:100%;height:100%;object-fit:cover;" alt="">
+        </div>
+        <div style="font-size:.82rem;font-weight:700;line-height:1.3;color:navy;">Fashion sense<br>is always<br>in style.</div>
+        <button class="btn" style="font-size:.65rem;padding:2px 8px;margin-top:5px;">click here &gt;</button>
+      </div>
+    </div>
+
+    <!-- STICKY NOTE -->
+    <div style="background:#fffb80;padding:12px;transform:rotate(2.5deg);border:1px solid #d4b800;font-family:'Comic Neue',cursive;font-size:.78rem;box-shadow:3px 3px 6px rgba(0,0,0,.2);line-height:1.6;">
+      <div style="width:10px;height:10px;background:red;border-radius:50%;margin:0 auto 8px;border:1px solid #000;"></div>
+      <strong>"Don't forget to eat cake before Sakshi does!"</strong><br>— Mom &#127874;
+    </div>
+
+    <!-- YOUR WORLD -->
+    <div style="background:var(--pink);border:3px solid #000;box-shadow:3px 3px 0 #000;">
+      <div style="background:#000;color:var(--green);padding:3px 8px;font-family:'Changa One',sans-serif;font-size:.85rem;">YOUR WORLD</div>
+      <div style="padding:8px;display:flex;align-items:flex-start;gap:8px;">
+        <div style="font-size:1.6rem;flex-shrink:0;">&#127874;</div>
+        <div style="font-size:.65rem;font-weight:700;color:#fff;line-height:1.5;">
+          Queen of cake. Ruler of the house. Official birthday legend!
+        </div>
+      </div>
+      <button onclick="triggerConfetti()" style="width:100%;background:#000;color:var(--green);font-family:'Changa One',sans-serif;font-size:.78rem;padding:5px;border:0;cursor:pointer;">CELEBRATE! &gt;</button>
+    </div>
+
+    <!-- STATUS -->
+    <div style="background:#fff;border:3px solid #000;padding:8px;text-align:center;box-shadow:3px 3px 0 #000;">
+      <div class="fh" style="font-size:1rem;">STATUS</div>
+      <div id="status-text" style="color:red;font-size:.72rem;font-weight:900;margin-top:3px;">&#9940; NOT LOGGED IN</div>
+    </div>
+
+    <!-- ACHIEVEMENTS -->
+    <div style="background:#fff;border:3px solid #000;padding:8px;box-shadow:3px 3px 0 #000;">
+      <div class="fb" style="font-size:1.2rem;border-bottom:2px solid #000;margin-bottom:6px;">ACHIEVEMENTS &#127942;</div>
+      <div id="a1" class="ach">&#128275; Logged In</div>
+      <div id="a2" class="ach" style="margin-top:3px;">&#128499; Voted</div>
+      <div id="a3" class="ach" style="margin-top:3px;">&#127918; Played a Game</div>
+      <div id="a4" class="ach" style="margin-top:3px;">&#128140; Sent a Wish</div>
+      <div id="a5" class="ach" style="margin-top:3px;">&#127925; Played Radio</div>
+    </div>
+
+  </div><!-- /right sidebar -->
+
+</div><!-- /main grid -->
+
+<!-- FOOTER -->
+<div style="max-width:960px;margin:0 auto;background:#000;color:#fff;text-align:center;padding:16px;border-top:4px solid var(--orange);">
+  <div class="fp" style="font-size:1.4rem;color:var(--green);">
+    Made with &#10084;&#65039; by Veer Bhaiya &nbsp;|&nbsp; &#169; 2024 PARULWA.COM <span class="blink">&#9733;</span>
+  </div>
+</div>
+
+<!-- ═══ FLOATING VINYL PLAYER ═══ -->
+<div style="position:fixed;bottom:18px;right:18px;z-index:150;display:flex;align-items:flex-end;gap:10px;">
+  <div id="song-bubble" style="background:#fff;border:3px solid #000;border-radius:10px;padding:7px 12px;font-size:.72rem;font-weight:700;max-width:150px;box-shadow:3px 3px 0 #000;display:none;position:relative;">
+    &#127925; Now Playing:<br><span id="track-name" style="color:var(--orange);">Loading…</span>
+  </div>
+  <div id="vinyl-disc" onclick="toggleRadio()" title="Play / Pause" style="width:88px;height:88px;background:#111;border-radius:50%;border:5px solid #333;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 0 0 2px #000,4px 4px 0 #000;position:relative;">
+    <div style="position:absolute;inset:8px;border-radius:50%;border:2px solid #2a2a2a;pointer-events:none;"></div>
+    <div style="position:absolute;inset:18px;border-radius:50%;border:2px solid #2a2a2a;pointer-events:none;"></div>
+    <div style="position:absolute;inset:26px;border-radius:50%;border:2px solid #2a2a2a;pointer-events:none;"></div>
+    <div style="width:26px;height:26px;background:var(--orange);border-radius:50%;border:3px solid #fff;z-index:1;display:flex;align-items:center;justify-content:center;pointer-events:none;">
+      <div style="width:5px;height:5px;background:#000;border-radius:50%;"></div>
+    </div>
+    <div id="play-hint" style="position:absolute;inset:0;border-radius:50%;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.7rem;transition:opacity .3s;pointer-events:none;">&#9654;</div>
+  </div>
+</div>
+
+<!-- ═══ GALLERY MODAL (Mac OS Genie) ═══ -->
+<div id="mac-modal" style="display:none;position:fixed;z-index:500;background:#ececec;border:4px solid #000;border-radius:12px;box-shadow:12px 12px 0 rgba(0,0,0,.5);overflow:hidden;flex-direction:column;">
+  <div style="background:linear-gradient(to bottom,#e0e0e0,#b0b0b0);border-bottom:2px solid #000;padding:7px 10px;display:flex;align-items:center;gap:6px;user-select:none;">
+    <div class="wb" style="background:#ff5f57;" onclick="closeGallery()" title="Close"></div>
+    <div class="wb" style="background:#febc2e;"></div>
+    <div class="wb" style="background:#28c840;"></div>
+    <span style="margin-left:8px;font-size:.78rem;font-weight:700;color:#333;">&#128248; Parul's Memories.app</span>
+  </div>
+  <div style="flex:1;display:flex;flex-direction:column;padding:12px;gap:8px;background:#f5f5f5;height:calc(100% - 40px);">
+    <div style="flex:1;background:#fff;border:2px solid #ccc;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;min-height:180px;">
+      <div id="gallery-media-container" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;"></div>
+      <button onclick="prevPhoto()" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.65);color:#fff;border:0;border-radius:50%;width:36px;height:36px;font-size:1.4rem;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;">&#8249;</button>
+      <button onclick="nextPhoto()" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.65);color:#fff;border:0;border-radius:50%;width:36px;height:36px;font-size:1.4rem;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;">&#8250;</button>
+    </div>
+    <div style="background:#e0e0e0;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;border-radius:0 0 8px 8px;">
+      <p id="modal-caption" style="font-family:'Comic Neue',cursive;font-weight:700;font-size:.9rem;color:#444;"></p>
+      <div style="font-size:.7rem;color:#888;white-space:nowrap;"><span id="photo-n">1</span>/<span id="photo-t">4</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SNAKE GAME ═══ -->
+<div id="gm-snake" class="gm" style="width:320px;height:385px;">
+  <div style="background:#111;border-bottom:2px solid #000;padding:7px 10px;display:flex;align-items:center;gap:6px;">
+    <div class="wb" style="background:#ff5f57;" onclick="closeGame('snake')"></div>
+    <div class="wb" style="background:#febc2e;"></div>
+    <div class="wb" style="background:#28c840;"></div>
+    <span style="margin-left:8px;font-size:.75rem;font-weight:700;color:#ccc;">&#127822; Snake</span>
+    <button onclick="closeGame('snake')" style="margin-left:auto;background:#ff5f57;border:2px solid #000;color:#fff;font-size:.7rem;font-weight:900;padding:2px 8px;cursor:pointer;font-family:'Changa One',sans-serif;border-radius:3px;">CLOSE X</button>
+  </div>
+  <div style="background:#000;flex:1;display:flex;flex-direction:column;align-items:center;padding:8px;gap:6px;">
+    <div style="display:flex;justify-content:space-between;width:100%;font-family:'VT323',monospace;font-size:1.25rem;color:var(--green);">
+      <span>SCORE: <span id="s-score">0</span></span>
+      <span id="s-status" style="color:#aaa;">TAP TO START</span>
+    </div>
+    <canvas id="s-canvas" width="280" height="280" style="border:2px solid var(--green);border-radius:3px;touch-action:none;"></canvas>
+    <!-- Touch D-pad — shown on mobile only -->
+    <div id="snake-touch-controls" style="display:none;grid-template-columns:1fr 1fr 1fr;gap:4px;width:140px;margin-top:4px;">
+      <div></div>
+      <button ontouchstart="snakeTouchDir(0,-1)" style="background:#222;border:2px solid var(--green);color:var(--green);font-size:1.4rem;padding:8px;border-radius:4px;cursor:pointer;touch-action:manipulation;">&#9650;</button>
+      <div></div>
+      <button ontouchstart="snakeTouchDir(-1,0)" style="background:#222;border:2px solid var(--green);color:var(--green);font-size:1.4rem;padding:8px;border-radius:4px;cursor:pointer;touch-action:manipulation;">&#9664;</button>
+      <button ontouchstart="snakeTouchStart()" style="background:#444;border:2px solid var(--green);color:var(--green);font-size:.7rem;font-family:'VT323',monospace;padding:8px;border-radius:4px;cursor:pointer;touch-action:manipulation;">GO</button>
+      <button ontouchstart="snakeTouchDir(1,0)" style="background:#222;border:2px solid var(--green);color:var(--green);font-size:1.4rem;padding:8px;border-radius:4px;cursor:pointer;touch-action:manipulation;">&#9654;</button>
+      <div></div>
+      <button ontouchstart="snakeTouchDir(0,1)" style="background:#222;border:2px solid var(--green);color:var(--green);font-size:1.4rem;padding:8px;border-radius:4px;cursor:pointer;touch-action:manipulation;">&#9660;</button>
+      <div></div>
+    </div>
+    <div style="color:#555;font-size:.65rem;font-family:'VT323',monospace;">Arrow keys or WASD | Space to start</div>
+  </div>
+</div>
+
+<!-- ═══ MEMORY GAME ═══ -->
+<div id="gm-memory" class="gm" style="width:340px;height:460px;">
+  <div style="background:linear-gradient(135deg,#662D91,#330066);border-bottom:2px solid #000;padding:7px 10px;display:flex;align-items:center;gap:6px;">
+    <div class="wb" style="background:#ff5f57;" onclick="closeGame('memory')"></div>
+    <div class="wb" style="background:#febc2e;"></div>
+    <div class="wb" style="background:#28c840;"></div>
+    <span style="margin-left:8px;font-size:.75rem;font-weight:700;color:#ddd;">&#129504; Memory Match</span>
+    <button onclick="closeGame('memory')" style="margin-left:auto;background:#ff5f57;border:2px solid #000;color:#fff;font-size:.7rem;font-weight:900;padding:2px 8px;cursor:pointer;font-family:'Changa One',sans-serif;border-radius:3px;">CLOSE X</button>
+  </div>
+  <div style="background:#1a0033;flex:1;display:flex;flex-direction:column;align-items:center;padding:10px;gap:8px;">
+    <div style="color:var(--green);font-family:'VT323',monospace;font-size:1.25rem;">MOVES: <span id="m-moves">0</span> &nbsp;|&nbsp; PAIRS: <span id="m-pairs">0</span>/8</div>
+    <div id="m-board" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;width:100%;"></div>
+    <button onclick="initMemory()" class="btn fh" style="padding:5px 18px;font-size:.85rem;">NEW GAME</button>
+  </div>
+</div>
+
+<!-- ═══ WHACK-A-SAKSHI GAME ═══ -->
+<div id="gm-whack" class="gm" style="width:320px;height:410px;">
+  <div style="background:linear-gradient(135deg,#FF3399,#cc0066);border-bottom:2px solid #000;padding:7px 10px;display:flex;align-items:center;gap:6px;">
+    <div class="wb" style="background:#ff5f57;" onclick="closeGame('whack')"></div>
+    <div class="wb" style="background:#febc2e;"></div>
+    <div class="wb" style="background:#28c840;"></div>
+    <span style="margin-left:8px;font-size:.75rem;font-weight:700;color:#fff;">&#127919; Whack-A-Sakshi!</span>
+    <button onclick="closeGame('whack')" style="margin-left:auto;background:#000;border:2px solid #fff;color:#fff;font-size:.7rem;font-weight:900;padding:2px 8px;cursor:pointer;font-family:'Changa One',sans-serif;border-radius:3px;">CLOSE X</button>
+  </div>
+  <div style="background:#2d0033;flex:1;display:flex;flex-direction:column;align-items:center;padding:10px;gap:8px;">
+    <div style="display:flex;justify-content:space-between;width:100%;color:#fff;font-family:'VT323',monospace;font-size:1.25rem;">
+      <span>SCORE: <span id="w-score">0</span></span>
+      <span>TIME: <span id="w-time">30</span>s</span>
+    </div>
+    <div id="w-board" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;"></div>
+    <button id="w-btn" onclick="startWhack()" class="btn fh" style="padding:6px 22px;font-size:.9rem;">START!</button>
+  </div>
+</div>
+
+<!-- ═══ GAME MENU ═══ -->
+<div id="gm-menu" class="gm" style="width:290px;">
+  <div style="background:linear-gradient(135deg,#FF3399,#cc0066);border-bottom:2px solid #000;padding:8px 12px;display:flex;align-items:center;gap:6px;">
+    <div class="wb" style="background:#ff5f57;" onclick="closeGame('menu')"></div>
+    <div class="wb" style="background:#febc2e;"></div>
+    <div class="wb" style="background:#28c840;"></div>
+    <span style="margin-left:8px;font-size:.78rem;font-weight:700;color:#fff;">&#127918; Parul's Arcade</span>
+    <button onclick="closeGame('menu')" style="margin-left:auto;background:#000;border:2px solid #fff;color:#fff;font-size:.7rem;font-weight:900;padding:2px 8px;cursor:pointer;font-family:'Changa One',sans-serif;border-radius:3px;">CLOSE X</button>
+  </div>
+  <div style="background:#fff;padding:16px;display:flex;flex-direction:column;gap:10px;">
+    <div class="fb" style="font-size:1.6rem;text-align:center;color:var(--pink);">CHOOSE YOUR GAME!</div>
+    <button onclick="closeGame('menu');startGame('snake')"  class="btn fh" style="padding:11px;font-size:1rem;width:100%;border-radius:4px;">&#127822; Snake</button>
+    <button onclick="closeGame('menu');startGame('memory')" class="btn fh" style="padding:11px;font-size:1rem;width:100%;border-radius:4px;">&#129504; Memory Match</button>
+    <button onclick="closeGame('menu');startGame('whack')"  class="btn fh" style="padding:11px;font-size:1rem;width:100%;border-radius:4px;">&#127919; Whack-A-Sakshi!</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════════════════════ -->
+<script>
+/* ─── STATE ─── */
+var isLoggedIn=false, isPlaying=false, curPhoto=0;
+var snakeLoop=null, wTimer=null, wClock=null, wRunning=false;
+
+/* ─── SONGS (Line 1015) ──────────────────────────────────────
+   HOW TO ADD YOUR OWN MUSIC:
+   1. Go to cloudinary.com - sign up free (no card, 25GB)
+   2. Upload your MP3 file
+   3. Click it - copy the URL ending in .mp3
+   4. Replace any url: value below with that URL
+   Add as many songs as you want - copy a whole {name:...,url:...} line
+──────────────────────────────────────────────────────── */
+var songs=[
+  {name:"Funny Cartoon Piano",  url:"https://cdn.pixabay.com/download/audio/2022/10/25/audio_2d057888b1.mp3"},
+  {name:"Upbeat Retro Pop",     url:"https://cdn.pixabay.com/download/audio/2022/03/15/audio_24915c2698.mp3"},
+  {name:"8-Bit Party",          url:"https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0ef7b4d82.mp3"},
+  {name:"Birthday Banger",      url:"https://cdn.pixabay.com/download/audio/2021/08/04/audio_bb630cc098.mp3"},
+];
+
+/* ─── GALLERY PHOTOS + VIDEOS (Line 1026) ────────────────
+   HOW TO ADD PHOTOS:
+   1. cloudinary.com - upload your JPG/PNG
+   2. Copy the URL ending in .jpg or .png
+   3. Replace any src: value below
+   4. Change caption: to your funny text
+
+   HOW TO ADD VIDEOS (Cloudinary MP4):
+   {type:"video", src:"YOUR_CLOUDINARY_MP4_URL", caption:"Lol moment"}
+
+   HOW TO ADD YOUTUBE VIDEOS (no upload needed):
+   {type:"youtube", src:"VIDEO_ID_HERE", caption:"Watch this!"}
+   The ID is the part after ?v= in the YouTube link.
+   Example: youtube.com/watch?v=dQw4w9WgXcQ → ID is dQw4w9WgXcQ
+──────────────────────────────────────────────────────── */
+var photos=[
+  {src:"https://images.unsplash.com/photo-1531123414780-f74242c2b052?w=600&q=80", caption:"Remember this disaster? 😂"},
+  {src:"https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=600&q=80", caption:"Fashion icon of 2005 👑"},
+  {src:"https://images.unsplash.com/photo-1517021897933-0e0319cfbc28?w=600&q=80", caption:"Best Sister Award → ME 🏆"},
+  {src:"https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=600&q=80", caption:"THAT birthday party 🎂"},
+];
+document.getElementById('photo-t').textContent=photos.length;
+
+/* ─── LIVE WISHES CONFIG - FIREBASE 🔥 ─────────────────────
+   Using Firebase Realtime Database for INSTANT live updates!
+   Your Firebase project is already configured below.
+──────────────────────────────────────────────────────── */
+var FIREBASE={
+  PROJECT: "parulwa-64f82-default-rtdb.asia-southeast1",
+  URL: "https://parulwa-64f82-default-rtdb.asia-southeast1.firebasedatabase.app/wishes.json"
+};
+var firebaseEventSource=null;
+var wishesCache=[];
+
+// Helper to check Firebase status
+function checkFirebaseConnection(){
+  fetch(FIREBASE.URL.replace('.json', '/.json'))
+    .then(function(r){
+      console.log('Firebase connection:', r.ok ? 'SUCCESS' : 'FAILED');
+      return r.json();
+    })
+    .then(function(data){
+      console.log('Firebase data:', data);
+    })
+    .catch(function(err){
+      console.error('Firebase error:', err);
+      alert('⚠️ Firebase connection failed. Please check:\n1. Firebase URL is correct\n2. Database rules allow read/write\n3. Database is enabled');
+    });
+}
+
+/* ═══════════════════════════════════════════════════════
+   CORE FUNCTIONS
+═══════════════════════════════════════════════════════ */
+
+/* Scroll helper */
+function goTo(id){
+  var el=document.getElementById(id);
+  if(el){el.scrollIntoView({behavior:'smooth',block:'start'});}
+}
+
+/* Gallery + scroll */
+function goToAndOpenGallery(){
+  goTo('sec-gallery');
+  setTimeout(function(){
+    openGallery(document.getElementById('gallery-bar'));
+  },400);
+}
+
+/* Sound player — uses Web Audio API as fallback */
+function playSound(id){
+  var el=document.getElementById(id);
+  if(!el)return;
+  el.currentTime=0;
+  var p=el.play();
+  if(p){p.catch(function(){
+    // Fallback: oscillator beep
+    try{
+      var ctx=new(window.AudioContext||window.webkitAudioContext)();
+      var o=ctx.createOscillator();
+      var g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);
+      if(id==='sfx-ok'){o.frequency.value=880;}
+      else if(id==='sfx-wrong'){o.frequency.value=220;}
+      else{o.frequency.value=660;}
+      g.gain.setValueAtTime(.3,ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.5);
+      o.start();o.stop(ctx.currentTime+.5);
+    }catch(e){}
+  });}
+}
+
+/* ─── START OVERLAY ─── */
+document.getElementById('start-overlay').addEventListener('click',function(){
+  var el=this;
+  gsap.to(el,{opacity:0,duration:.6,onComplete:function(){el.style.display='none';}});
+  startTicker();
+  startChase();
+  startCountdown();
+  loadWishes();
+});
+
+/* ─── LOGIN ─── */
+function doLogin(){
+  var u=document.getElementById('usr').value.trim().toLowerCase();
+  var p=document.getElementById('pwd').value.trim().toLowerCase();
+  var err=document.getElementById('login-err');
+  if(u==='parul'&&p==='sakshi'){
+    isLoggedIn=true;
+    document.getElementById('login-panel').style.display='none';
+    document.getElementById('profile-panel').style.display='block';
+    document.getElementById('lock-overlay').classList.add('gone');
+    document.getElementById('gallery-lock').style.display='none';
+    document.getElementById('gallery-thumb').style.filter='none';
+    document.getElementById('gallery-thumb').style.opacity='1';
+    document.getElementById('status-text').innerHTML='&#10003; LOGGED IN AS PARUL';
+    document.getElementById('status-text').style.color='green';
+    unlockAch('a1','var(--green)','#000');
+    playSound('sfx-login');
+    triggerConfetti();
+  }else{
+    err.style.display='block';
+    gsap.to('#login-panel',{x:9,duration:.06,yoyo:true,repeat:9,ease:'none'});
+    setTimeout(function(){err.style.display='none';},3000);
+  }
+}
+document.getElementById('pwd').addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
+document.getElementById('usr').addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
+
+/* ─── POLL ─── */
+function vote(c){
+  var pp=document.getElementById('pp'),ps=document.getElementById('ps'),res=document.getElementById('poll-res');
+  // Reset both buttons
+  pp.style.background='linear-gradient(180deg,#fff,#ddd)';pp.style.color='#000';
+  ps.style.background='linear-gradient(180deg,#fff,#ddd)';ps.style.color='#000';
+  res.style.display='block';
+  if(c==='p'){
+    pp.style.background='#4caf50';pp.style.color='#fff';pp.style.boxShadow='inset 2px 2px 0 rgba(0,0,0,.2)';
+    res.textContent='CORRECT! Parul is obviously the best!';
+    res.style.background='#4caf50';res.style.color='#fff';res.style.borderColor='#2e7d32';
+    playSound('sfx-ok');
+    triggerConfetti();
+  }else{
+    ps.style.background='#f44336';ps.style.color='#fff';ps.style.boxShadow='inset 2px 2px 0 rgba(0,0,0,.2)';
+    res.textContent='WRONG! Nice try Sakshi! Parul wins!';
+    res.style.background='#f44336';res.style.color='#fff';res.style.borderColor='#b71c1c';
+    playSound('sfx-wrong');
+  }
+  unlockAch('a2','#ffe066','#000');
+}
+
+/* ─── GALLERY ─── */
+function openGallery(triggerEl){
+  if(!isLoggedIn){
+    gsap.to('#gallery-lock',{scale:1.07,duration:.08,yoyo:true,repeat:5});
+    goTo('login-panel');
+    return;
+  }
+  var modal=document.getElementById('mac-modal');
+  var vw=window.innerWidth,vh=window.innerHeight;
+  var isMobile=vw<=600;
+
+  if(isMobile){
+    // On mobile: just show full screen, no genie animation
+    gsap.set(modal,{
+      display:'flex',
+      top:0,left:0,
+      width:'100vw',height:'100vh',
+      opacity:0,scaleY:1,transformOrigin:'top center'
+    });
+    gsap.to(modal,{opacity:1,duration:.25,ease:'power2.out',onComplete:updateGalleryImg});
+  }else{
+    var rect=triggerEl.getBoundingClientRect();
+    gsap.set(modal,{
+      display:'flex',
+      top:rect.top+window.scrollY,left:rect.left,
+      width:rect.width,height:rect.height,
+      opacity:.3,scaleY:.04,transformOrigin:'top center'
+    });
+    var mw=Math.min(vw*.9,680),mh=Math.min(vh*.88,520);
+    gsap.to(modal,{
+      top:(vh-mh)/2+window.scrollY,left:(vw-mw)/2,
+      width:mw,height:mh,opacity:1,scaleY:1,
+      duration:.5,ease:'power3.out',
+      onComplete:updateGalleryImg
+    });
+  }
+}
+function closeGallery(){
+  var modal=document.getElementById('mac-modal');
+  var trigger=document.getElementById('gallery-bar');
+  var rect=trigger.getBoundingClientRect();
+  gsap.to(modal,{
+    top:rect.top+window.scrollY,left:rect.left,
+    width:rect.width,height:0,
+    opacity:0,scaleY:.04,
+    duration:.35,ease:'power2.in',
+    onComplete:function(){modal.style.display='none';gsap.set(modal,{scaleY:1,height:'auto'});}
+  });
+}
+function updateGalleryImg(){
+  var p=photos[curPhoto];
+  var container=document.getElementById('gallery-media-container');
+  var type=p.type||'photo';
+
+  if(type==='youtube'){
+    container.innerHTML='<iframe src="https://www.youtube.com/embed/'+p.src+'?autoplay=0" style="width:100%;height:100%;min-height:200px;border:0;" allowfullscreen></iframe>';
+  }else if(type==='video'){
+    container.innerHTML='<video src="'+p.src+'" controls style="max-height:100%;max-width:100%;border:4px solid #fff;box-shadow:0 4px 14px rgba(0,0,0,.2);" preload="metadata"></video>';
+  }else{
+    container.innerHTML='<img src="'+p.src+'" alt="" style="max-height:100%;max-width:100%;object-fit:contain;border:5px solid #fff;box-shadow:0 4px 14px rgba(0,0,0,.2);transform:rotate(1.5deg);">';
+  }
+  document.getElementById('modal-caption').textContent=p.caption||'';
+  document.getElementById('photo-n').textContent=curPhoto+1;
+}
+function nextPhoto(){curPhoto=(curPhoto+1)%photos.length;updateGalleryImg();}
+function prevPhoto(){curPhoto=(curPhoto-1+photos.length)%photos.length;updateGalleryImg();}
+
+/* ─── RADIO ─── */
+var player=document.getElementById('radio-player');
+function toggleRadio(){
+  if(isPlaying){
+    player.pause();
+    document.getElementById('vinyl-disc').classList.remove('vs');
+    document.getElementById('song-bubble').style.display='none';
+    document.getElementById('play-hint').style.opacity='1';
+    isPlaying=false;
+  }else{playRandomSong();}
+}
+function playRandomSong(){
+  var s=songs[Math.floor(Math.random()*songs.length)];
+  player.src=s.url;player.volume=.5;
+  var pp=player.play();
+  if(pp)pp.catch(function(){});
+  document.getElementById('track-name').textContent=s.name;
+  var np=document.getElementById('np-text');if(np)np.textContent='Now: '+s.name;
+  document.getElementById('song-bubble').style.display='block';
+  document.getElementById('vinyl-disc').classList.add('vs');
+  document.getElementById('play-hint').style.opacity='0';
+  isPlaying=true;
+  unlockAch('a5','var(--purple)','#fff');
+}
+function playNextSong(){playRandomSong();}
+player.addEventListener('ended',function(){setTimeout(playRandomSong,1000);});
+
+/* ─── TICKER ─── */
+function startTicker(){
+  setTimeout(function(){
+    var track=document.getElementById('ticker-track');
+    var w=track.scrollWidth;
+    gsap.fromTo(track,{x:0},{x:-(w/2),duration:28,ease:'none',repeat:-1});
+    gsap.to('#t-parul,#t-sakshi',{y:-5,duration:.2,yoyo:true,repeat:-1,ease:'power1.inOut',stagger:.15});
+  },300);
+}
+
+/* ─── CHASE SCENE — FULL REWRITE ─── */
+var chaseState = {
+  paPos: -180,   // parul x position
+  saPos: -400,   // sakshi x position
+  paSpeed: 1.4,  // parul speed px/frame
+  saSpeed: 1.7,  // sakshi speed px/frame  ← sakshi slightly faster = catches up
+  sceneW: 600,
+  fighting: false,
+  fightTimer: null,
+  fightDuration: 0,
+  loop: null,
+  bubbleTimer: null
+};
+
+var parolQuotes = [
+  'MY CAKE!!', 'CATCH ME!!', 'TOO SLOW!', 'HA HA HA!', 'NEVER!!', 'GO AWAY!'
+];
+var sakshiQuotes = [
+  'GIVE IT!!', 'COME BACK!!', 'CATCH U NOW!', 'THIEF!', 'MY CAKE TOO!'
+];
+var fightStatuses = [
+  'FIGHT FIGHT FIGHT!!', 'CATFIGHT!! POW!!', 'THEY ARE WRESTLING!!',
+  'WHO WILL WIN?!', 'CAKE IN DANGER!!', 'SISTERS AT WAR!!'
+];
+
+function playFightSound(){
+  try{
+    var ctx=new(window.AudioContext||window.webkitAudioContext)();
+    // POW sound — short burst of noise + pitch drop
+    var buf=ctx.createBuffer(1,ctx.sampleRate*.15,ctx.sampleRate);
+    var data=buf.getChannelData(0);
+    for(var i=0;i<data.length;i++){
+      data[i]=(Math.random()*2-1)*Math.exp(-i/(ctx.sampleRate*.04));
+    }
+    var src=ctx.createBufferSource();
+    src.buffer=buf;
+    var gain=ctx.createGain();
+    gain.gain.setValueAtTime(.6,ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.15);
+    src.connect(gain);gain.connect(ctx.destination);
+    src.start();
+
+    // Add a pitch tone for "smack"
+    var o=ctx.createOscillator();
+    var g2=ctx.createGain();
+    o.frequency.setValueAtTime(250,ctx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(80,ctx.currentTime+.12);
+    g2.gain.setValueAtTime(.4,ctx.currentTime);
+    g2.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.12);
+    o.connect(g2);g2.connect(ctx.destination);
+    o.start();o.stop(ctx.currentTime+.12);
+  }catch(e){}
+}
+
+function spawnFightStars(x, y){
+  var cloud=document.getElementById('fight-cloud');
+  cloud.style.display='block';
+  cloud.style.left=(x-30)+'px';
+  cloud.style.top=(y-30)+'px';
+  var symbols=['POW!','BAM!','SMACK!','OOF!','ZAP!','!!'];
+  cloud.innerHTML='';
+  for(var i=0;i<3;i++){
+    var star=document.createElement('div');
+    star.className='fight-star';
+    star.style.left=(Math.random()*60-10)+'px';
+    star.style.top=(Math.random()*50-10)+'px';
+    star.style.fontSize=(Math.random()*.4+.65)+'rem';
+    star.style.fontFamily="'Changa One',sans-serif";
+    star.style.color=['#FF5500','#FF3399','#FFEE00','#9933CC'][Math.floor(Math.random()*4)];
+    star.style.textShadow='1px 1px 0 #000';
+    star.textContent=symbols[Math.floor(Math.random()*symbols.length)];
+    star.style.animationDuration=(.45+Math.random()*.3)+'s';
+    cloud.appendChild(star);
+  }
+  setTimeout(function(){cloud.style.display='none';cloud.innerHTML='';},700);
+}
+
+function showBubble(who, text){
+  var el=document.getElementById('bubble-'+who);
+  if(!el)return;
+  el.textContent=text;
+  el.classList.add('show');
+  setTimeout(function(){el.classList.remove('show');},1600);
+}
+
+function startFight(fightX){
+  if(chaseState.fighting)return;
+  chaseState.fighting=true;
+  chaseState.fightDuration=Math.floor(Math.random()*3+3); // 3-5 "fight ticks"
+  var scene=document.getElementById('chase-main');
+  scene.classList.add('fight-mode');
+  document.getElementById('chase-status').textContent=fightStatuses[Math.floor(Math.random()*fightStatuses.length)];
+
+  // Position both at the fight spot
+  chaseState.paPos=fightX;
+  chaseState.saPos=fightX-40;
+  applyPositions();
+
+  var tick=0;
+  chaseState.fightTimer=setInterval(function(){
+    playFightSound();
+    spawnFightStars(fightX, 80);
+    tick++;
+    if(tick>=chaseState.fightDuration){
+      endFight();
+    }
+  },500);
+}
+
+function endFight(){
+  clearInterval(chaseState.fightTimer);
+  chaseState.fighting=false;
+  var scene=document.getElementById('chase-main');
+  scene.classList.remove('fight-mode');
+  // Parul escapes — she runs ahead, Sakshi recovers behind
+  chaseState.saPos=chaseState.paPos-160;
+  chaseState.paSpeed=1.4+Math.random()*0.4;
+  chaseState.saSpeed=1.5+Math.random()*0.5;
+  var statuses=['PARUL ESCAPES!','SAKSHI RECOVERS!','THE CHASE CONTINUES!','PARUL RUNS AGAIN!'];
+  document.getElementById('chase-status').textContent=statuses[Math.floor(Math.random()*statuses.length)];
+  setTimeout(function(){
+    document.getElementById('chase-status').textContent='PARUL RUNS!! SAKSHI CHASES!!';
+  },2000);
+}
+
+function applyPositions(){
+  var parul=document.getElementById('runner-parul');
+  var sakshi=document.getElementById('runner-sakshi');
+  if(parul) parul.style.left=chaseState.paPos+'px';
+  if(sakshi) sakshi.style.left=chaseState.saPos+'px';
+}
+
+function chaseFrame(){
+  var s=chaseState;
+  if(s.fighting) return;
+
+  s.paPos+=s.paSpeed;
+  s.saPos+=s.saSpeed;
+
+  var gap=s.paPos-s.saPos;
+
+  // Fight trigger: when Sakshi gets very close to Parul
+  if(gap<30 && gap>-20 && s.paPos>60 && s.paPos<s.sceneW-80){
+    startFight(s.paPos);
+    return;
+  }
+
+  // Reset Parul when she exits right edge
+  if(s.paPos>s.sceneW+100){
+    s.paPos=-160;
+    s.saPos=-380;
+    // Randomise speeds slightly each loop
+    s.paSpeed=1.2+Math.random()*0.5;
+    s.saSpeed=1.5+Math.random()*0.5;
+    // Random bubble quote
+    if(Math.random()>0.4) setTimeout(function(){showBubble('parul',parolQuotes[Math.floor(Math.random()*parolQuotes.length)]);},800);
+    if(Math.random()>0.4) setTimeout(function(){showBubble('sakshi',sakshiQuotes[Math.floor(Math.random()*sakshiQuotes.length)]);},1200);
+  }
+  // Reset Sakshi if she somehow gets too far ahead
+  if(s.saPos>s.sceneW+120) s.saPos=-380;
+
+  applyPositions();
+}
+
+function startChase(){
+  var scene=document.getElementById('chase-main');
+  chaseState.sceneW=(scene.offsetWidth||550)+100;
+
+  // Kick off random bubble quotes every 5-8 seconds
+  function scheduleBubble(){
+    setTimeout(function(){
+      if(Math.random()>0.3) showBubble('parul', parolQuotes[Math.floor(Math.random()*parolQuotes.length)]);
+      setTimeout(function(){
+        if(Math.random()>0.4) showBubble('sakshi', sakshiQuotes[Math.floor(Math.random()*sakshiQuotes.length)]);
+      }, 800);
+      scheduleBubble();
+    }, 5000+Math.random()*4000);
+  }
+  scheduleBubble();
+
+  // Run at ~45fps
+  if(chaseState.loop) cancelAnimationFrame(chaseState.loop);
+  var last=0;
+  function frame(ts){
+    if(ts-last>22){ // ~45fps cap
+      chaseFrame();
+      last=ts;
+    }
+    chaseState.loop=requestAnimationFrame(frame);
+  }
+  chaseState.loop=requestAnimationFrame(frame);
+}
+
+/* ─── CONFETTI ─── */
+function triggerConfetti(){
+  var end=Date.now()+2200;
+  (function b(){
+    confetti({particleCount:5,angle:60,spread:55,origin:{x:0},colors:['#FF5500','#D4E009','#00AEEF','#FF3399','#9933CC']});
+    confetti({particleCount:5,angle:120,spread:55,origin:{x:1},colors:['#FF5500','#D4E009','#00AEEF','#FF3399','#9933CC']});
+    if(Date.now()<end)requestAnimationFrame(b);
+  })();
+}
+
+/* ─── COUNTDOWN ─── */
+function startCountdown(){
+  /* ← Change this date to Parul's actual birthday! Format: YYYY, MM-1, DD */
+  var target=new Date(2025,11,31,0,0,0); // Dec 31 2025 example
+  function tick(){
+    var diff=target-Date.now();
+    if(diff<=0){
+      ['cd','ch','cm','cs'].forEach(function(x){document.getElementById(x).textContent='00';});
+      return;
+    }
+    document.getElementById('cd').textContent=Math.floor(diff/86400000).toString().padStart(2,'0');
+    document.getElementById('ch').textContent=Math.floor((diff%86400000)/3600000).toString().padStart(2,'0');
+    document.getElementById('cm').textContent=Math.floor((diff%3600000)/60000).toString().padStart(2,'0');
+    document.getElementById('cs').textContent=Math.floor((diff%60000)/1000).toString().padStart(2,'0');
+  }
+  tick();setInterval(tick,1000);
+}
+
+/* ─── WISHES (Firebase Realtime Database) ─── */
+function isFirebaseConfigured(){
+  return FIREBASE.PROJECT && FIREBASE.PROJECT.length > 5;
+}
+
+function startFirebaseListener(){
+  if(!isFirebaseConfigured()) return;
+  
+  // Try EventSource first
+  if(typeof EventSource !== 'undefined' && !firebaseEventSource){
+    try {
+      firebaseEventSource = new EventSource(FIREBASE.URL);
+      
+      firebaseEventSource.onmessage = function(event) {
+        try {
+          var data = JSON.parse(event.data);
+          if(data && typeof data === 'object' && data !== null){
+            var wishesArray = Object.keys(data).map(function(key){
+              return {id: key, name: data[key].name, msg: data[key].msg, time: data[key].time, timestamp: data[key].timestamp || 0};
+            }).sort(function(a, b){return b.timestamp - a.timestamp;});
+            
+            wishesCache = wishesArray;
+            renderWishes(wishesArray);
+            var now=new Date();
+            var timeStr=now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+            document.getElementById('wishes-status-text').textContent='Updated: '+timeStr+' | '+wishesArray.length+' wish(es) 🔥 LIVE!';
+          } else {
+            wishesCache = [];
+            renderWishes([]);
+            document.getElementById('wishes-status-text').textContent='0 wishes — Be the first! 🎉';
+          }
+        } catch(e) {
+          console.log('Parse error:', e);
+        }
+      };
+      
+      firebaseEventSource.onerror = function(err) {
+        console.log('EventSource error, switching to polling:', err);
+        if(firebaseEventSource){
+          firebaseEventSource.close();
+          firebaseEventSource = null;
+        }
+        startPolling();
+      };
+      
+      return;
+    } catch(e) {
+      console.log('EventSource failed, using polling:', e);
+    }
+  }
+  
+  // Fallback to polling
+  startPolling();
+}
+
+var pollingInterval = null;
+function startPolling(){
+  if(pollingInterval) return;
+  
+  function pollWishes(){
+    fetch(FIREBASE.URL)
+      .then(function(r){return r.json();})
+      .then(function(data){
+        if(data && typeof data === 'object' && data !== null){
+          var wishesArray = Object.keys(data).map(function(key){
+            return {id: key, name: data[key].name, msg: data[key].msg, time: data[key].time, timestamp: data[key].timestamp || 0};
+          }).sort(function(a, b){return b.timestamp - a.timestamp;});
+          
+          wishesCache = wishesArray;
+          renderWishes(wishesArray);
+          var now=new Date();
+          var timeStr=now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+          document.getElementById('wishes-status-text').textContent='Updated: '+timeStr+' | '+wishesArray.length+' wish(es) 🔄 Auto-refresh';
+        } else {
+          wishesCache = [];
+          renderWishes([]);
+          document.getElementById('wishes-status-text').textContent='0 wishes — Be the first! 🎉';
+        }
+      })
+      .catch(function(err){
+        console.error('Poll error:', err);
+        document.getElementById('wishes-status-text').textContent='⚠️ Connection error - retrying...';
+      });
+  }
+  
+  pollWishes();
+  pollingInterval = setInterval(pollWishes, 3000);
+}
+
+function loadWishes(){
+  if(!isFirebaseConfigured()){
+    renderWishes([]);
+    document.getElementById('wishes-status-text').textContent='[Firebase not configured]';
+    return;
+  }
+  
+  // Test connection first
+  document.getElementById('wishes-status-text').textContent='🔄 Connecting to Firebase...';
+  
+  fetch(FIREBASE.URL)
+    .then(function(r){
+      if(!r.ok){
+        throw new Error('Firebase connection failed. Status: ' + r.status);
+      }
+      return r.json();
+    })
+    .then(function(){
+      document.getElementById('wishes-status-text').textContent='✅ Connected! Loading wishes...';
+      startFirebaseListener();
+    })
+    .catch(function(err){
+      console.error('Firebase connection error:', err);
+      document.getElementById('wishes-status-text').textContent='❌ Cannot connect to Firebase';
+      alert('⚠️ Firebase Error!\n\nPlease check:\n1. Go to Firebase Console\n2. Realtime Database → Rules\n3. Set rules to:\n{\n  "rules": {\n    "wishes": {\n      ".read": true,\n      ".write": true\n    }\n  }\n}\n4. Click Publish');
+    });
+}
+
+function postWish(){
+  var name=document.getElementById('w-name').value.trim()||'Anonymous';
+  var msg=document.getElementById('w-msg').value.trim();
+  if(!msg){document.getElementById('w-msg').style.border='2px solid red';return;}
+  document.getElementById('w-msg').style.border='2px solid #000';
+  
+  if(!isFirebaseConfigured()){
+    alert('Firebase not configured!');
+    return;
+  }
+  
+  var wish={
+    name:name,
+    msg:msg,
+    time:new Date().toLocaleDateString(),
+    timestamp:Date.now()
+  };
+  
+  document.getElementById('wishes-status-text').textContent='📤 Posting…';
+
+  fetch(FIREBASE.URL, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(wish)
+  })
+  .then(function(r){return r.json();})
+  .then(function(){
+    document.getElementById('w-name').value='';
+    document.getElementById('w-msg').value='';
+    triggerConfetti();
+    unlockAch('a4','#ffcce6','#000');
+    document.getElementById('wishes-status-text').textContent='✅ Posted! Everyone can see it now!';
+    setTimeout(function(){
+      var now=new Date();
+      var timeStr=now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+      document.getElementById('wishes-status-text').textContent='Updated: '+timeStr+' | 🔥 LIVE!';
+    }, 2000);
+  })
+  .catch(function(err){
+    console.error('Post error:', err);
+    document.getElementById('wishes-status-text').textContent='❌ Error posting. Check Firebase setup.';
+  });
+}
+
+function renderWishes(arr){
+  var board=document.getElementById('wishes-board');
+  if(!arr||arr.length===0){
+    board.innerHTML='<div style="text-align:center;color:#999;font-size:.75rem;font-style:italic;padding:10px;">Be the first to wish Parul! &#127881;</div>';
+    return;
+  }
+  board.innerHTML=arr.map(function(w,idx){
+    var animDelay=idx*0.05;
+    return '<div class="wish-item" style="padding:8px 10px;border-bottom:1px solid #c8e6c9;display:flex;gap:8px;align-items:flex-start;animation:fadeInWish 0.4s ease-out '+animDelay+'s both;background:#fff;margin-bottom:2px;border-radius:4px;">'
+      +'<span style="font-size:1.2rem;flex-shrink:0;">&#128140;</span>'
+      +'<div style="flex:1;">'
+      +'<span style="font-weight:900;font-size:.8rem;color:var(--orange);">'+escHtml(w.name)+'</span>'
+      +' <span style="font-size:.6rem;color:#999;">'+escHtml(w.time||'')+'</span><br>'
+      +'<span style="font-size:.78rem;line-height:1.4;">'+escHtml(w.msg)+'</span>'
+      +'</div></div>';
+  }).join('');
+}
+
+function escHtml(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+document.getElementById('w-msg').addEventListener('keydown',function(e){
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();postWish();}
+});
+
+/* ─── ACHIEVEMENTS ─── */
+function unlockAch(id,bg,color){
+  var el=document.getElementById(id);
+  if(!el)return;
+  el.classList.add('done');
+  el.style.background=bg;el.style.color=color||'';
+  gsap.fromTo(el,{scale:1.15},{scale:1,duration:.3,ease:'back.out'});
+}
+
+/* ══════════════ GAMES ══════════════ */
+function openGameMenu(){
+  var m=document.getElementById('gm-menu');
+  var vw=window.innerWidth,vh=window.innerHeight;
+  var isMobile=vw<=600;
+  if(isMobile){
+    gsap.set(m,{display:'flex',opacity:0,scale:.95,left:0,top:0,width:'100vw'});
+  }else{
+    gsap.set(m,{display:'flex',opacity:0,scale:.6,left:Math.max(8,(vw-290)/2),top:Math.max(80,(vh-300)/2+window.scrollY)});
+  }
+  gsap.to(m,{opacity:1,scale:1,duration:.3,ease:'back.out(1.4)'});
+  unlockAch('a3','var(--pink)','#fff');
+}
+
+function startGame(type){
+  var dims={snake:[320,385],memory:[340,460],whack:[320,410]};
+  var ids={snake:'gm-snake',memory:'gm-memory',whack:'gm-whack'};
+  var d=dims[type], modal=document.getElementById(ids[type]);
+  var vw=window.innerWidth,vh=window.innerHeight;
+  var isMobile=vw<=600;
+  if(isMobile){
+    gsap.set(modal,{display:'flex',opacity:0,scale:.97,left:0,top:0,width:'100vw',height:'100vh'});
+  }else{
+    var L=Math.max(8,(vw-d[0])/2), T=Math.max(55,(vh-d[1])/2+window.scrollY);
+    gsap.set(modal,{display:'flex',opacity:0,scale:.6,left:L,top:T});
+  }
+  gsap.to(modal,{opacity:1,scale:1,duration:.35,ease:'back.out(1.3)'});
+  if(type==='snake')initSnake();
+  if(type==='memory')initMemory();
+  if(type==='whack')initWhackBoard();
+  unlockAch('a3','var(--pink)','#fff');
+}
+
+function closeGame(type){
+  var map={snake:'gm-snake',memory:'gm-memory',whack:'gm-whack',menu:'gm-menu'};
+  var modal=document.getElementById(map[type]);
+  gsap.to(modal,{opacity:0,scale:.6,duration:.25,ease:'power2.in',onComplete:function(){modal.style.display='none';}});
+  if(type==='snake'){if(snakeLoop){clearInterval(snakeLoop);snakeLoop=null;}document.onkeydown=null;}
+  if(type==='whack'){clearInterval(wTimer);clearInterval(wClock);wRunning=false;}
+}
+
+/* Snake touch helpers — called by the D-pad buttons */
+var _snakeDir={x:1,y:0};
+var _snakeRunning=false;
+var _snakeNeedRestart=false;
+function snakeTouchDir(dx,dy){
+  if(_snakeDir.x!==-dx||_snakeDir.y!==-dy) _snakeDir={x:dx,y:dy};
+}
+function snakeTouchStart(){
+  // simulate Space press
+  var e=new KeyboardEvent('keydown',{key:' ',bubbles:true});
+  document.dispatchEvent(e);
+}
+
+/* ═══ SNAKE ═══ */
+function initSnake(){
+  if(snakeLoop){clearInterval(snakeLoop);snakeLoop=null;}
+  var cv=document.getElementById('s-canvas'),ctx=cv.getContext('2d');
+  // Scale canvas to actual display size on mobile
+  var displayW=cv.clientWidth||280;
+  var SZ=14,COLS=20,ROWS=20;
+  var snake=[{x:10,y:10}],food=rf(),score=0,running=false,needRestart=false;
+  _snakeDir={x:1,y:0};
+  var dir=_snakeDir;
+  document.getElementById('s-score').textContent=0;
+  document.getElementById('s-status').textContent='TAP GO / SPACE';
+
+  function rf(){
+    var pos;
+    do{pos={x:Math.floor(Math.random()*COLS),y:Math.floor(Math.random()*ROWS)};}
+    while(snake.some(function(s){return s.x===pos.x&&s.y===pos.y;}));
+    return pos;
+  }
+
+  function draw(){
+    ctx.fillStyle='#0a0a0a';ctx.fillRect(0,0,cv.width,cv.height);
+    ctx.fillStyle='#1c1c1c';
+    for(var x=0;x<COLS;x++)for(var y=0;y<ROWS;y++)ctx.fillRect(x*SZ+6,y*SZ+6,2,2);
+    ctx.fillStyle='#FF3399';ctx.fillRect(food.x*SZ+1,food.y*SZ+1,SZ-2,SZ-2);
+    ctx.fillStyle='#fff';ctx.font='bold 10px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('C',food.x*SZ+SZ/2,food.y*SZ+SZ/2);
+    for(var i=0;i<snake.length;i++){
+      ctx.fillStyle=i===0?'#D4E009':'#7aaa00';
+      ctx.fillRect(snake[i].x*SZ+1,snake[i].y*SZ+1,SZ-2,SZ-2);
+      if(i===0){ctx.fillStyle='#000';ctx.fillRect(snake[i].x*SZ+3,snake[i].y*SZ+3,3,3);ctx.fillRect(snake[i].x*SZ+8,snake[i].y*SZ+3,3,3);}
+    }
+  }
+
+  function step(){
+    if(!running)return;
+    // sync direction from touch d-pad
+    var nd=_snakeDir;
+    if(nd.x!==-dir.x||nd.y!==-dir.y) dir=nd;
+    var head={x:((snake[0].x+dir.x)+COLS)%COLS,y:((snake[0].y+dir.y)+ROWS)%ROWS};
+    if(snake.slice(1).some(function(s){return s.x===head.x&&s.y===head.y;})){
+      running=false;needRestart=true;
+      document.getElementById('s-status').textContent='DEAD! GO=RESTART';
+      clearInterval(snakeLoop);snakeLoop=null;return;
+    }
+    snake.unshift(head);
+    if(head.x===food.x&&head.y===food.y){
+      score++;document.getElementById('s-score').textContent=score;food=rf();
+      if(score%5===0)triggerConfetti();
+    }else{snake.pop();}
+    draw();
+  }
+
+  draw();
+  snakeLoop=setInterval(step,130);
+
+  document.onkeydown=function(e){
+    var M={'ArrowUp':{x:0,y:-1},'ArrowDown':{x:0,y:1},'ArrowLeft':{x:-1,y:0},'ArrowRight':{x:1,y:0},'w':{x:0,y:-1},'s':{x:0,y:1},'a':{x:-1,y:0},'d':{x:1,y:0}};
+    if(e.key===' '){
+      e.preventDefault();
+      if(needRestart){
+        snake=[{x:10,y:10}];dir={x:1,y:0};_snakeDir={x:1,y:0};food=rf();score=0;
+        document.getElementById('s-score').textContent=0;
+        needRestart=false;running=true;
+        document.getElementById('s-status').textContent='GO!';
+        if(!snakeLoop)snakeLoop=setInterval(step,130);
+      }else if(!running){running=true;document.getElementById('s-status').textContent='GO!';}
+    }
+    if(M[e.key]){var nd=M[e.key];if(nd.x!==-dir.x||nd.y!==-dir.y){dir=nd;_snakeDir=nd;}e.preventDefault();}
+  };
+}
+
+/* ═══ MEMORY ═══ */
+function initMemory(){
+  var emojis=['&#127874;','&#127881;','&#127882;','&#127880;','&#127873;','&#127752;','&#11088;','&#128150;'];
+  var cards=emojis.concat(emojis).sort(function(){return Math.random()-.5;});
+  var flipped=[],matched=0,moves=0,locked=false;
+  document.getElementById('m-moves').textContent=0;
+  document.getElementById('m-pairs').textContent=0;
+  var board=document.getElementById('m-board');board.innerHTML='';
+
+  cards.forEach(function(emoji){
+    var card=document.createElement('div');
+    card.style.cssText='height:58px;background:#330066;border:2px solid var(--purple);border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.5rem;user-select:none;transition:all .18s;';
+    card.innerHTML='&#10067;';
+    card.dataset.emoji=emoji;card.dataset.matched='0';
+
+    card.addEventListener('click',function(){
+      if(locked||card.dataset.matched==='1'||flipped.indexOf(card)>-1)return;
+      card.innerHTML=emoji;card.style.background='#660099';card.style.transform='scale(1.06)';
+      flipped.push(card);
+
+      if(flipped.length===2){
+        locked=true;moves++;
+        document.getElementById('m-moves').textContent=moves;
+        setTimeout(function(){
+          if(flipped[0].dataset.emoji===flipped[1].dataset.emoji){
+            flipped.forEach(function(c){c.dataset.matched='1';c.style.background='var(--green)';c.style.color='#000';c.style.transform='';});
+            matched++;document.getElementById('m-pairs').textContent=matched;
+            if(matched===8)triggerConfetti();
+          }else{
+            flipped.forEach(function(c){c.innerHTML='&#10067;';c.style.background='#330066';c.style.transform='';});
+          }
+          flipped=[];locked=false;
+        },700);
+      }
+    });
+    board.appendChild(card);
+  });
+}
+
+/* ═══ WHACK-A-SAKSHI ═══ */
+function initWhackBoard(){
+  var board=document.getElementById('w-board');board.innerHTML='';
+  for(var i=0;i<9;i++){
+    var hole=document.createElement('div');
+    hole.style.cssText='height:68px;background:#1a0020;border:2px solid #550066;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.9rem;cursor:pointer;user-select:none;transition:background .1s;';
+    hole.innerHTML='&#9675;';hole.dataset.up='0';
+    hole.addEventListener('click',function(){
+      if(this.dataset.up==='1'){
+        var sc=parseInt(document.getElementById('w-score').textContent)+1;
+        document.getElementById('w-score').textContent=sc;
+        this.innerHTML='&#128165;';this.style.background='#660000';this.dataset.up='0';
+        var h=this;setTimeout(function(){h.innerHTML='&#9675;';h.style.background='#1a0020';},180);
+        if(sc%5===0)triggerConfetti();
+      }
+    });
+    board.appendChild(hole);
+  }
+}
+
+function startWhack(){
+  if(wRunning)return;
+  wRunning=true;var tLeft=30;
+  document.getElementById('w-score').textContent=0;
+  document.getElementById('w-time').textContent=30;
+  document.getElementById('w-btn').style.display='none';
+  var holes=document.querySelectorAll('#w-board>div');
+
+  wTimer=setInterval(function(){
+    holes.forEach(function(h){h.innerHTML='&#9675;';h.style.background='#1a0020';h.dataset.up='0';});
+    var up=holes[Math.floor(Math.random()*9)];
+    up.innerHTML='&#128544;';up.dataset.up='1';up.style.background='#440044';
+  },600);
+
+  wClock=setInterval(function(){
+    tLeft--;document.getElementById('w-time').textContent=tLeft;
+    if(tLeft<=0){
+      clearInterval(wTimer);clearInterval(wClock);wRunning=false;
+      holes.forEach(function(h){h.innerHTML='&#9675;';h.dataset.up='0';h.style.background='#1a0020';});
+      var btn=document.getElementById('w-btn');btn.style.display='';btn.textContent='PLAY AGAIN!';
+      if(parseInt(document.getElementById('w-score').textContent)>=10)triggerConfetti();
+    }
+  },1000);
+}
+</script>
+</body>
+</html>
