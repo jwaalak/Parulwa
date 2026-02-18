@@ -77,6 +77,8 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<!-- Cloudinary Upload Widget -->
+<script src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>
 <link href="https://fonts.googleapis.com/css2?family=Changa+One&family=Comic+Neue:wght@400;700&family=Bangers&family=VT323&family=Poiret+One&family=Abril+Fatface&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
 
 <style>
@@ -259,7 +261,7 @@ body{
     <h1 class="fh" style="color:#fff;font-size:3.2rem;text-align:center;line-height:1.1;">CLICK<br>TO<br>ENTER!</h1>
   </div>
   <p class="fp blink" style="color:var(--green);font-size:1.8rem;">▶▶ HAPPY BIRTHDAY PARULWA! ◀◀</p>
-  <p style="color:rgba(255,255,255,.4);font-size:.75rem;margin-top:12px;font-family:'Comic Neue',sans-serif;">Hint: login as  parul / sakshi</p>
+
 </div>
 
 <!-- ═══════════════════════════════════════════════════
@@ -1008,23 +1010,32 @@ body{
 </div>
 
 <!-- ═══ ADMIN PHOTO MANAGER ═══ -->
-<div id="admin-photo-modal" class="gm" style="width:400px;height:500px;display:none;">
+<div id="admin-photo-modal" class="gm" style="width:420px;height:560px;display:none;">
   <div style="background:red;border-bottom:2px solid #000;padding:7px 10px;display:flex;align-items:center;gap:6px;">
     <div class="wb" style="background:#ff5f57;" onclick="closeAdminPhotoManager()"></div>
     <div class="wb" style="background:#febc2e;"></div>
     <div class="wb" style="background:#28c840;"></div>
-    <span style="margin-left:8px;font-size:.75rem;font-weight:700;color:#fff;">⚡ ADMIN: Manage Photos/Videos</span>
+    <span style="margin-left:8px;font-size:.75rem;font-weight:700;color:#fff;">⚡ ADMIN: Manage Photos/Videos (LIVE)</span>
   </div>
   <div style="background:#f5f5f5;flex:1;display:flex;flex-direction:column;padding:10px;gap:8px;overflow-y:auto;">
+    <!-- Upload from Device -->
     <div style="background:#fff;border:2px solid #000;padding:8px;">
-      <div class="fh" style="font-size:.9rem;margin-bottom:6px;">ADD NEW PHOTO/VIDEO</div>
-      <input id="admin-photo-url" type="text" placeholder="Image/Video URL (Cloudinary)" style="width:100%;padding:5px;border:2px solid #000;margin-bottom:4px;font-size:.75rem;">
+      <div class="fh" style="font-size:.9rem;margin-bottom:6px;">📁 UPLOAD FROM DEVICE</div>
+      <button onclick="uploadToCloudinary()" class="btn fh" style="width:100%;padding:8px;font-size:.85rem;background:var(--blue);color:#fff;margin-bottom:4px;">📱 PICK PHOTO / VIDEO</button>
+      <div style="font-size:.6rem;color:#777;text-align:center;">Uploads directly to Cloudinary & saves to gallery permanently</div>
+    </div>
+    <!-- Manual URL add -->
+    <div style="background:#fff;border:2px solid #000;padding:8px;">
+      <div class="fh" style="font-size:.9rem;margin-bottom:6px;">🔗 ADD BY URL</div>
+      <input id="admin-photo-url" type="text" placeholder="Cloudinary Image/Video URL" style="width:100%;padding:5px;border:2px solid #000;margin-bottom:4px;font-size:.75rem;">
       <input id="admin-photo-caption" type="text" placeholder="Caption" style="width:100%;padding:5px;border:2px solid #000;margin-bottom:6px;font-size:.75rem;">
       <button onclick="adminAddPhoto()" class="btn fh" style="width:100%;padding:6px;font-size:.8rem;background:var(--green);">ADD PHOTO</button>
     </div>
+    <!-- Current list -->
     <div style="background:#fff;border:2px solid #000;padding:8px;">
-      <div class="fh" style="font-size:.9rem;margin-bottom:6px;">CURRENT PHOTOS (<span id="admin-photo-count">0</span>)</div>
-      <div id="admin-photo-list" style="max-height:250px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;"></div>
+      <div class="fh" style="font-size:.9rem;margin-bottom:4px;">GALLERY (<span id="admin-photo-count">0</span>) — drag ☰ to reorder</div>
+      <div id="admin-save-status" style="font-size:.65rem;color:green;margin-bottom:4px;display:none;"></div>
+      <div id="admin-photo-list" style="max-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;"></div>
     </div>
   </div>
 </div>
@@ -1216,6 +1227,7 @@ document.getElementById('start-overlay').addEventListener('click',function(){
   startCountdown();
   loadWishes();
   startWishesAutoRefresh();
+  loadGalleryFromFirebase();
 });
 
 /* ─── LOGIN ─── */
@@ -2034,59 +2046,158 @@ function startWhack(){
   },1000);
 }
 
-/* ─── ADMIN PHOTO MANAGEMENT ─── */
+/* ─── FIREBASE GALLERY URL ─── */
+var FB_GALLERY_URL = "https://birthday-62252-default-rtdb.firebaseio.com/gallery";
+
+/* ─── LOAD GALLERY FROM FIREBASE ON PAGE LOAD ─── */
+function loadGalleryFromFirebase(){
+  fetch(FB_GALLERY_URL + '.json')
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if(data && Array.isArray(data) && data.length > 0){
+        photos = data;
+      }
+      // Always keep the hardcoded photos as a fallback seed if firebase is empty
+      filteredPhotos = photos.slice();
+      document.getElementById('photo-t').textContent = photos.length;
+      updateGalleryImg();
+    })
+    .catch(function(){ /* keep default photos */ });
+}
+
+/* ─── SAVE GALLERY TO FIREBASE ─── */
+function saveGalleryToFirebase(callback){
+  var statusEl = document.getElementById('admin-save-status');
+  if(statusEl){ statusEl.style.display='block'; statusEl.textContent='💾 Saving...'; }
+  fetch(FB_GALLERY_URL + '.json', {
+    method: 'PUT',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(photos)
+  })
+  .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+  .then(function(){
+    if(statusEl){ statusEl.textContent='✅ Saved! Gallery updated live.'; setTimeout(function(){ statusEl.style.display='none'; }, 3000); }
+    filteredPhotos = photos.slice();
+    document.getElementById('photo-t').textContent = photos.length;
+    if(callback) callback();
+  })
+  .catch(function(err){
+    if(statusEl){ statusEl.textContent='❌ Save failed: '+err.message; }
+  });
+}
+
+/* ─── CLOUDINARY UPLOAD WIDGET ─── */
+function uploadToCloudinary(){
+  if(!isAdmin){ alert('Admin access required!'); return; }
+  var myWidget = cloudinary.createUploadWidget({
+    cloudName: 'dmed4bf8g',
+    uploadPreset: 'Parulwa',
+    multiple: true,
+    resourceType: 'auto',
+    sources: ['local', 'camera', 'url'],
+    styles: {
+      palette: { window: '#000000', windowBorder: '#FF5500', tabIcon: '#FF5500',
+        menuIcons: '#D4E009', textDark: '#ffffff', textLight: '#ffffff',
+        link: '#FF5500', action: '#FF5500', inactiveTabIcon: '#999', error: '#ff3355',
+        inProgress: '#D4E009', complete: '#28c840', sourceBg: '#1a1a1a' },
+      fonts: { default: null, "'Changa One', Impact": { url: 'https://fonts.googleapis.com/css2?family=Changa+One', active: true } }
+    }
+  }, function(error, result){
+    if(!error && result && result.event === 'success'){
+      var info = result.info;
+      var isVid = info.resource_type === 'video';
+      var newItem = {
+        src: info.secure_url,
+        caption: info.original_filename || (isVid ? '🎥 New Video' : '📸 New Photo'),
+        type: isVid ? 'video' : undefined
+      };
+      photos.unshift(newItem); // add to front
+      saveGalleryToFirebase(function(){
+        renderAdminPhotoList();
+      });
+    }
+  });
+  myWidget.open();
+}
+
+/* ─── ADMIN PHOTO MANAGER ─── */
 function showAdminPhotoManager(){
-  if(!isAdmin){
-    alert('Admin access required!');
-    return;
-  }
-  var modal=document.getElementById('admin-photo-modal');
-  modal.style.display='flex';
-  modal.style.left='50%';
-  modal.style.top='50%';
-  modal.style.transform='translate(-50%,-50%)';
+  if(!isAdmin){ alert('Admin access required!'); return; }
+  var modal = document.getElementById('admin-photo-modal');
+  modal.style.display = 'flex';
+  modal.style.left = '50%';
+  modal.style.top = '50%';
+  modal.style.transform = 'translate(-50%,-50%)';
   renderAdminPhotoList();
 }
 
 function closeAdminPhotoManager(){
-  document.getElementById('admin-photo-modal').style.display='none';
+  document.getElementById('admin-photo-modal').style.display = 'none';
 }
 
+/* ─── DRAG AND DROP REORDER ─── */
+var dragSrcIdx = null;
+
 function renderAdminPhotoList(){
-  var list=document.getElementById('admin-photo-list');
-  document.getElementById('admin-photo-count').textContent=photos.length;
-  list.innerHTML=photos.map(function(p,idx){
-    return '<div style="background:#f0f0f0;border:2px solid #000;padding:6px;display:flex;gap:6px;align-items:center;">'
-      +'<img src="'+p.src+'" style="width:50px;height:50px;object-fit:cover;border:1px solid #000;">'
-      +'<div style="flex:1;font-size:.7rem;"><strong>'+escHtml(p.caption)+'</strong></div>'
-      +'<button onclick="adminDeletePhoto('+idx+')" style="background:red;color:#fff;border:2px solid #000;padding:3px 8px;font-size:.65rem;font-weight:900;cursor:pointer;border-radius:3px;">DEL</button>'
+  var list = document.getElementById('admin-photo-list');
+  document.getElementById('admin-photo-count').textContent = photos.length;
+  list.innerHTML = photos.map(function(p, idx){
+    var isVid = p.type === 'video' || p.type === 'youtube';
+    var thumb = isVid
+      ? '<div style="width:50px;height:50px;background:#000;border:1px solid #000;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.3rem;flex-shrink:0;">▶</div>'
+      : '<img src="'+p.src+'" style="width:50px;height:50px;object-fit:cover;border:1px solid #000;flex-shrink:0;" onerror="this.style.background=\'#ccc\'">';
+    return '<div draggable="true" data-idx="'+idx+'" ondragstart="adminDragStart(event)" ondragover="adminDragOver(event)" ondrop="adminDragDrop(event)" style="background:#f0f0f0;border:2px solid #000;padding:6px;display:flex;gap:6px;align-items:center;cursor:grab;border-radius:3px;">'
+      +'<span style="font-size:1.1rem;cursor:grab;flex-shrink:0;color:#666;">☰</span>'
+      + thumb
+      +'<div style="flex:1;font-size:.68rem;overflow:hidden;"><strong>'+escHtml(p.caption||'')+'</strong><br><span style="color:#999;font-size:.58rem;">'+(isVid?'VIDEO':'PHOTO')+'</span></div>'
+      +'<button onclick="adminDeletePhoto('+idx+')" style="background:red;color:#fff;border:2px solid #000;padding:3px 8px;font-size:.65rem;font-weight:900;cursor:pointer;border-radius:3px;flex-shrink:0;">DEL</button>'
       +'</div>';
   }).join('');
 }
 
+function adminDragStart(e){
+  dragSrcIdx = parseInt(e.currentTarget.dataset.idx);
+  e.dataTransfer.effectAllowed = 'move';
+}
+function adminDragOver(e){
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  e.currentTarget.style.borderTop = '3px solid var(--orange)';
+}
+function adminDragDrop(e){
+  e.preventDefault();
+  e.currentTarget.style.borderTop = '';
+  var targetIdx = parseInt(e.currentTarget.dataset.idx);
+  if(dragSrcIdx === null || dragSrcIdx === targetIdx) return;
+  var moved = photos.splice(dragSrcIdx, 1)[0];
+  photos.splice(targetIdx, 0, moved);
+  dragSrcIdx = null;
+  saveGalleryToFirebase(function(){
+    renderAdminPhotoList();
+  });
+}
+
 function adminAddPhoto(){
-  if(!isAdmin)return;
-  var url=document.getElementById('admin-photo-url').value.trim();
-  var caption=document.getElementById('admin-photo-caption').value.trim();
-  if(!url){
-    alert('Please enter a URL!');
-    return;
-  }
-  photos.push({src:url,caption:caption||'New Photo'});
-  document.getElementById('admin-photo-url').value='';
-  document.getElementById('admin-photo-caption').value='';
-  document.getElementById('photo-t').textContent=photos.length;
-  renderAdminPhotoList();
-  alert('Photo added! Note: This only adds it temporarily. To save permanently, edit the HTML file and add it to the photos array (line 1049).');
+  if(!isAdmin) return;
+  var url = document.getElementById('admin-photo-url').value.trim();
+  var caption = document.getElementById('admin-photo-caption').value.trim();
+  if(!url){ alert('Please enter a URL!'); return; }
+  var isVid = /\.(mp4|mov|webm|ogg)$/i.test(url);
+  photos.unshift({src: url, caption: caption || 'New Photo', type: isVid ? 'video' : undefined});
+  document.getElementById('admin-photo-url').value = '';
+  document.getElementById('admin-photo-caption').value = '';
+  saveGalleryToFirebase(function(){
+    renderAdminPhotoList();
+  });
 }
 
 function adminDeletePhoto(idx){
-  if(!isAdmin)return;
-  if(!confirm('Delete this photo?'))return;
-  photos.splice(idx,1);
-  document.getElementById('photo-t').textContent=photos.length;
-  renderAdminPhotoList();
-  alert('Photo deleted! Note: This only deletes it temporarily. To save permanently, edit the HTML file and remove it from the photos array (line 1049).');
+  if(!isAdmin) return;
+  if(!confirm('Delete this photo/video? This is permanent!')) return;
+  photos.splice(idx, 1);
+  saveGalleryToFirebase(function(){
+    renderAdminPhotoList();
+  });
 }
 </script>
 </body>
