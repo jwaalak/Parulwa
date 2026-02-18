@@ -2052,13 +2052,12 @@ var FB_GALLERY_URL = "https://birthday-62252-default-rtdb.firebaseio.com/gallery
 
 /* ─── LOAD GALLERY FROM FIREBASE ON PAGE LOAD ─── */
 function loadGalleryFromFirebase(){
-  fetch(FB_GALLERY_URL + '.json')
+  fetch(FB_GALLERY_URL + '/list.json')
     .then(function(r){ return r.json(); })
     .then(function(data){
-      if(data && Array.isArray(data) && data.length > 0){
-        photos = data;
+      if(data && data.items && Array.isArray(data.items) && data.items.length > 0){
+        photos = data.items;
       }
-      // Always keep the hardcoded photos as a fallback seed if firebase is empty
       filteredPhotos = photos.slice();
       document.getElementById('photo-t').textContent = photos.length;
       updateGalleryImg();
@@ -2071,10 +2070,11 @@ function saveGalleryToFirebase(callback){
   var statusEl = document.getElementById('admin-save-status');
   if(statusEl){ statusEl.style.display='block'; statusEl.style.color='#333'; statusEl.textContent='💾 Saving...'; }
 
-  fetch('https://birthday-62252-default-rtdb.firebaseio.com/gallery.json', {
+  // Use PUT on /list node — same approach as wishes which use POST successfully
+  fetch('https://birthday-62252-default-rtdb.firebaseio.com/gallery/list.json', {
     method: 'PUT',
     headers: {'Content-Type':'application/json'},
-    body: JSON.stringify(photos)
+    body: JSON.stringify({items: photos, updated: Date.now()})
   })
   .then(function(r){
     if(!r.ok) throw new Error('HTTP '+r.status);
@@ -2087,8 +2087,8 @@ function saveGalleryToFirebase(callback){
     if(callback) callback();
   })
   .catch(function(err){
-    // Save failed but still update local view
-    if(statusEl){ statusEl.style.color='red'; statusEl.textContent='❌ Save failed: '+err.message+' | Go to Firebase Console → Realtime DB → Rules → set .write:true → Publish'; }
+    if(statusEl){ statusEl.style.color='red'; statusEl.textContent='❌ Still failing: '+err.message; }
+    // Still update local gallery even if save fails
     filteredPhotos = photos.slice();
     document.getElementById('photo-t').textContent = photos.length;
     if(callback) callback();
@@ -2098,27 +2098,28 @@ function saveGalleryToFirebase(callback){
 /* ─── FIREBASE TEST ─── */
 function testFirebaseWrite(){
   var statusEl = document.getElementById('admin-save-status');
-  if(statusEl){ statusEl.style.display='block'; statusEl.style.color='#333'; statusEl.textContent='🔧 Testing Firebase...'; }
-  
-  // Test 1: read
-  fetch('https://birthday-62252-default-rtdb.firebaseio.com/.json')
-  .then(function(r){ 
-    statusEl.textContent = 'READ: '+r.status+' | ';
-    // Test 2: write to gallery
-    return fetch('https://birthday-62252-default-rtdb.firebaseio.com/gallery.json', {
+  if(statusEl){ statusEl.style.display='block'; statusEl.style.color='#333'; statusEl.textContent='🔧 Testing...'; }
+
+  // Step 1: test wishes read (we know this works)
+  fetch('https://birthday-62252-default-rtdb.firebaseio.com/wishes.json')
+  .then(function(r){
+    statusEl.textContent = 'WISHES READ:'+r.status+' | ';
+    // Step 2: test gallery write
+    return fetch('https://birthday-62252-default-rtdb.firebaseio.com/gallery/list.json', {
       method: 'PUT',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify([{test:true}])
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({test:true, t:Date.now()})
     });
   })
   .then(function(r){
-    statusEl.textContent += 'WRITE: '+r.status;
-    if(r.status === 200){ statusEl.style.color='green'; statusEl.textContent += ' ✅ Firebase works!'; }
-    else if(r.status === 401){ statusEl.style.color='red'; statusEl.textContent += ' ❌ 401 = Rules not saved. Go to Firebase → Database → Rules → Publish again'; }
-    else if(r.status === 403){ statusEl.style.color='red'; statusEl.textContent += ' ❌ 403 = Permission denied. Check rules.'; }
-    else { statusEl.style.color='orange'; statusEl.textContent += ' ⚠️ Unexpected status'; }
+    statusEl.textContent += 'GALLERY WRITE:'+r.status;
+    if(r.status===200||r.status===204){ statusEl.style.color='green'; statusEl.textContent+=' ✅ ALL GOOD!'; }
+    else if(r.status===401){ statusEl.style.color='red'; statusEl.textContent+=' ❌ 401=DB might be wrong region or locked mode'; }
+    else { statusEl.style.color='orange'; statusEl.textContent+=' ⚠️'; }
+    return r.text();
   })
-  .catch(function(e){ statusEl.style.color='red'; statusEl.textContent = 'Network error: '+e.message; });
+  .then(function(body){ statusEl.textContent += ' ['+body.substring(0,30)+']'; })
+  .catch(function(e){ statusEl.style.color='red'; statusEl.textContent='Error: '+e.message; });
 }
 
 /* ─── CLOUDINARY UPLOAD WIDGET ─── */
