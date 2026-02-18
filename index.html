@@ -1023,6 +1023,7 @@ body{
       <div class="fh" style="font-size:.9rem;margin-bottom:6px;">📁 UPLOAD FROM DEVICE</div>
       <button onclick="uploadToCloudinary()" class="btn fh" style="width:100%;padding:8px;font-size:.85rem;background:var(--blue);color:#fff;margin-bottom:4px;">📱 PICK PHOTO / VIDEO</button>
       <div style="font-size:.6rem;color:#777;text-align:center;">Uploads directly to Cloudinary & saves to gallery permanently</div>
+      <button onclick="testFirebaseWrite()" class="btn fh" style="width:100%;padding:5px;font-size:.7rem;margin-top:6px;background:#333;color:#fff;">🔧 TEST FIREBASE</button>
     </div>
     <!-- Manual URL add -->
     <div style="background:#fff;border:2px solid #000;padding:8px;">
@@ -2068,22 +2069,56 @@ function loadGalleryFromFirebase(){
 /* ─── SAVE GALLERY TO FIREBASE ─── */
 function saveGalleryToFirebase(callback){
   var statusEl = document.getElementById('admin-save-status');
-  if(statusEl){ statusEl.style.display='block'; statusEl.textContent='💾 Saving...'; }
-  fetch(FB_GALLERY_URL + '.json', {
+  if(statusEl){ statusEl.style.display='block'; statusEl.style.color='#333'; statusEl.textContent='💾 Saving...'; }
+
+  fetch('https://birthday-62252-default-rtdb.firebaseio.com/gallery.json', {
     method: 'PUT',
     headers: {'Content-Type':'application/json'},
     body: JSON.stringify(photos)
   })
-  .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+  .then(function(r){
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    return r.json();
+  })
   .then(function(){
-    if(statusEl){ statusEl.textContent='✅ Saved! Gallery updated live.'; setTimeout(function(){ statusEl.style.display='none'; }, 3000); }
+    if(statusEl){ statusEl.style.color='green'; statusEl.textContent='✅ Saved! Gallery updated live.'; setTimeout(function(){ statusEl.style.display='none'; }, 3000); }
     filteredPhotos = photos.slice();
     document.getElementById('photo-t').textContent = photos.length;
     if(callback) callback();
   })
   .catch(function(err){
-    if(statusEl){ statusEl.textContent='❌ Save failed: '+err.message; }
+    // Save failed but still update local view
+    if(statusEl){ statusEl.style.color='red'; statusEl.textContent='❌ Save failed: '+err.message+' | Go to Firebase Console → Realtime DB → Rules → set .write:true → Publish'; }
+    filteredPhotos = photos.slice();
+    document.getElementById('photo-t').textContent = photos.length;
+    if(callback) callback();
   });
+}
+
+/* ─── FIREBASE TEST ─── */
+function testFirebaseWrite(){
+  var statusEl = document.getElementById('admin-save-status');
+  if(statusEl){ statusEl.style.display='block'; statusEl.style.color='#333'; statusEl.textContent='🔧 Testing Firebase...'; }
+  
+  // Test 1: read
+  fetch('https://birthday-62252-default-rtdb.firebaseio.com/.json')
+  .then(function(r){ 
+    statusEl.textContent = 'READ: '+r.status+' | ';
+    // Test 2: write to gallery
+    return fetch('https://birthday-62252-default-rtdb.firebaseio.com/gallery.json', {
+      method: 'PUT',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify([{test:true}])
+    });
+  })
+  .then(function(r){
+    statusEl.textContent += 'WRITE: '+r.status;
+    if(r.status === 200){ statusEl.style.color='green'; statusEl.textContent += ' ✅ Firebase works!'; }
+    else if(r.status === 401){ statusEl.style.color='red'; statusEl.textContent += ' ❌ 401 = Rules not saved. Go to Firebase → Database → Rules → Publish again'; }
+    else if(r.status === 403){ statusEl.style.color='red'; statusEl.textContent += ' ❌ 403 = Permission denied. Check rules.'; }
+    else { statusEl.style.color='orange'; statusEl.textContent += ' ⚠️ Unexpected status'; }
+  })
+  .catch(function(e){ statusEl.style.color='red'; statusEl.textContent = 'Network error: '+e.message; });
 }
 
 /* ─── CLOUDINARY UPLOAD WIDGET ─── */
