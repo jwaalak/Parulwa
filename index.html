@@ -1259,7 +1259,9 @@ document.getElementById('start-overlay').addEventListener('click',function(){
 /* ─── LOGIN (Firebase Auth) ─── */
 function onLoginSuccess(email){
   isLoggedIn = true;
-  isAdmin = (email === ADMIN_EMAIL);
+  var cleanEmail = (email || '').trim().toLowerCase();
+  var cleanAdmin = (ADMIN_EMAIL || '').trim().toLowerCase();
+  isAdmin = (cleanEmail === cleanAdmin);
   document.getElementById('login-panel').style.display = 'none';
   if(isAdmin){
     document.getElementById('admin-panel').style.display = 'block';
@@ -1269,7 +1271,7 @@ function onLoginSuccess(email){
   } else {
     document.getElementById('profile-panel').style.display = 'block';
     document.getElementById('admin-panel').style.display = 'none';
-    document.getElementById('status-text').innerHTML = '&#10003; LOGGED IN';
+    document.getElementById('status-text').innerHTML = '&#10003; ' + email;
     document.getElementById('status-text').style.color = 'green';
   }
   document.getElementById('lock-overlay').classList.add('gone');
