@@ -147,10 +147,58 @@ body{
 .ticker-wrap{overflow:hidden;background:#d0d0d0;border-top:4px solid #000;border-bottom:4px solid #000;height:46px;display:flex;align-items:center;}
 .ticker-label{background:#1a1a1a;color:var(--green);font-family:'Changa One',sans-serif;font-size:.8rem;padding:0 10px;height:100%;display:flex;align-items:center;border-right:4px solid #000;flex-shrink:0;white-space:nowrap;}
 #ticker-track{display:inline-flex;align-items:center;white-space:nowrap;will-change:transform;}
+
+/* ════ CURSOR TRAIL ════ */
+.cursor-star{position:fixed;pointer-events:none;z-index:9999;font-size:1.1rem;transform:translate(-50%,-50%);transition:opacity .5s;animation:starPop .5s ease forwards;}
+@keyframes starPop{0%{opacity:1;transform:translate(-50%,-50%) scale(1.2)}100%{opacity:0;transform:translate(-50%,-130%) scale(0.4)}}
+
+
+
+/* ════ FIREWORK BURST ════ */
+.firework-dot{position:fixed;pointer-events:none;z-index:9991;width:8px;height:8px;border-radius:50%;animation:fireworkFly var(--d,.8s) ease-out forwards;}
+@keyframes fireworkFly{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--tx,50px),var(--ty,-80px)) scale(0.2)}}
+
+/* ════ SHAKE ANIMATION ════ */
+@keyframes wiggle{0%,100%{transform:rotate(0deg)}25%{transform:rotate(-5deg)}75%{transform:rotate(5deg)}}
+.wiggle-hover:hover{animation:wiggle .4s ease infinite;}
+
+/* ════ POP IN ════ */
+@keyframes popIn{0%{transform:scale(0) rotate(-10deg);opacity:0}60%{transform:scale(1.2) rotate(3deg)}100%{transform:scale(1) rotate(0deg);opacity:1}}
+.pop-in{animation:popIn .5s cubic-bezier(.36,.07,.19,.97) both;}
+
+/* ════ SPARKLE ════ */
+@keyframes sparkleSpin{0%{transform:rotate(0deg) scale(1)}50%{transform:rotate(180deg) scale(1.3)}100%{transform:rotate(360deg) scale(1)}}
+.sparkle-btn:hover{animation:sparkleSpin .5s ease;}
+
+/* ════ FUN FACT CARD ════ */
+@keyframes factSlide{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+.fact-anim{animation:factSlide .3s ease both;}
+
+/* ════ BOUNCE BADGE ════ */
+@keyframes bounceBadge{0%,100%{transform:translateY(0) scale(1)}40%{transform:translateY(-8px) scale(1.1)}60%{transform:translateY(-4px) scale(1.05)}}
+.bounce-badge{animation:bounceBadge 1.8s ease-in-out infinite;}
+
+/* ════ GLITCH TEXT ════ */
+@keyframes glitch1{0%,100%{clip-path:inset(0 0 95% 0)}20%{clip-path:inset(30% 0 50% 0)}40%{clip-path:inset(60% 0 20% 0)}60%{clip-path:inset(80% 0 5% 0)}80%{clip-path:inset(10% 0 75% 0)}}
+.glitch-text{position:relative;}
+.glitch-text::before,.glitch-text::after{content:attr(data-text);position:absolute;top:0;left:0;width:100%;height:100%;}
+.glitch-text::before{color:var(--pink);animation:glitch1 3s infinite;left:2px;}
+.glitch-text::after{color:var(--blue);animation:glitch1 3s infinite reverse;left:-2px;}
+
+/* ════ NEON GLOW ════ */
+@keyframes neonFlicker{0%,19%,21%,23%,25%,54%,56%,100%{text-shadow:0 0 5px #fff,0 0 10px #fff,0 0 20px var(--pink),0 0 40px var(--pink)}20%,24%,55%{text-shadow:none}}
+
+/* ════ TYPING CURSOR ════ */
+@keyframes typingCursor{0%,100%{opacity:1}50%{opacity:0}}
+.typing-cursor::after{content:'|';animation:typingCursor .7s infinite;}
+
+/* ════ SLOT MACHINE ════ */
+@keyframes slotSpin{0%{transform:translateY(0)}100%{transform:translateY(-200%)}}
+
 /* LOCK OVERLAY */
 #lock-overlay{position:absolute;inset:0;backdrop-filter:blur(10px);background:rgba(255,255,255,.42);z-index:30;display:flex;align-items:center;justify-content:center;pointer-events:all;transition:opacity .7s;}
 #lock-overlay.gone{opacity:0;pointer-events:none;}
-/* VINYL SPIN */
+/* VINYL SPIN — kept for legacy but actual spin is on #vinyl-record */
 @keyframes vspin{100%{transform:rotate(360deg)}}
 .vs{animation:vspin 1.8s linear infinite;}
 /* SECTION STRUCTURE */
@@ -273,12 +321,20 @@ body{
 </audio>
 
 <!-- ═══ START OVERLAY ═══ -->
-<div id="start-overlay" style="position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.96);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;user-select:none;">
-  <div class="splat" style="width:240px;height:240px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;">
-    <h1 class="fh" style="color:#fff;font-size:3.2rem;text-align:center;line-height:1.1;">CLICK<br>TO<br>ENTER!</h1>
+<style>
+@keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes glowPulse{0%,100%{text-shadow:0 0 10px var(--green),0 0 30px var(--green)}50%{text-shadow:0 0 20px #fff,0 0 60px var(--green),0 0 80px var(--orange)}}
+</style>
+<div id="start-overlay" style="position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.97);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;user-select:none;overflow:hidden;">
+  <div style="text-align:center;animation:fadeInUp .8s ease both;">
+    <div class="splat" style="width:260px;height:260px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+      <div style="text-align:center;">
+        <h1 class="fh" style="color:#fff;font-size:3rem;text-align:center;line-height:1.1;animation:glowPulse 2s infinite;">CLICK<br>TO<br>ENTER!</h1>
+      </div>
+    </div>
+    <p class="fp blink" style="color:var(--green);font-size:1.8rem;animation:glowPulse 1.5s infinite;">▶▶ HAPPY BIRTHDAY PARULWA! ◀◀</p>
+    <p style="color:#888;font-size:.75rem;margin-top:10px;font-family:'Comic Neue',sans-serif;">Tap anywhere to enter the party 🎉</p>
   </div>
-  <p class="fp blink" style="color:var(--green);font-size:1.8rem;">▶▶ HAPPY BIRTHDAY PARULWA! ◀◀</p>
-
 </div>
 
 <!-- ═══════════════════════════════════════════════════
@@ -301,6 +357,8 @@ body{
       <div onclick="goToAndOpenGallery()" style="background:var(--orange); padding:6px 12px;font-family:'Changa One',sans-serif;font-size:.78rem;border-radius:6px 6px 0 0;border:2px solid #666;cursor:pointer;color:#fff;white-space:nowrap;display:flex;align-items:center;transition:filter .15s;" onmouseover="this.style.filter='brightness(1.15)'" onmouseout="this.style.filter=''">GALLERY</div>
       <!-- BLAB tab → scrolls to wishes section -->
       <div onclick="goTo('sec-blab')"   style="background:#fff;           padding:6px 12px;font-family:'Changa One',sans-serif;font-size:.78rem;border-radius:6px 6px 0 0;border:2px solid #666;cursor:pointer;white-space:nowrap;display:flex;align-items:center;transition:filter .15s;" onmouseover="this.style.filter='brightness(1.15)'" onmouseout="this.style.filter=''">BLAB</div>
+      <!-- FUN tab → scrolls to fun sections -->
+      <div onclick="goTo('sec-facts')"  style="background:#FF8C00;color:#fff;padding:6px 12px;font-family:'Changa One',sans-serif;font-size:.78rem;border-radius:6px 6px 0 0;border:2px solid #666;cursor:pointer;white-space:nowrap;display:flex;align-items:center;transition:filter .15s;" onmouseover="this.style.filter='brightness(1.15)'" onmouseout="this.style.filter=''">🎉 FUN</div>
     </div>
     <!-- Search box -->
     <div style="display:flex;background:#ffe066;padding:4px 10px;border-radius:20px;border:2px solid #aaa;align-items:center;gap:4px;flex-shrink:0;margin-left:6px;">
@@ -431,6 +489,7 @@ body{
     <div id="admin-panel" style="display:none;background:#1a1a1a;border:3px solid red;box-shadow:3px 3px 0 #000;padding:8px;">
       <div class="fh" style="color:red;font-size:.95rem;margin-bottom:8px;text-align:center;letter-spacing:1px;">⚡ ADMIN CONTROLS ⚡</div>
       <button onclick="showAdminPhotoManager()" class="btn fh" style="width:100%;padding:5px;font-size:.75rem;margin-bottom:4px;background:var(--pink);color:#fff;">📸 MANAGE PHOTOS</button>
+      <button onclick="showAdminSongManager()" class="btn fh" style="width:100%;padding:5px;font-size:.75rem;margin-bottom:4px;background:var(--purple);color:#fff;">🎵 UPLOAD SONGS</button>
       <div style="font-size:.6rem;color:#ccc;text-align:center;margin-top:6px;">Delete wishes by clicking DELETE button on each wish</div>
     </div>
 
@@ -771,17 +830,51 @@ body{
           <span style="font-style:italic;">&#127925; Music — Radio Parul</span>
           <span style="font-size:.7rem;font-weight:700;">MORE MUSIC &gt;&gt;</span>
         </div>
-        <div class="sb" style="background:#f5ecff;">
-          <div onclick="toggleRadio()" style="width:58px;height:58px;background:var(--purple);border:2px solid #000;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;position:relative;">
-            <div style="width:18px;height:18px;background:var(--orange);border-radius:50%;border:2px solid #fff;"></div>
-            <div style="position:absolute;inset:7px;border-radius:50%;border:2px solid rgba(255,255,255,.25);pointer-events:none;"></div>
+        <div style="border:3px solid #000;border-top:0;border-radius:0 0 8px 8px;background:#f5ecff;padding:8px;display:flex;flex-direction:column;gap:7px;">
+          <!-- Top row: mini vinyl + song name -->
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div onclick="toggleRadio()" style="width:52px;height:52px;background:var(--purple);border:2px solid #000;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;position:relative;box-shadow:3px 3px 0 #000;">
+              <div style="width:15px;height:15px;background:var(--orange);border-radius:50%;border:2px solid #fff;position:relative;z-index:2;"></div>
+              <div style="position:absolute;inset:5px;border-radius:50%;border:2px solid rgba(255,255,255,.18);pointer-events:none;"></div>
+            </div>
+            <div style="flex:1;min-width:0;">
+              <div class="fb" style="color:var(--purple);font-size:1.1rem;line-height:1.1;">RADIO PARUL &#128251;</div>
+              <div id="radio-song-name" style="font-size:.68rem;color:var(--purple);font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Hit play!</div>
+              <div id="np-text" style="font-size:.6rem;color:#999;font-weight:700;"></div>
+            </div>
           </div>
-          <div style="flex:1;">
-            <div class="fb" style="color:var(--purple);font-size:1.15rem;">RADIO PARUL &#128251;</div>
-            <p style="font-size:.72rem;font-weight:700;">Broadcasting random bops 24/7. Click the vinyl below!</p>
-            <div id="np-text" style="font-size:.65rem;color:var(--purple);font-weight:900;margin-top:3px;"></div>
+          <!-- Seekbar -->
+          <div style="display:flex;align-items:center;gap:6px;">
+            <style>
+              #radio-seekbar {
+                -webkit-appearance:none;appearance:none;
+                flex:1;height:8px;border-radius:4px;
+                background:linear-gradient(to right,var(--purple) 0%,var(--purple) 0%,#d0b8ee 0%,#d0b8ee 100%);
+                border:2px solid #000;cursor:pointer;outline:none;
+              }
+              #radio-seekbar::-webkit-slider-thumb {
+                -webkit-appearance:none;appearance:none;
+                width:16px;height:16px;border-radius:50%;
+                background:var(--orange);border:2px solid #000;
+                box-shadow:1px 1px 0 #000;cursor:pointer;
+              }
+              #radio-seekbar::-moz-range-thumb {
+                width:16px;height:16px;border-radius:50%;
+                background:var(--orange);border:2px solid #000;cursor:pointer;
+              }
+            </style>
+            <span id="radio-time-cur" style="font-family:'VT323',monospace;font-size:.9rem;min-width:28px;text-align:right;">0:00</span>
+            <input id="radio-seekbar" type="range" min="0" max="100" value="0"
+              oninput="radioSeek(this.value)"
+              style="flex:1;height:8px;">
+            <span id="radio-time-dur" style="font-family:'VT323',monospace;font-size:.9rem;min-width:28px;">0:00</span>
           </div>
-          <button onclick="playNextSong()" class="btn fh" style="padding:5px 12px;transform:skew(-8deg);">SKIP &#9197;</button>
+          <!-- Controls: Prev | Play/Pause | Next -->
+          <div style="display:flex;justify-content:center;align-items:center;gap:8px;">
+            <button onclick="playPrevSong()" class="btn fh" style="padding:6px 14px;font-size:1rem;background:var(--purple);color:#fff;border:2px solid #000;box-shadow:3px 3px 0 #000;" title="Previous">&#9664;&#9664;</button>
+            <button id="radio-play-btn" onclick="toggleRadio()" class="btn fh" style="padding:7px 20px;font-size:1.1rem;background:var(--orange);color:#fff;border:2px solid #000;box-shadow:3px 3px 0 #000;min-width:54px;" title="Play/Pause">&#9654;</button>
+            <button onclick="playNextSong()" class="btn fh" style="padding:6px 14px;font-size:1rem;background:var(--purple);color:#fff;border:2px solid #000;box-shadow:3px 3px 0 #000;" title="Next">&#9654;&#9654;</button>
+          </div>
         </div>
       </div>
 
@@ -823,11 +916,124 @@ body{
         </div>
       </div>
 
-      <!-- ═══ BIRTHDAY WISHES / BLAB SECTION ═══
-           Uses JSONBin.io for FREE shared storage.
-           Setup instructions in the JS section below.
-           All visitors can post and see each other's wishes!
-      -->
+      <!-- ════ FUN FACTS ABOUT PARUL ════ -->
+      <div id="sec-facts">
+        <div class="sh" style="background:var(--blue);color:#fff;">
+          <span class="fh">📋 Parul Facts™</span>
+          <span style="font-size:.7rem;font-weight:700;">OFFICIAL DATA</span>
+        </div>
+        <div style="border:3px solid #000;border-top:0;border-radius:0 0 8px 8px;background:#e0f7ff;padding:10px;">
+          <div id="fact-card" style="background:#fff;border:3px solid #000;border-radius:6px;padding:12px;text-align:center;min-height:70px;display:flex;flex-direction:column;justify-content:center;box-shadow:3px 3px 0 #000;position:relative;overflow:hidden;">
+            <div style="position:absolute;top:4px;left:6px;font-size:.6rem;font-weight:900;color:#aaa;font-family:'VT323',monospace;">FACT #<span id="fact-num">1</span></div>
+            <div id="fact-text" class="fact-anim" style="font-size:.85rem;font-weight:700;line-height:1.5;color:#222;padding:4px 0;"></div>
+            <div id="fact-emoji" style="font-size:1.8rem;margin-top:4px;"></div>
+          </div>
+          <div style="display:flex;gap:6px;margin-top:8px;">
+            <button onclick="showFact(-1)" class="btn fh" style="flex:1;padding:6px;font-size:.85rem;background:#000;color:var(--green);">◀ PREV</button>
+            <button onclick="showFact(1)"  class="btn fh" style="flex:1;padding:6px;font-size:.85rem;background:var(--blue);color:#fff;">NEXT ▶</button>
+            <button onclick="showRandomFact()" class="btn fh" style="flex:1;padding:6px;font-size:.85rem;background:var(--orange);color:#fff;" title="Shuffle">🔀</button>
+          </div>
+          <div style="display:flex;gap:3px;justify-content:center;margin-top:6px;" id="fact-dots"></div>
+        </div>
+      </div>
+
+      <!-- ════ BIRTHDAY JOKE MACHINE ════ -->
+      <div id="sec-jokes">
+        <div class="sh" style="background:#cc0000;color:#fff;">
+          <span class="fh">😂 Joke-O-Matic 3000</span>
+          <span class="blink" style="font-size:.7rem;">PRESS FOR FUN</span>
+        </div>
+        <div style="border:3px solid #000;border-top:0;border-radius:0 0 8px 8px;background:#fff8f0;padding:10px;display:flex;flex-direction:column;gap:8px;">
+          <div id="joke-setup" style="background:#fff;border:3px solid #000;border-radius:4px;padding:10px;font-size:.82rem;font-weight:700;min-height:36px;box-shadow:3px 3px 0 #000;font-family:'Comic Neue',sans-serif;"></div>
+          <div id="joke-punchline" style="background:#ffe066;border:3px solid #000;border-radius:4px;padding:10px;font-size:.88rem;font-weight:900;min-height:36px;box-shadow:3px 3px 0 #000;display:none;font-family:'Changa One',sans-serif;color:var(--orange);"></div>
+          <div style="display:flex;gap:6px;">
+            <button id="joke-btn" onclick="jokeStep()" class="btn fh" style="flex:1;padding:8px;font-size:.9rem;background:#cc0000;color:#fff;">😂 TELL ME A JOKE!</button>
+            <button onclick="jokeStep('new')" class="btn fh" style="padding:8px 12px;font-size:.9rem;background:#333;color:#fff;" title="New joke">🔀</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════ SECRET MESSAGE DECODER ════ -->
+      <div id="sec-secret">
+        <div class="sh" style="background:#111;color:var(--green);">
+          <span class="fh glitch-text" data-text="🕵️ SECRET MSG">🕵️ SECRET MSG</span>
+          <span class="fp blink" style="color:var(--green);font-size:.8rem;">CLASSIFIED</span>
+        </div>
+        <div style="border:3px solid #000;border-top:0;border-radius:0 0 8px 8px;background:#111;padding:10px;">
+          <div style="background:#000;border:2px solid var(--green);border-radius:4px;padding:10px;font-family:'VT323',monospace;font-size:1rem;color:var(--green);line-height:1.7;min-height:70px;" id="secret-display">___ _____ __ ______</div>
+          <button onclick="decodeSecret()" class="btn fh" style="width:100%;margin-top:7px;padding:7px;font-size:.85rem;background:#000;color:var(--green);border:2px solid var(--green);">🔓 DECODE MESSAGE</button>
+        </div>
+      </div>
+
+      <!-- ════ FAKE BREAKING NEWS GENERATOR ════ -->
+      <div id="sec-news">
+        <div class="sh" style="background:#cc0000;color:#fff;">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span class="blink" style="background:#fff;color:red;font-size:.6rem;font-weight:900;padding:1px 5px;border-radius:2px;">LIVE</span>
+            <span class="fh">BREAKING NEWS</span>
+          </div>
+          <span class="fp blink" style="font-size:.8rem;">24/7 COVERAGE</span>
+        </div>
+        <div style="border:3px solid #000;border-top:0;border-radius:0 0 8px 8px;background:#111;padding:0;overflow:hidden;">
+          <!-- TV screen effect -->
+          <div style="background:#000;padding:10px;position:relative;">
+            <div style="background:#1a0000;border:3px solid #cc0000;border-radius:4px;padding:10px;min-height:90px;position:relative;">
+              <!-- Scanline overlay -->
+              <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.15) 2px,rgba(0,0,0,.15) 4px);pointer-events:none;border-radius:3px;"></div>
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+                <div style="background:red;width:8px;height:8px;border-radius:50%;animation:blink 1s step-start infinite;flex-shrink:0;"></div>
+                <span style="font-family:'VT323',monospace;color:#cc0000;font-size:.85rem;" id="news-channel">📺 PARULWA NEWS NETWORK — PNN</span>
+              </div>
+              <div id="news-headline" style="font-family:'Changa One',sans-serif;color:#fff;font-size:.95rem;line-height:1.4;min-height:40px;"></div>
+              <div id="news-sub" style="font-family:'Comic Neue',sans-serif;color:#aaa;font-size:.68rem;margin-top:5px;font-style:italic;"></div>
+            </div>
+            <!-- Bottom ticker inside box -->
+            <div style="background:#cc0000;color:#fff;font-family:'VT323',monospace;font-size:.85rem;padding:3px 8px;overflow:hidden;white-space:nowrap;margin-top:6px;border:2px solid #ff4444;">
+              <span id="news-ticker-inner">⚡ LOADING LATEST NEWS...</span>
+            </div>
+          </div>
+          <div style="display:flex;gap:6px;padding:8px;background:#1a1a1a;">
+            <button onclick="newBreakingNews()" class="btn fh" style="flex:1;padding:7px;font-size:.85rem;background:#cc0000;color:#fff;border:2px solid #ff4444;">📡 NEXT STORY</button>
+            <button onclick="breakingNewsAuto()" id="news-auto-btn" class="btn fh" style="padding:7px 12px;font-size:.85rem;background:#333;color:#fff;border:2px solid #666;">⏵ AUTO</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════ PARUL vs SAKSHI SCOREBOARD ════ -->
+      <div id="sec-scoreboard">
+        <div class="sh" style="background:#000;color:var(--green);">
+          <span class="fh">🏆 PARUL vs SAKSHI</span>
+          <span class="fp" style="color:var(--orange);font-size:.85rem;">OFFICIAL STATS</span>
+        </div>
+        <div style="border:3px solid #000;border-top:0;border-radius:0 0 8px 8px;background:#0a0a0a;padding:10px;">
+          <!-- Score display -->
+          <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:0;margin-bottom:10px;border:3px solid #333;border-radius:4px;overflow:hidden;">
+            <div style="background:var(--orange);padding:8px;text-align:center;">
+              <div class="fb" style="color:#fff;font-size:1.5rem;text-shadow:2px 2px 0 #000;">PARUL</div>
+              <div id="sb-parul-score" class="fh" style="font-size:2.8rem;color:#fff;text-shadow:3px 3px 0 #000;line-height:1;">0</div>
+              <div style="font-size:.6rem;color:rgba(255,255,255,.8);font-weight:700;">POINTS</div>
+            </div>
+            <div style="background:#111;display:flex;align-items:center;justify-content:center;padding:0 10px;">
+              <div class="fb" style="color:#ff4444;font-size:1.8rem;">VS</div>
+            </div>
+            <div style="background:#555;padding:8px;text-align:center;">
+              <div class="fb" style="color:#fff;font-size:1.5rem;text-shadow:2px 2px 0 #000;">SAKSHI</div>
+              <div id="sb-sakshi-score" class="fh" style="font-size:2.8rem;color:#fff;text-shadow:3px 3px 0 #000;line-height:1;">0</div>
+              <div style="font-size:.6rem;color:rgba(255,255,255,.8);font-weight:700;">POINTS</div>
+            </div>
+          </div>
+          <!-- Categories -->
+          <div id="sb-categories" style="display:flex;flex-direction:column;gap:5px;"></div>
+          <!-- Buttons -->
+          <div style="display:flex;gap:6px;margin-top:8px;">
+            <button onclick="nextScoreCategory()" class="btn fh" style="flex:1;padding:7px;font-size:.82rem;background:var(--orange);color:#fff;border:2px solid #000;">▶ NEXT ROUND</button>
+            <button onclick="resetScoreboard()" class="btn fh" style="padding:7px 10px;font-size:.82rem;background:#333;color:#fff;border:2px solid #666;">↺</button>
+          </div>
+          <div id="sb-verdict" style="margin-top:7px;text-align:center;font-family:'Changa One',sans-serif;font-size:.85rem;min-height:22px;color:var(--green);"></div>
+        </div>
+      </div>
+
+      <!-- ═══ BIRTHDAY WISHES / BLAB SECTION ═══ -->
       <div id="sec-blab">
         <div class="sh" style="background:#009900;color:#fff;">
           <span style="font-style:italic;">Birthday Wishes for Parul!</span>
@@ -873,9 +1079,10 @@ body{
     </div>
 
     <!-- STICKY NOTE -->
-    <div style="background:#fffb80;padding:12px;transform:rotate(2.5deg);border:1px solid #d4b800;font-family:'Comic Neue',cursive;font-size:.78rem;box-shadow:3px 3px 6px rgba(0,0,0,.2);line-height:1.6;">
+    <div style="background:#fffb80;padding:12px;transform:rotate(2.5deg);border:1px solid #d4b800;font-family:'Comic Neue',cursive;font-size:.78rem;box-shadow:3px 3px 6px rgba(0,0,0,.2);line-height:1.6;cursor:pointer;" onclick="this.style.transform='rotate('+(Math.random()*10-5)+'deg)'">
       <div style="width:10px;height:10px;background:red;border-radius:50%;margin:0 auto 8px;border:1px solid #000;"></div>
       <strong>"Don't forget to eat cake before Sakshi does!"</strong><br>— Mom &#127874;
+      <div style="font-size:.58rem;color:#999;margin-top:4px;text-align:right;">(click to fidget)</div>
     </div>
 
     <!-- YOUR WORLD -->
@@ -918,18 +1125,114 @@ body{
 </div>
 
 <!-- ═══ FLOATING VINYL PLAYER ═══ -->
-<div style="position:fixed;bottom:18px;right:18px;z-index:150;display:flex;align-items:flex-end;gap:10px;">
-  <div id="song-bubble" style="background:#fff;border:3px solid #000;border-radius:10px;padding:7px 12px;font-size:.72rem;font-weight:700;max-width:150px;box-shadow:3px 3px 0 #000;display:none;position:relative;">
+<style>
+@keyframes vinyl-spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+@keyframes tonearm-in { from{transform:rotate(-25deg)} to{transform:rotate(0deg)} }
+.vinyl-spinning { animation: vinyl-spin 1.8s linear infinite; }
+#vinyl-wrap {
+  position:fixed;bottom:14px;right:14px;z-index:150;
+  display:flex;flex-direction:column;align-items:flex-end;gap:6px;
+}
+#vinyl-player-box {
+  position:relative;width:110px;height:110px;
+  cursor:pointer;user-select:none;
+}
+/* The record itself */
+#vinyl-record {
+  width:110px;height:110px;border-radius:50%;
+  background:
+    radial-gradient(circle at center, #1a1a1a 0%, #1a1a1a 12%, transparent 12%),
+    repeating-radial-gradient(circle at center, #111 0px, #111 1.5px, #1e1e1e 1.5px, #222 3px, #1a1a1a 3px, #1a1a1a 4.5px),
+    #111;
+  box-shadow: 0 0 0 3px #000, 4px 4px 0 #000, inset 0 0 20px rgba(0,0,0,.6);
+  border:2px solid #000;
+  position:relative;display:flex;align-items:center;justify-content:center;
+}
+/* Grooves overlay */
+#vinyl-record::before {
+  content:'';position:absolute;inset:0;border-radius:50%;
+  background:
+    repeating-radial-gradient(circle at center,
+      transparent 14px, rgba(255,255,255,.03) 15px, transparent 16px,
+      transparent 19px, rgba(255,255,255,.03) 20px, transparent 21px,
+      transparent 24px, rgba(255,255,255,.03) 25px, transparent 26px,
+      transparent 30px, rgba(255,255,255,.03) 31px, transparent 32px,
+      transparent 36px, rgba(255,255,255,.03) 37px, transparent 38px,
+      transparent 42px, rgba(255,255,255,.03) 43px, transparent 44px
+    );
+  pointer-events:none;
+}
+/* Sheen on vinyl */
+#vinyl-record::after {
+  content:'';position:absolute;inset:0;border-radius:50%;
+  background:linear-gradient(135deg,rgba(255,255,255,.07) 0%,transparent 50%,rgba(255,255,255,.04) 100%);
+  pointer-events:none;
+}
+/* Label in center */
+#vinyl-label {
+  width:36px;height:36px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%, #FF6600, #cc3300);
+  border:1.5px solid #fff;z-index:2;
+  display:flex;align-items:center;justify-content:center;flex-direction:column;
+  pointer-events:none;position:relative;
+  box-shadow:0 0 0 2px #000;
+}
+#vinyl-label-dot {
+  width:6px;height:6px;border-radius:50%;background:#000;
+  border:1px solid rgba(255,255,255,.5);
+}
+/* Tonearm */
+#vinyl-tonearm {
+  position:absolute;top:6px;right:2px;width:44px;height:44px;
+  transform-origin:top right;
+  transition:transform .6s ease;
+  pointer-events:none;z-index:5;
+}
+#vinyl-tonearm.playing { transform:rotate(22deg); }
+#vinyl-tonearm.paused  { transform:rotate(0deg); }
+/* Play overlay */
+#play-hint {
+  position:absolute;inset:0;border-radius:50%;
+  background:rgba(0,0,0,.55);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:1.8rem;
+  transition:opacity .3s;pointer-events:none;
+  z-index:3;
+}
+/* Song bubble */
+#song-bubble {
+  background:#fff;border:3px solid #000;border-radius:10px;
+  padding:7px 12px;font-size:.72rem;font-weight:700;
+  max-width:160px;box-shadow:3px 3px 0 #000;
+  display:none;position:relative;
+  border-bottom-right-radius:3px;
+}
+</style>
+
+<div id="vinyl-wrap">
+  <div id="song-bubble">
     &#127925; Now Playing:<br><span id="track-name" style="color:var(--orange);">Loading…</span>
   </div>
-  <div id="vinyl-disc" title="Click = Play/Pause  |  Double-click = Skip song" style="width:88px;height:88px;background:#111;border-radius:50%;border:5px solid #333;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 0 0 2px #000,4px 4px 0 #000;position:relative;user-select:none;">
-    <div style="position:absolute;inset:8px;border-radius:50%;border:2px solid #2a2a2a;pointer-events:none;"></div>
-    <div style="position:absolute;inset:18px;border-radius:50%;border:2px solid #2a2a2a;pointer-events:none;"></div>
-    <div style="position:absolute;inset:26px;border-radius:50%;border:2px solid #2a2a2a;pointer-events:none;"></div>
-    <div style="width:26px;height:26px;background:var(--orange);border-radius:50%;border:3px solid #fff;z-index:1;display:flex;align-items:center;justify-content:center;pointer-events:none;">
-      <div style="width:5px;height:5px;background:#000;border-radius:50%;"></div>
+  <div id="vinyl-player-box" title="Click = Play/Pause  |  Double-click = Skip song">
+    <!-- Tonearm SVG -->
+    <svg id="vinyl-tonearm" class="paused" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+      <!-- pivot -->
+      <circle cx="38" cy="6" r="5" fill="#888" stroke="#000" stroke-width="1.5"/>
+      <circle cx="38" cy="6" r="2.5" fill="#444" stroke="#000" stroke-width="1"/>
+      <!-- arm -->
+      <line x1="38" y1="10" x2="14" y2="38" stroke="#aaa" stroke-width="3" stroke-linecap="round"/>
+      <!-- head / needle -->
+      <rect x="10" y="35" width="8" height="5" rx="2" fill="#ccc" stroke="#000" stroke-width="1.2" transform="rotate(-30 14 38)"/>
+    </svg>
+    <!-- Vinyl disc -->
+    <div id="vinyl-disc">
+      <div id="vinyl-record">
+        <div id="vinyl-label">
+          <div id="vinyl-label-dot"></div>
+        </div>
+      </div>
+      <div id="play-hint">&#9654;</div>
     </div>
-    <div id="play-hint" style="position:absolute;inset:0;border-radius:50%;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.7rem;transition:opacity .3s;pointer-events:none;">&#9654;</div>
   </div>
 </div>
 
@@ -966,7 +1269,7 @@ body{
     <div class="wb" style="background:#ff5f57;" onclick="closeGame('snake')"></div>
     <div class="wb" style="background:#febc2e;"></div>
     <div class="wb" style="background:#28c840;"></div>
-    <span style="margin-left:8px;font-size:.75rem;font-weight:700;color:#ccc;">&#127822; Snake</span>
+    <span style="margin-left:8px;font-size:.75rem;font-weight:700;color:#ccc;">🎂 Snake — Eat the Cake!</span>
     <button onclick="closeGame('snake')" style="margin-left:auto;background:#ff5f57;border:2px solid #000;color:#fff;font-size:.7rem;font-weight:900;padding:2px 8px;cursor:pointer;font-family:'Changa One',sans-serif;border-radius:3px;">CLOSE X</button>
   </div>
   <div style="background:#000;flex:1;display:flex;flex-direction:column;align-items:center;padding:8px;gap:6px;">
@@ -1058,7 +1361,40 @@ body{
   </div>
 </div>
 
-<!-- ═══ GAME MENU ═══ -->
+<!-- ═══ ADMIN SONG MANAGER ═══ -->
+<div id="admin-song-modal" class="gm" style="width:440px;height:580px;display:none;">
+  <div style="background:var(--purple);border-bottom:2px solid #000;padding:7px 10px;display:flex;align-items:center;gap:6px;">
+    <div class="wb" style="background:#ff5f57;" onclick="closeAdminSongManager()"></div>
+    <div class="wb" style="background:#febc2e;"></div>
+    <div class="wb" style="background:#28c840;"></div>
+    <span style="margin-left:8px;font-size:.75rem;font-weight:700;color:#fff;">🎵 ADMIN: Upload Songs to Cloudinary</span>
+    <button onclick="closeAdminSongManager()" style="margin-left:auto;background:#ff5f57;border:2px solid #000;color:#fff;font-size:.7rem;font-weight:900;padding:2px 8px;cursor:pointer;font-family:'Changa One',sans-serif;border-radius:3px;">CLOSE X</button>
+  </div>
+  <div style="background:#f5f0ff;flex:1;display:flex;flex-direction:column;padding:10px;gap:8px;overflow-y:auto;">
+    <!-- Upload Section -->
+    <div style="background:#fff;border:2px solid #000;padding:10px;box-shadow:3px 3px 0 #000;">
+      <div class="fh" style="font-size:.95rem;margin-bottom:6px;color:var(--purple);">📤 UPLOAD MP3 / OGG AUDIO</div>
+      <button onclick="uploadSongToCloudinary()" class="btn fh" style="width:100%;padding:9px;font-size:.9rem;background:var(--purple);color:#fff;margin-bottom:5px;">🎵 PICK AUDIO FILE</button>
+      <div style="font-size:.6rem;color:#777;text-align:center;line-height:1.5;">Uploads directly to Cloudinary<br>Song is added to playlist instantly — no page reload needed!</div>
+    </div>
+    <!-- Status -->
+    <div id="admin-song-status" style="display:none;font-size:.72rem;font-weight:700;padding:6px 10px;border:2px solid #000;border-radius:3px;background:#fff;text-align:center;"></div>
+    <!-- Manual URL add -->
+    <div style="background:#fff;border:2px solid #000;padding:10px;box-shadow:3px 3px 0 #000;">
+      <div class="fh" style="font-size:.9rem;margin-bottom:6px;color:var(--purple);">🔗 ADD BY CLOUDINARY URL</div>
+      <input id="admin-song-url"  type="text" placeholder="Cloudinary Audio URL (.mp3 or .ogg)" style="width:100%;padding:5px;border:2px solid #000;margin-bottom:5px;font-size:.72rem;">
+      <input id="admin-song-name" type="text" placeholder="Song Name (e.g. Tum Jo Aaye)" style="width:100%;padding:5px;border:2px solid #000;margin-bottom:7px;font-size:.72rem;">
+      <button onclick="adminAddSong()" class="btn fh" style="width:100%;padding:7px;font-size:.8rem;background:var(--green);">+ ADD SONG</button>
+    </div>
+    <!-- Current song list -->
+    <div style="background:#fff;border:2px solid #000;padding:10px;box-shadow:3px 3px 0 #000;">
+      <div class="fh" style="font-size:.9rem;margin-bottom:6px;color:var(--purple);">PLAYLIST (<span id="admin-song-count">0</span> songs)</div>
+      <div id="admin-song-list" style="max-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;"></div>
+    </div>
+  </div>
+</div>
+
+
 <div id="gm-menu" class="gm" style="width:290px;">
   <div style="background:linear-gradient(135deg,#FF3399,#cc0066);border-bottom:2px solid #000;padding:8px 12px;display:flex;align-items:center;gap:6px;">
     <div class="wb" style="background:#ff5f57;" onclick="closeGame('menu')"></div>
@@ -1246,6 +1582,7 @@ document.getElementById('start-overlay').addEventListener('click',function(){
   loadWishes();
   startWishesAutoRefresh();
   loadGalleryFromFirebase();
+  initAllFunFeatures();
   // Preload Cloudinary widget so it opens instantly when admin clicks upload
   setTimeout(function(){
     try {
@@ -1394,6 +1731,10 @@ function updateGalleryImg(){
     document.getElementById('photo-t').textContent='0';
     return;
   }
+  // Stop any playing video before switching
+  var oldVid = document.querySelector('#gallery-media-container video');
+  if(oldVid){ oldVid.pause(); oldVid.src=''; }
+
   var p=filteredPhotos[curPhoto];
   var container=document.getElementById('gallery-media-container');
   var type=p.type||'photo';
@@ -1403,15 +1744,63 @@ function updateGalleryImg(){
   }else if(type==='video'){
     var isMov=p.src.indexOf('.mov')>-1||p.src.indexOf('.MOV')>-1;
     var mp4url=isMov?p.src.replace(/\.mov$/i,'.mp4'):p.src;
-    container.innerHTML='<video controls style="max-height:100%;max-width:100%;border:4px solid #fff;box-shadow:0 4px 14px rgba(0,0,0,.2);" preload="metadata">'
-      +(isMov?'<source src="'+mp4url+'" type="video/mp4"><source src="'+p.src+'" type="video/quicktime">':'<source src="'+p.src+'" type="video/mp4">')
-      +'</video>';
+    var vidEl=document.createElement('video');
+    vidEl.controls=true;
+    vidEl.preload='metadata';
+    vidEl.style.cssText='max-height:100%;max-width:100%;border:4px solid #fff;box-shadow:0 4px 14px rgba(0,0,0,.2);';
+    if(isMov){
+      vidEl.innerHTML='<source src="'+mp4url+'" type="video/mp4"><source src="'+p.src+'" type="video/quicktime">';
+    } else {
+      vidEl.innerHTML='<source src="'+p.src+'" type="video/mp4">';
+    }
+    // When video starts playing → smoothly pause radio
+    vidEl.addEventListener('play', function(){
+      if(isPlaying){
+        player.pause();
+        document.getElementById('vinyl-record').classList.remove('vinyl-spinning');
+        document.getElementById('vinyl-tonearm').classList.remove('playing');
+        document.getElementById('vinyl-tonearm').classList.add('paused');
+        document.getElementById('play-hint').style.opacity='1';
+        document.getElementById('play-hint').innerHTML='&#9654;';
+        var rpb=document.getElementById('radio-play-btn');if(rpb)rpb.innerHTML='&#9654;';
+        isPlaying=false;
+        // show a small toast
+        showToast('🎬 Radio paused — enjoy the video!');
+      }
+    });
+    // When video pauses or ends → resume radio
+    function resumeRadioAfterVideo(){
+      if(!isPlaying && player.src && player.src !== window.location.href){
+        player.play().catch(function(){});
+        document.getElementById('vinyl-record').classList.add('vinyl-spinning');
+        document.getElementById('vinyl-tonearm').classList.remove('paused');
+        document.getElementById('vinyl-tonearm').classList.add('playing');
+        document.getElementById('play-hint').style.opacity='0';
+        var rpb=document.getElementById('radio-play-btn');if(rpb)rpb.innerHTML='&#9646;&#9646;';
+        isPlaying=true;
+        showToast('🎵 Radio resumed!');
+      }
+    }
+    vidEl.addEventListener('pause', function(){ if(vidEl.ended) return; setTimeout(resumeRadioAfterVideo,400); });
+    vidEl.addEventListener('ended', resumeRadioAfterVideo);
+    container.innerHTML='';
+    container.appendChild(vidEl);
   }else{
     container.innerHTML='<img src="'+p.src+'" alt="" style="max-height:100%;max-width:100%;width:auto;height:auto;object-fit:contain;border:5px solid #fff;box-shadow:0 4px 14px rgba(0,0,0,.2);transform:rotate(1.5deg);display:block;">';
   }
   document.getElementById('modal-caption').textContent=p.caption||'';
   document.getElementById('photo-n').textContent=curPhoto+1;
   document.getElementById('photo-t').textContent=filteredPhotos.length;
+}
+
+/* Small toast notification */
+function showToast(msg){
+  var t=document.createElement('div');
+  t.textContent=msg;
+  t.style.cssText='position:fixed;bottom:140px;left:50%;transform:translateX(-50%);background:#000;color:#fff;padding:7px 16px;border-radius:20px;border:2px solid var(--orange);font-family:"Changa One",sans-serif;font-size:.78rem;z-index:9999;opacity:0;transition:opacity .3s;white-space:nowrap;box-shadow:3px 3px 0 #000;';
+  document.body.appendChild(t);
+  requestAnimationFrame(function(){ t.style.opacity='1'; });
+  setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); },400); },2500);
 }
 function nextPhoto(){curPhoto=(curPhoto+1)%filteredPhotos.length;updateGalleryImg();}
 function prevPhoto(){curPhoto=(curPhoto-1+filteredPhotos.length)%filteredPhotos.length;updateGalleryImg();}
@@ -1421,19 +1810,37 @@ var player=document.getElementById('radio-player');
 var vinylClickTimer=null;
 
 // Single click = play/pause | Double click = skip song
-document.getElementById('vinyl-disc').addEventListener('click',function(){
+document.getElementById('vinyl-player-box').addEventListener('click',function(e){
   if(vinylClickTimer){clearTimeout(vinylClickTimer);vinylClickTimer=null;playRandomSong();return;}
-  vinylClickTimer=setTimeout(function(){vinylClickTimer=null;toggleRadio();},260);
+  vinylClickTimer=setTimeout(function(){vinylClickTimer=null;toggleRadio();},280);
 });
 
 function toggleRadio(){
   if(isPlaying){
     player.pause();
-    document.getElementById('vinyl-disc').classList.remove('vs');
+    document.getElementById('vinyl-record').classList.remove('vinyl-spinning');
+    document.getElementById('vinyl-tonearm').classList.remove('playing');
+    document.getElementById('vinyl-tonearm').classList.add('paused');
     document.getElementById('song-bubble').style.display='none';
     document.getElementById('play-hint').style.opacity='1';
+    document.getElementById('play-hint').innerHTML='&#9654;';
     isPlaying=false;
-  }else{playRandomSong();}
+    // update radio section controls
+    var rb=document.getElementById('radio-play-btn');
+    if(rb){rb.innerHTML='&#9654;';}
+  }else{
+    if(player.src&&player.src!==window.location.href){
+      player.play().catch(function(){playRandomSong();});
+      document.getElementById('vinyl-record').classList.add('vinyl-spinning');
+      document.getElementById('vinyl-tonearm').classList.remove('paused');
+      document.getElementById('vinyl-tonearm').classList.add('playing');
+      document.getElementById('song-bubble').style.display='block';
+      document.getElementById('play-hint').style.opacity='0';
+      isPlaying=true;
+      var rb=document.getElementById('radio-play-btn');
+      if(rb){rb.innerHTML='&#9646;&#9646;';}
+    }else{playRandomSong();}
+  }
 }
 function playRandomSong(){
   var s=songs[Math.floor(Math.random()*songs.length)];
@@ -1453,14 +1860,68 @@ function playRandomSong(){
   setTimeout(function(){if(!isPlaying&&player.paused){var pp=player.play();if(pp)pp.catch(function(){});}},800);
   document.getElementById('track-name').textContent=s.name;
   var np=document.getElementById('np-text');if(np)np.textContent='Now: '+s.name;
-  document.getElementById('song-bubble').style.display='block';
-  document.getElementById('vinyl-disc').classList.add('vs');
+  var rb=document.getElementById('radio-song-name');if(rb)rb.textContent=s.name;
+  // history tracking
+  songHistory.push(s);historyIdx=songHistory.length-1;if(songHistory.length>50)songHistory.shift();
+  document.getElementById('vinyl-record').classList.add('vinyl-spinning');
+  document.getElementById('vinyl-tonearm').classList.remove('paused');
+  document.getElementById('vinyl-tonearm').classList.add('playing');
   document.getElementById('play-hint').style.opacity='0';
+  // update radio controls
+  var rpb=document.getElementById('radio-play-btn');if(rpb)rpb.innerHTML='&#9646;&#9646;';
   isPlaying=true;
   unlockAch('a5','var(--purple)','#fff');
+  // seekbar reset
+  var sb=document.getElementById('radio-seekbar');if(sb){sb.value=0;}
 }
 function playNextSong(){playRandomSong();}
 player.addEventListener('ended',function(){setTimeout(playRandomSong,1000);});
+// Update seekbar as song plays
+player.addEventListener('timeupdate',function(){
+  var sb=document.getElementById('radio-seekbar');
+  if(sb&&player.duration&&!isNaN(player.duration)){
+    var pct=(player.currentTime/player.duration)*100;
+    sb.value=pct;
+    sb.style.background='linear-gradient(to right,var(--purple) '+pct+'%,var(--purple) '+pct+'%,#d0b8ee '+pct+'%,#d0b8ee 100%)';
+    var tc=document.getElementById('radio-time-cur');
+    var td=document.getElementById('radio-time-dur');
+    if(tc)tc.textContent=fmtTime(player.currentTime);
+    if(td)td.textContent=fmtTime(player.duration);
+  }
+});
+function fmtTime(s){
+  if(!s||isNaN(s))return'0:00';
+  var m=Math.floor(s/60),sec=Math.floor(s%60);
+  return m+':'+(sec<10?'0':'')+sec;
+}
+function radioSeek(val){
+  if(player.duration&&!isNaN(player.duration)){
+    player.currentTime=(val/100)*player.duration;
+  }
+}
+var songHistory=[];var historyIdx=-1;
+var _origPlayRandom=playRandomSong;
+function playPrevSong(){
+  if(songHistory.length>1&&historyIdx>0){
+    historyIdx--;
+    var s=songHistory[historyIdx];
+    player.src='';player.load();player.src=s.url;player.volume=.5;player.load();
+    player.addEventListener('canplay',function onC(){player.removeEventListener('canplay',onC);var pp=player.play();if(pp)pp.catch(function(){});},{once:true});
+    document.getElementById('track-name').textContent=s.name;
+    var rb=document.getElementById('radio-song-name');if(rb)rb.textContent=s.name;
+    var np=document.getElementById('np-text');if(np)np.textContent='Now: '+s.name;
+    document.getElementById('song-bubble').style.display='block';
+    document.getElementById('vinyl-record').classList.add('vinyl-spinning');
+    document.getElementById('vinyl-tonearm').classList.remove('paused');
+    document.getElementById('vinyl-tonearm').classList.add('playing');
+    document.getElementById('play-hint').style.opacity='0';
+    var rpb=document.getElementById('radio-play-btn');if(rpb)rpb.innerHTML='&#9646;&#9646;';
+    isPlaying=true;
+  }else{
+    // restart current
+    player.currentTime=0;
+  }
+}
 
 /* ─── GALLERY FILTER ─── */
 var galleryFilter='all';
@@ -1953,9 +2414,9 @@ function initSnake(){
     ctx.fillStyle='#0a0a0a';ctx.fillRect(0,0,cv.width,cv.height);
     ctx.fillStyle='#1c1c1c';
     for(var x=0;x<COLS;x++)for(var y=0;y<ROWS;y++)ctx.fillRect(x*SZ+6,y*SZ+6,2,2);
-    ctx.fillStyle='#FF3399';ctx.fillRect(food.x*SZ+1,food.y*SZ+1,SZ-2,SZ-2);
-    ctx.fillStyle='#fff';ctx.font='bold 10px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText('C',food.x*SZ+SZ/2,food.y*SZ+SZ/2);
+    // Draw cake as food
+    ctx.font=(SZ-2)+'px serif';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('🎂',food.x*SZ+SZ/2,food.y*SZ+SZ/2+1);
     for(var i=0;i<snake.length;i++){
       ctx.fillStyle=i===0?'#D4E009':'#7aaa00';
       ctx.fillRect(snake[i].x*SZ+1,snake[i].y*SZ+1,SZ-2,SZ-2);
@@ -2085,7 +2546,305 @@ function startWhack(){
   },1000);
 }
 
-/* ─── FIREBASE GALLERY URL ─── */
+/* ══════════════════════════════════════════
+   FUN FEATURES MEGA-BLOCK
+══════════════════════════════════════════ */
+
+/* ─── CURSOR MAGIC TRAIL ─── */
+var cursorEmojis = ['✨','⭐','🌟','💫','🎉','🎊','🎈','💖','🌸','🦋'];
+var cursorTrailOn = true;
+document.addEventListener('mousemove', function(e){
+  if(!cursorTrailOn) return;
+  if(Math.random() > 0.35) return; // not every move
+  var el = document.createElement('div');
+  el.className = 'cursor-star';
+  el.textContent = cursorEmojis[Math.floor(Math.random()*cursorEmojis.length)];
+  el.style.left = e.clientX + 'px';
+  el.style.top  = e.clientY + 'px';
+  document.body.appendChild(el);
+  setTimeout(function(){ el.remove(); }, 600);
+});
+
+/* ─── FIREWORK ON CLICK ─── */
+document.addEventListener('click', function(e){
+  if(e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  spawnFirework(e.clientX, e.clientY);
+});
+function spawnFirework(cx, cy){
+  var colors = ['#FF5500','#FF3399','#D4E009','#00AEEF','#9933CC','#fff','#FFD700'];
+  for(var i = 0; i < 12; i++){
+    var dot = document.createElement('div');
+    dot.className = 'firework-dot';
+    var angle = (i / 12) * Math.PI * 2;
+    var dist  = 50 + Math.random() * 60;
+    dot.style.setProperty('--tx', Math.cos(angle)*dist + 'px');
+    dot.style.setProperty('--ty', Math.sin(angle)*dist - 30 + 'px');
+    dot.style.setProperty('--d', (.4 + Math.random()*.5) + 's');
+    dot.style.left = cx + 'px';
+    dot.style.top  = cy + 'px';
+    dot.style.background = colors[Math.floor(Math.random()*colors.length)];
+    document.body.appendChild(dot);
+    setTimeout(function(d){ d.remove(); }, 900, dot);
+  }
+}
+
+/* ─── FUN FACTS ABOUT PARUL ─── */
+var parulFacts = [
+  { text: "Parul can eat cake faster than Sakshi can steal it. Scientists are baffled.", emoji: "🎂" },
+  { text: "It is medically proven that Parul's smile can fix any bad day. Side effects: too much happiness.", emoji: "😊" },
+  { text: "Parul once ran so fast from Sakshi that she accidentally broke the sound barrier. Locals heard a loud BOOM.", emoji: "💨" },
+  { text: "Parul's laugh is classified as a Tier-1 National Treasure. Protected by law.", emoji: "😂" },
+  { text: "Studies show that wherever Parul goes, the vibe immediately improves by 300%.", emoji: "✨" },
+  { text: "Parul has successfully saved 100% of all cakes she has held. Sakshi's success rate: 0%.", emoji: "🏆" },
+  { text: "On her birthday, Parul gets +10 to all stats: Cuteness, Smartness, Funniness, and Cake Speed.", emoji: "⬆️" },
+  { text: "Parul is the only person who can make fun of you and make you feel loved at the same time.", emoji: "💖" },
+  { text: "According to birthday law, ALL cake today belongs to Parul. Court order signed. Final.", emoji: "⚖️" },
+  { text: "Parul's birthday is Feb 18. Coincidentally, this is also National 'Best Person Alive' Day.", emoji: "🎊" },
+  { text: "Parul once stayed up so late she accidentally entered Feb 19. She is the only person to have 2 birthdays.", emoji: "🌙" },
+  { text: "The Oxford Dictionary added 'Parulwa' as a synonym for 'absolutely amazing'. True story.", emoji: "📚" },
+];
+var factIdx = 0;
+function initFacts(){
+  showFactAt(0);
+  renderFactDots();
+}
+function renderFactDots(){
+  var c = document.getElementById('fact-dots');
+  if(!c) return;
+  c.innerHTML = parulFacts.map(function(_,i){
+    return '<div onclick="showFactAt('+i+')" style="width:8px;height:8px;border-radius:50%;border:1.5px solid #000;background:'+(i===factIdx?'var(--blue)':'#ddd')+';cursor:pointer;transition:background .2s;"></div>';
+  }).join('');
+}
+function showFactAt(i){
+  factIdx = ((i % parulFacts.length) + parulFacts.length) % parulFacts.length;
+  var f = parulFacts[factIdx];
+  var el = document.getElementById('fact-text');
+  var ee = document.getElementById('fact-emoji');
+  var fn = document.getElementById('fact-num');
+  if(el){ el.className=''; void el.offsetWidth; el.className='fact-anim'; el.textContent = f.text; }
+  if(ee) ee.textContent = f.emoji;
+  if(fn) fn.textContent = factIdx + 1;
+  renderFactDots();
+}
+function showFact(dir){ showFactAt(factIdx + dir); }
+function showRandomFact(){ showFactAt(Math.floor(Math.random()*parulFacts.length)); triggerConfetti(); }
+
+/* ─── JOKE MACHINE ─── */
+var jokes = [
+  { setup: "Why did Parul hide the cake from Sakshi?", punch: "Because sharing is caring, but cake is LIFE! 🎂" },
+  { setup: "What do you call Parul on her birthday?", punch: "THE BIRTHDAY QUEEN! Bow down! 👑" },
+  { setup: "Why does Parul always win at everything?", punch: "Because she's Parulwa — the universe made a special exception for her! 🌟" },
+  { setup: "What's the difference between Parul and a superhero?", punch: "Superheroes wear capes. Parul doesn't need one. She IS the cape! 🦸‍♀️" },
+  { setup: "Sakshi: I want some cake! Parul: ...", punch: "...Nice try. MINE. ALL MINE. *runs away* 🎂💨" },
+  { setup: "Why did the birthday candles start a union?", punch: "They were tired of being blown away by Parul every year! 🕯️" },
+  { setup: "How many Paruls does it take to light up a room?", punch: "Just one. Obviously. She walks in and BOOM — party! 💡" },
+  { setup: "What's Parul's superpower?", punch: "Being absolutely iconic while eating cake and making it look glamorous. 💅" },
+  { setup: "The doctor said Parul needed to take it easy on her birthday...", punch: "So she only ate 3 pieces of cake instead of the whole thing. Responsible! 🎂" },
+  { setup: "Why did Parul get the biggest birthday gift?", punch: "Because 'biggest' isn't big enough to describe how amazing she is! 🎁" },
+];
+var jokeIdx = 0;
+var jokeStage = 0; // 0=fresh, 1=setup shown, 2=punchline shown
+function initJokes(){
+  jokeIdx = Math.floor(Math.random()*jokes.length);
+  document.getElementById('joke-setup').textContent = 'Press the button for a birthday joke! 😂';
+  document.getElementById('joke-punchline').style.display = 'none';
+}
+function jokeStep(mode){
+  if(mode === 'new') {
+    jokeIdx = (jokeIdx + 1) % jokes.length;
+    jokeStage = 0;
+    document.getElementById('joke-punchline').style.display = 'none';
+  }
+  if(jokeStage === 0){
+    document.getElementById('joke-setup').textContent = jokes[jokeIdx].setup;
+    document.getElementById('joke-btn').textContent = '🥁 ...And the answer is?';
+    jokeStage = 1;
+  } else if(jokeStage === 1){
+    var p = document.getElementById('joke-punchline');
+    p.style.display = 'block';
+    p.textContent = jokes[jokeIdx].punch;
+    p.className = 'pop-in';
+    document.getElementById('joke-btn').textContent = '😂 NEXT JOKE!';
+    jokeStage = 2;
+    spawnFirework(window.innerWidth/2, window.innerHeight/2);
+  } else {
+    jokeIdx = (jokeIdx + 1) % jokes.length;
+    jokeStage = 0;
+    document.getElementById('joke-punchline').style.display = 'none';
+    document.getElementById('joke-setup').textContent = jokes[jokeIdx].setup;
+    document.getElementById('joke-btn').textContent = '🥁 ...And the answer is?';
+    jokeStage = 1;
+  }
+}
+
+/* ─── VIDEO ↔ RADIO MUTUAL PAUSE ─── */
+function pauseRadioForVideo(){
+  if(isPlaying){
+    player.pause();
+    document.getElementById('vinyl-record').classList.remove('vinyl-spinning');
+    document.getElementById('vinyl-tonearm').classList.remove('playing');
+    document.getElementById('vinyl-tonearm').classList.add('paused');
+    document.getElementById('play-hint').style.opacity='1';
+    document.getElementById('play-hint').innerHTML='&#9654;';
+    var rpb=document.getElementById('radio-play-btn');if(rpb)rpb.innerHTML='&#9654;';
+    isPlaying=false;
+  }
+}
+
+/* ─── FAKE BREAKING NEWS GENERATOR ─── */
+var newsStories = [
+  { headline:"SAKSHI SPOTTED NEAR BIRTHDAY CAKE — POLICE CALLED", sub:"Witnesses describe a 'suspicious hand reaching' incident. Cake confirmed safe. Sakshi denies everything.", ticker:"⚡ CAKE THEFT ATTEMPT FOILED | PARUL HERO | SAKSHI: 'I WAS JUST LOOKING'" },
+  { headline:"PARUL OFFICIALLY DECLARED BEST SISTER IN RECORDED HISTORY", sub:"Scientists confirm. UN passes resolution. Sakshi lodges formal complaint. Complaint rejected.", ticker:"⚡ UN RESOLUTION 2026 | PARUL WINS | SAKSHI ABSTAINS FROM VOTE" },
+  { headline:"LOCAL BIRTHDAY GIRL EATS CAKE AT WORLD-RECORD SPEED", sub:"Officials with stopwatch confirm new national record. Sakshi's portion mysteriously also gone.", ticker:"⚡ NEW WORLD RECORD | SECONDS 0.04 | FORENSICS INVESTIGATING SAKSHI'S PLATE" },
+  { headline:"SOURCES CONFIRM: PARUL HAS NOT SHARED CAKE IN 18 YEARS", sub:"Family members corroborate story. 'She's been doing this since birth,' confirms Veer Bhaiya.", ticker:"⚡ 18 YEARS | ZERO SHARES | SAKSHI STILL TRYING" },
+  { headline:"BREAKING: BIRTHDAY WISHES POURING IN FROM ALL GALAXIES", sub:"Milky Way, Andromeda, and three unnamed galaxies all sent greetings to Parulwa today.", ticker:"⚡ INTERGALACTIC BIRTHDAY | ALIENS SAY PARUL IS GREAT | SAKSHI NOT INVITED" },
+  { headline:"VEER BHAIYA BUILDS ENTIRE WEBSITE FOR PARUL — SAKSHI GETS NOTHING", sub:"Reports of jealousy emerge. Sakshi reportedly refreshing the site repeatedly. Investigation ongoing.", ticker:"⚡ WEBSITE ONLINE | SAKSHI HIT F5 462 TIMES | PARUL SAYS 'AS EXPECTED'" },
+  { headline:"PARUL'S LAUGH DECLARED A PROTECTED HERITAGE SOUND", sub:"Ministry of Culture issues certificate. Sound now legally cannot be silenced. Especially not by Sakshi.", ticker:"⚡ LAUGH PROTECTED BY LAW | SAKSHI: 'SHE LAUGHS TOO LOUD' | COURT: 'DISMISSED'" },
+  { headline:"BIRTHDAY CANDLES REFUSE TO BLOW OUT, CITING 'PARUL IS TOO POWERFUL'", sub:"Fire brigade called. Brigade left crying with happiness. Candles eventually bribed with cake.", ticker:"⚡ CANDLE REBELLION | FIRE BRIGADE EMOTIONAL | CAKE USED AS NEGOTIATION TOOL" },
+  { headline:"SAKSHI ATTEMPTS 'SHARING IS CARING' ARGUMENT — JUDGE RULES IT INVALID", sub:"High Court agrees: Parul's birthday cake is 100% Parul's. Sakshi to submit written apology.", ticker:"⚡ COURT RULES AGAINST SAKSHI | CAKE BELONGS TO PARUL | VERDICT FINAL" },
+  { headline:"PARUL RUNS SO FAST EVEN GOOGLE MAPS CANNOT TRACK HER", sub:"Tech giant admits defeat. 'She is simply too quick,' says Silicon Valley engineer.", ticker:"⚡ GOOGLE DEFEATED | PARUL UNTRACEABLE | SAKSHI STILL 500M BEHIND" },
+  { headline:"SCIENTISTS DISCOVER PARULWA IS POWERED BY CAKE AND VIBES", sub:"Research published in Journal of Birthday Science. Control group (Sakshi) shows no such powers.", ticker:"⚡ NEW SCIENTIFIC DISCOVERY | PARULWA IS POWERED BY CAKE | SAKSHI: PLAIN TOAST ENERGY" },
+  { headline:"LOCAL WOMAN TURNS BIRTHDAY INTO 24-HOUR NATIONAL HOLIDAY", sub:"Parliament yet to ratify. However, family household has already recognised Feb 18 as public holiday.", ticker:"⚡ HOLIDAY PROPOSAL FILED | FAMILY PARLIAMENT VOTES YES | SAKSHI ABSENT FROM VOTE" },
+];
+var newsIdx = 0;
+var newsAutoTimer = null;
+var newsAutoRunning = false;
+
+function initNews(){
+  newsIdx = Math.floor(Math.random() * newsStories.length);
+  renderNews();
+}
+function renderNews(){
+  var s = newsStories[newsIdx];
+  var hl = document.getElementById('news-headline');
+  var sub = document.getElementById('news-sub');
+  var tk = document.getElementById('news-ticker-inner');
+  if(!hl) return;
+  hl.style.opacity='0';
+  setTimeout(function(){
+    hl.textContent = s.headline;
+    hl.style.transition='opacity .35s';
+    hl.style.opacity='1';
+  },180);
+  if(sub) sub.textContent = s.sub;
+  if(tk){
+    tk.style.transition='opacity .3s';
+    tk.style.opacity='0';
+    setTimeout(function(){ tk.textContent=s.ticker; tk.style.opacity='1'; },200);
+  }
+}
+function newBreakingNews(){
+  newsIdx = (newsIdx + 1) % newsStories.length;
+  renderNews();
+  spawnFirework(window.innerWidth*0.5, window.innerHeight*0.4);
+}
+function breakingNewsAuto(){
+  var btn = document.getElementById('news-auto-btn');
+  if(newsAutoRunning){
+    clearInterval(newsAutoTimer);
+    newsAutoRunning = false;
+    if(btn){ btn.textContent='⏵ AUTO'; btn.style.background='#333'; }
+  } else {
+    newsAutoRunning = true;
+    if(btn){ btn.textContent='⏹ STOP'; btn.style.background='#cc0000'; }
+    newsAutoTimer = setInterval(function(){
+      newsIdx = (newsIdx + 1) % newsStories.length;
+      renderNews();
+    }, 4000);
+  }
+}
+
+/* ─── PARUL VS SAKSHI SCOREBOARD ─── */
+var sbCategories = [
+  { cat:"🏃 Fastest Runner",           parul:10, sakshi:3,  commentary:"Parul runs on cake-powered turbo boost. Sakshi was still tying her shoelaces." },
+  { cat:"🎂 Cake Consumed Today",       parul:5,  sakshi:1,  commentary:"Sakshi had 1 slice. Parul had 5 and would like more please." },
+  { cat:"🧠 Life Decisions (Smart)",    parul:99, sakshi:12, commentary:"Parul once memorised an entire menu. Sakshi ordered wrong food 4 times." },
+  { cat:"😂 Funniest Incident Today",   parul:8,  sakshi:6,  commentary:"Close round! But Parul's reaction when Sakshi tried to steal cake was legendary." },
+  { cat:"👑 Times Called 'Queen'",      parul:47, sakshi:0,  commentary:"Self explanatory. Even Sakshi called Parul queen once, accidentally." },
+  { cat:"🎤 Loudest Birthday Scream",   parul:10, sakshi:9,  commentary:"Ultra close! Sakshi screamed when she saw the cake was already half eaten." },
+  { cat:"📸 Best Photo Taken Today",    parul:10, sakshi:2,  commentary:"Parul is photogenic at all angles including surprise angles. Sakshi was blinking." },
+  { cat:"💨 Cake Theft Attempts",       parul:0,  sakshi:11, commentary:"Parul ZERO attempts — she doesn't need to steal. It's already hers. Sakshi: 11 failed attempts." },
+  { cat:"🎁 Gifts Received",           parul:10, sakshi:0,  commentary:"It is Parul's birthday. Did you forget, Sakshi?" },
+  { cat:"⚡ Overall Birthday Energy",   parul:100,sakshi:4,  commentary:"Final score. As expected. Parul wins, Sakshi loses, cake is gone. Court adjourned." },
+];
+var sbIdx = 0;
+var sbParulTotal = 0;
+var sbSakshiTotal = 0;
+
+function initScoreboard(){
+  sbIdx = 0; sbParulTotal = 0; sbSakshiTotal = 0;
+  document.getElementById('sb-parul-score').textContent = '0';
+  document.getElementById('sb-sakshi-score').textContent = '0';
+  document.getElementById('sb-verdict').textContent = '';
+  renderScoreCategory();
+}
+function renderScoreCategory(){
+  var c = document.getElementById('sb-categories');
+  if(!c) return;
+  var shown = sbCategories.slice(0, sbIdx+1);
+  c.innerHTML = shown.map(function(r, i){
+    var total = r.parul + r.sakshi;
+    var pPct  = Math.round((r.parul/Math.max(total,1))*100);
+    var sPct  = 100 - pPct;
+    var isLatest = i === shown.length - 1;
+    return '<div style="background:'+(isLatest?'#1a1a00':'#111')+';border:2px solid '+(isLatest?'var(--orange)':'#333')+';border-radius:4px;padding:6px;'+(isLatest?'animation:popIn .4s ease;':'')+'">'
+      +'<div style="font-size:.7rem;font-weight:700;color:#fff;margin-bottom:4px;">'+r.cat+'</div>'
+      +'<div style="display:flex;gap:3px;align-items:center;height:14px;">'
+      +'<div style="flex:'+pPct+';background:var(--orange);height:100%;border-radius:3px 0 0 3px;min-width:4px;transition:flex .5s;"></div>'
+      +'<div style="flex:'+sPct+';background:#555;height:100%;border-radius:0 3px 3px 0;min-width:4px;transition:flex .5s;"></div>'
+      +'</div>'
+      +'<div style="display:flex;justify-content:space-between;font-size:.6rem;color:#aaa;margin-top:2px;">'
+      +'<span style="color:var(--orange);font-weight:900;">'+r.parul+'pts</span>'
+      +'<span style="font-size:.55rem;font-style:italic;color:#888;text-align:center;flex:1;padding:0 4px;">'+r.commentary+'</span>'
+      +'<span style="color:#888;font-weight:900;">'+r.sakshi+'pts</span>'
+      +'</div>'
+      +'</div>';
+  }).join('');
+}
+function nextScoreCategory(){
+  if(sbIdx >= sbCategories.length - 1){
+    // show final verdict
+    var v = document.getElementById('sb-verdict');
+    if(v){ v.innerHTML='🏆 FINAL VERDICT: <span style="color:var(--orange)">PARUL WINS BY A LANDSLIDE!</span> Sakshi please go home.'; }
+    triggerConfetti();
+    return;
+  }
+  sbIdx++;
+  var r = sbCategories[sbIdx];
+  sbParulTotal += r.parul;
+  sbSakshiTotal += r.sakshi;
+  // animate score counters
+  animateCounter('sb-parul-score',  sbParulTotal);
+  animateCounter('sb-sakshi-score', sbSakshiTotal);
+  renderScoreCategory();
+  if(r.parul > r.sakshi) spawnFirework(window.innerWidth*0.3, window.innerHeight*0.4);
+}
+function animateCounter(id, target){
+  var el = document.getElementById(id);
+  if(!el) return;
+  var start = parseInt(el.textContent)||0;
+  var diff  = target - start;
+  var steps = 20;
+  var i = 0;
+  var t = setInterval(function(){
+    i++;
+    el.textContent = Math.round(start + (diff * i/steps));
+    if(i >= steps){ el.textContent = target; clearInterval(t); }
+  }, 30);
+}
+function resetScoreboard(){
+  initScoreboard();
+}
+
+/* ─── INIT ALL FUN FEATURES ─── */
+function initAllFunFeatures(){
+  initFacts();
+  initJokes();
+  initNews();
+  initScoreboard();
+}
+
+
 var FB_GALLERY_URL = "https://birthday-62252-default-rtdb.firebaseio.com/gallery";
 
 /* ─── LOAD GALLERY FROM FIREBASE ON PAGE LOAD ─── */
@@ -2159,7 +2918,97 @@ function testFirebaseWrite(){
   .catch(function(e){ statusEl.style.color='red'; statusEl.textContent = 'Network error: '+e.message; });
 }
 
-/* ─── CLOUDINARY UPLOAD WIDGET ─── */
+/* ─── ADMIN SONG MANAGER ─── */
+function showAdminSongManager(){
+  if(!isAdmin){alert('Admin access required!');return;}
+  var modal=document.getElementById('admin-song-modal');
+  modal.style.display='flex';
+  modal.style.left='50%';modal.style.top='50%';
+  modal.style.transform='translate(-50%,-50%)';
+  renderAdminSongList();
+}
+function closeAdminSongManager(){
+  document.getElementById('admin-song-modal').style.display='none';
+}
+function renderAdminSongList(){
+  var list=document.getElementById('admin-song-list');
+  document.getElementById('admin-song-count').textContent=songs.length;
+  list.innerHTML=songs.map(function(s,idx){
+    return '<div style="background:#f0f0f0;border:2px solid #000;padding:6px 8px;display:flex;gap:6px;align-items:center;border-radius:3px;">'
+      +'<span style="font-size:1rem;flex-shrink:0;">🎵</span>'
+      +'<div style="flex:1;font-size:.68rem;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;"><strong>'+escHtml(s.name)+'</strong></div>'
+      +'<button onclick="adminPlaySongPreview('+idx+')" style="background:var(--green);color:#000;border:2px solid #000;padding:2px 7px;font-size:.62rem;font-weight:900;cursor:pointer;border-radius:3px;flex-shrink:0;font-family:\'Changa One\',sans-serif;">▶</button>'
+      +'<button onclick="adminDeleteSong('+idx+')" style="background:red;color:#fff;border:2px solid #000;padding:2px 7px;font-size:.62rem;font-weight:900;cursor:pointer;border-radius:3px;flex-shrink:0;">DEL</button>'
+      +'</div>';
+  }).join('');
+}
+function adminPlaySongPreview(idx){
+  var s=songs[idx];
+  player.src=s.url;player.volume=.5;player.load();
+  player.play().catch(function(){});
+  document.getElementById('track-name').textContent=s.name;
+  var rb=document.getElementById('radio-song-name');if(rb)rb.textContent=s.name;
+  document.getElementById('song-bubble').style.display='block';
+  document.getElementById('vinyl-record').classList.add('vinyl-spinning');
+  document.getElementById('vinyl-tonearm').classList.remove('paused');
+  document.getElementById('vinyl-tonearm').classList.add('playing');
+  document.getElementById('play-hint').style.opacity='0';
+  var rpb=document.getElementById('radio-play-btn');if(rpb)rpb.innerHTML='&#9646;&#9646;';
+  isPlaying=true;
+}
+function adminAddSong(){
+  if(!isAdmin)return;
+  var url=document.getElementById('admin-song-url').value.trim();
+  var name=document.getElementById('admin-song-name').value.trim();
+  if(!url){alert('Please enter a URL!');return;}
+  if(!name)name=url.split('/').pop().replace(/\.[^.]+$/,'').replace(/_/g,' ');
+  songs.unshift({name:name,url:url});
+  document.getElementById('admin-song-url').value='';
+  document.getElementById('admin-song-name').value='';
+  renderAdminSongList();
+  var st=document.getElementById('admin-song-status');
+  st.style.display='block';st.style.color='green';st.textContent='✅ Song added to playlist! (Session only — add URL to songs[] in code to persist)';
+  setTimeout(function(){st.style.display='none';},4000);
+}
+function adminDeleteSong(idx){
+  if(!isAdmin)return;
+  if(!confirm('Remove "'+songs[idx].name+'" from playlist?'))return;
+  songs.splice(idx,1);
+  renderAdminSongList();
+}
+function uploadSongToCloudinary(){
+  if(!isAdmin){alert('Admin access required!');return;}
+  var st=document.getElementById('admin-song-status');
+  var widget=cloudinary.createUploadWidget({
+    cloudName:'dmed4bf8g',
+    uploadPreset:'Parulwa',
+    multiple:true,
+    resourceType:'auto',
+    sources:['local','url'],
+    clientAllowedFormats:['mp3','ogg','aac','wav','flac','m4a'],
+    styles:{
+      palette:{window:'#0d0d0d',windowBorder:'var(--purple)',tabIcon:'var(--purple)',
+        menuIcons:'var(--green)',textDark:'#ffffff',textLight:'#ffffff',
+        link:'var(--purple)',action:'var(--orange)',inactiveTabIcon:'#999',
+        error:'#ff3355',inProgress:'var(--green)',complete:'#28c840',sourceBg:'#1a1a1a'},
+      fonts:{default:null,"'Changa One', Impact":{url:'https://fonts.googleapis.com/css2?family=Changa+One',active:true}}
+    }
+  },function(error,result){
+    if(!error&&result&&result.event==='success'){
+      var info=result.info;
+      var songName=(info.original_filename||'New Song').replace(/_/g,' ');
+      songs.unshift({name:songName,url:info.secure_url});
+      renderAdminSongList();
+      if(st){st.style.display='block';st.style.color='green';st.textContent='✅ "'+songName+'" uploaded & added to playlist!';}
+      setTimeout(function(){if(st)st.style.display='none';},4000);
+    }
+    if(error){
+      if(st){st.style.display='block';st.style.color='red';st.textContent='❌ Upload error: '+JSON.stringify(error);}
+    }
+  });
+  widget.open();
+}
+
 function uploadToCloudinary(){
   if(!isAdmin){ alert('Admin access required!'); return; }
   var myWidget = cloudinary.createUploadWidget({
