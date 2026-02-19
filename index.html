@@ -357,8 +357,6 @@ body{
       <div onclick="goToAndOpenGallery()" style="background:var(--orange); padding:6px 12px;font-family:'Changa One',sans-serif;font-size:.78rem;border-radius:6px 6px 0 0;border:2px solid #666;cursor:pointer;color:#fff;white-space:nowrap;display:flex;align-items:center;transition:filter .15s;" onmouseover="this.style.filter='brightness(1.15)'" onmouseout="this.style.filter=''">GALLERY</div>
       <!-- BLAB tab → scrolls to wishes section -->
       <div onclick="goTo('sec-blab')"   style="background:#fff;           padding:6px 12px;font-family:'Changa One',sans-serif;font-size:.78rem;border-radius:6px 6px 0 0;border:2px solid #666;cursor:pointer;white-space:nowrap;display:flex;align-items:center;transition:filter .15s;" onmouseover="this.style.filter='brightness(1.15)'" onmouseout="this.style.filter=''">BLAB</div>
-      <!-- FUN tab → scrolls to fun sections -->
-      <div onclick="goTo('sec-facts')"  style="background:#FF8C00;color:#fff;padding:6px 12px;font-family:'Changa One',sans-serif;font-size:.78rem;border-radius:6px 6px 0 0;border:2px solid #666;cursor:pointer;white-space:nowrap;display:flex;align-items:center;transition:filter .15s;" onmouseover="this.style.filter='brightness(1.15)'" onmouseout="this.style.filter=''">🎉 FUN</div>
     </div>
     <!-- Search box -->
     <div style="display:flex;background:#ffe066;padding:4px 10px;border-radius:20px;border:2px solid #aaa;align-items:center;gap:4px;flex-shrink:0;margin-left:6px;">
@@ -916,43 +914,6 @@ body{
         </div>
       </div>
 
-      <!-- ════ FUN FACTS ABOUT PARUL ════ -->
-      <div id="sec-facts">
-        <div class="sh" style="background:var(--blue);color:#fff;">
-          <span class="fh">📋 Parul Facts™</span>
-          <span style="font-size:.7rem;font-weight:700;">OFFICIAL DATA</span>
-        </div>
-        <div style="border:3px solid #000;border-top:0;border-radius:0 0 8px 8px;background:#e0f7ff;padding:10px;">
-          <div id="fact-card" style="background:#fff;border:3px solid #000;border-radius:6px;padding:12px;text-align:center;min-height:70px;display:flex;flex-direction:column;justify-content:center;box-shadow:3px 3px 0 #000;position:relative;overflow:hidden;">
-            <div style="position:absolute;top:4px;left:6px;font-size:.6rem;font-weight:900;color:#aaa;font-family:'VT323',monospace;">FACT #<span id="fact-num">1</span></div>
-            <div id="fact-text" class="fact-anim" style="font-size:.85rem;font-weight:700;line-height:1.5;color:#222;padding:4px 0;"></div>
-            <div id="fact-emoji" style="font-size:1.8rem;margin-top:4px;"></div>
-          </div>
-          <div style="display:flex;gap:6px;margin-top:8px;">
-            <button onclick="showFact(-1)" class="btn fh" style="flex:1;padding:6px;font-size:.85rem;background:#000;color:var(--green);">◀ PREV</button>
-            <button onclick="showFact(1)"  class="btn fh" style="flex:1;padding:6px;font-size:.85rem;background:var(--blue);color:#fff;">NEXT ▶</button>
-            <button onclick="showRandomFact()" class="btn fh" style="flex:1;padding:6px;font-size:.85rem;background:var(--orange);color:#fff;" title="Shuffle">🔀</button>
-          </div>
-          <div style="display:flex;gap:3px;justify-content:center;margin-top:6px;" id="fact-dots"></div>
-        </div>
-      </div>
-
-      <!-- ════ BIRTHDAY JOKE MACHINE ════ -->
-      <div id="sec-jokes">
-        <div class="sh" style="background:#cc0000;color:#fff;">
-          <span class="fh">😂 Joke-O-Matic 3000</span>
-          <span class="blink" style="font-size:.7rem;">PRESS FOR FUN</span>
-        </div>
-        <div style="border:3px solid #000;border-top:0;border-radius:0 0 8px 8px;background:#fff8f0;padding:10px;display:flex;flex-direction:column;gap:8px;">
-          <div id="joke-setup" style="background:#fff;border:3px solid #000;border-radius:4px;padding:10px;font-size:.82rem;font-weight:700;min-height:36px;box-shadow:3px 3px 0 #000;font-family:'Comic Neue',sans-serif;"></div>
-          <div id="joke-punchline" style="background:#ffe066;border:3px solid #000;border-radius:4px;padding:10px;font-size:.88rem;font-weight:900;min-height:36px;box-shadow:3px 3px 0 #000;display:none;font-family:'Changa One',sans-serif;color:var(--orange);"></div>
-          <div style="display:flex;gap:6px;">
-            <button id="joke-btn" onclick="jokeStep()" class="btn fh" style="flex:1;padding:8px;font-size:.9rem;background:#cc0000;color:#fff;">😂 TELL ME A JOKE!</button>
-            <button onclick="jokeStep('new')" class="btn fh" style="padding:8px 12px;font-size:.9rem;background:#333;color:#fff;" title="New joke">🔀</button>
-          </div>
-        </div>
-      </div>
-
       <!-- ════ SECRET MESSAGE DECODER ════ -->
       <div id="sec-secret">
         <div class="sh" style="background:#111;color:var(--green);">
@@ -960,76 +921,8 @@ body{
           <span class="fp blink" style="color:var(--green);font-size:.8rem;">CLASSIFIED</span>
         </div>
         <div style="border:3px solid #000;border-top:0;border-radius:0 0 8px 8px;background:#111;padding:10px;">
-          <div style="background:#000;border:2px solid var(--green);border-radius:4px;padding:10px;font-family:'VT323',monospace;font-size:1rem;color:var(--green);line-height:1.7;min-height:70px;" id="secret-display">___ _____ __ ______</div>
+          <div style="background:#000;border:2px solid var(--green);border-radius:4px;padding:10px;font-family:'VT323',monospace;font-size:1rem;color:var(--green);line-height:1.7;min-height:70px;" id="secret-display">PRESS DECODE TO REVEAL SECRET MESSAGE...</div>
           <button onclick="decodeSecret()" class="btn fh" style="width:100%;margin-top:7px;padding:7px;font-size:.85rem;background:#000;color:var(--green);border:2px solid var(--green);">🔓 DECODE MESSAGE</button>
-        </div>
-      </div>
-
-      <!-- ════ FAKE BREAKING NEWS GENERATOR ════ -->
-      <div id="sec-news">
-        <div class="sh" style="background:#cc0000;color:#fff;">
-          <div style="display:flex;align-items:center;gap:6px;">
-            <span class="blink" style="background:#fff;color:red;font-size:.6rem;font-weight:900;padding:1px 5px;border-radius:2px;">LIVE</span>
-            <span class="fh">BREAKING NEWS</span>
-          </div>
-          <span class="fp blink" style="font-size:.8rem;">24/7 COVERAGE</span>
-        </div>
-        <div style="border:3px solid #000;border-top:0;border-radius:0 0 8px 8px;background:#111;padding:0;overflow:hidden;">
-          <!-- TV screen effect -->
-          <div style="background:#000;padding:10px;position:relative;">
-            <div style="background:#1a0000;border:3px solid #cc0000;border-radius:4px;padding:10px;min-height:90px;position:relative;">
-              <!-- Scanline overlay -->
-              <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.15) 2px,rgba(0,0,0,.15) 4px);pointer-events:none;border-radius:3px;"></div>
-              <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
-                <div style="background:red;width:8px;height:8px;border-radius:50%;animation:blink 1s step-start infinite;flex-shrink:0;"></div>
-                <span style="font-family:'VT323',monospace;color:#cc0000;font-size:.85rem;" id="news-channel">📺 PARULWA NEWS NETWORK — PNN</span>
-              </div>
-              <div id="news-headline" style="font-family:'Changa One',sans-serif;color:#fff;font-size:.95rem;line-height:1.4;min-height:40px;"></div>
-              <div id="news-sub" style="font-family:'Comic Neue',sans-serif;color:#aaa;font-size:.68rem;margin-top:5px;font-style:italic;"></div>
-            </div>
-            <!-- Bottom ticker inside box -->
-            <div style="background:#cc0000;color:#fff;font-family:'VT323',monospace;font-size:.85rem;padding:3px 8px;overflow:hidden;white-space:nowrap;margin-top:6px;border:2px solid #ff4444;">
-              <span id="news-ticker-inner">⚡ LOADING LATEST NEWS...</span>
-            </div>
-          </div>
-          <div style="display:flex;gap:6px;padding:8px;background:#1a1a1a;">
-            <button onclick="newBreakingNews()" class="btn fh" style="flex:1;padding:7px;font-size:.85rem;background:#cc0000;color:#fff;border:2px solid #ff4444;">📡 NEXT STORY</button>
-            <button onclick="breakingNewsAuto()" id="news-auto-btn" class="btn fh" style="padding:7px 12px;font-size:.85rem;background:#333;color:#fff;border:2px solid #666;">⏵ AUTO</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ════ PARUL vs SAKSHI SCOREBOARD ════ -->
-      <div id="sec-scoreboard">
-        <div class="sh" style="background:#000;color:var(--green);">
-          <span class="fh">🏆 PARUL vs SAKSHI</span>
-          <span class="fp" style="color:var(--orange);font-size:.85rem;">OFFICIAL STATS</span>
-        </div>
-        <div style="border:3px solid #000;border-top:0;border-radius:0 0 8px 8px;background:#0a0a0a;padding:10px;">
-          <!-- Score display -->
-          <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:0;margin-bottom:10px;border:3px solid #333;border-radius:4px;overflow:hidden;">
-            <div style="background:var(--orange);padding:8px;text-align:center;">
-              <div class="fb" style="color:#fff;font-size:1.5rem;text-shadow:2px 2px 0 #000;">PARUL</div>
-              <div id="sb-parul-score" class="fh" style="font-size:2.8rem;color:#fff;text-shadow:3px 3px 0 #000;line-height:1;">0</div>
-              <div style="font-size:.6rem;color:rgba(255,255,255,.8);font-weight:700;">POINTS</div>
-            </div>
-            <div style="background:#111;display:flex;align-items:center;justify-content:center;padding:0 10px;">
-              <div class="fb" style="color:#ff4444;font-size:1.8rem;">VS</div>
-            </div>
-            <div style="background:#555;padding:8px;text-align:center;">
-              <div class="fb" style="color:#fff;font-size:1.5rem;text-shadow:2px 2px 0 #000;">SAKSHI</div>
-              <div id="sb-sakshi-score" class="fh" style="font-size:2.8rem;color:#fff;text-shadow:3px 3px 0 #000;line-height:1;">0</div>
-              <div style="font-size:.6rem;color:rgba(255,255,255,.8);font-weight:700;">POINTS</div>
-            </div>
-          </div>
-          <!-- Categories -->
-          <div id="sb-categories" style="display:flex;flex-direction:column;gap:5px;"></div>
-          <!-- Buttons -->
-          <div style="display:flex;gap:6px;margin-top:8px;">
-            <button onclick="nextScoreCategory()" class="btn fh" style="flex:1;padding:7px;font-size:.82rem;background:var(--orange);color:#fff;border:2px solid #000;">▶ NEXT ROUND</button>
-            <button onclick="resetScoreboard()" class="btn fh" style="padding:7px 10px;font-size:.82rem;background:#333;color:#fff;border:2px solid #666;">↺</button>
-          </div>
-          <div id="sb-verdict" style="margin-top:7px;text-align:center;font-family:'Changa One',sans-serif;font-size:.85rem;min-height:22px;color:var(--green);"></div>
         </div>
       </div>
 
@@ -2588,261 +2481,45 @@ function spawnFirework(cx, cy){
   }
 }
 
-/* ─── FUN FACTS ABOUT PARUL ─── */
-var parulFacts = [
-  { text: "Parul can eat cake faster than Sakshi can steal it. Scientists are baffled.", emoji: "🎂" },
-  { text: "It is medically proven that Parul's smile can fix any bad day. Side effects: too much happiness.", emoji: "😊" },
-  { text: "Parul once ran so fast from Sakshi that she accidentally broke the sound barrier. Locals heard a loud BOOM.", emoji: "💨" },
-  { text: "Parul's laugh is classified as a Tier-1 National Treasure. Protected by law.", emoji: "😂" },
-  { text: "Studies show that wherever Parul goes, the vibe immediately improves by 300%.", emoji: "✨" },
-  { text: "Parul has successfully saved 100% of all cakes she has held. Sakshi's success rate: 0%.", emoji: "🏆" },
-  { text: "On her birthday, Parul gets +10 to all stats: Cuteness, Smartness, Funniness, and Cake Speed.", emoji: "⬆️" },
-  { text: "Parul is the only person who can make fun of you and make you feel loved at the same time.", emoji: "💖" },
-  { text: "According to birthday law, ALL cake today belongs to Parul. Court order signed. Final.", emoji: "⚖️" },
-  { text: "Parul's birthday is Feb 18. Coincidentally, this is also National 'Best Person Alive' Day.", emoji: "🎊" },
-  { text: "Parul once stayed up so late she accidentally entered Feb 19. She is the only person to have 2 birthdays.", emoji: "🌙" },
-  { text: "The Oxford Dictionary added 'Parulwa' as a synonym for 'absolutely amazing'. True story.", emoji: "📚" },
+/* ─── SECRET MESSAGE DECODER (FIXED) ─── */
+var secretMessages = [
+  'YOU ARE THE BEST SISTER IN THE WHOLE UNIVERSE!',
+  'HAPPY BIRTHDAY PARULWA!! YOU ARE SO SO LOVED!!',
+  'CAKE IS YOURS TODAY. SAKSHI CANNOT HAVE ANY.',
+  'YOU ARE ABSOLUTELY AMAZING. NEVER FORGET THAT!',
+  'FROM VEER BHAIYA WITH ALL THE LOVE IN THE WORLD.',
 ];
-var factIdx = 0;
-function initFacts(){
-  showFactAt(0);
-  renderFactDots();
-}
-function renderFactDots(){
-  var c = document.getElementById('fact-dots');
-  if(!c) return;
-  c.innerHTML = parulFacts.map(function(_,i){
-    return '<div onclick="showFactAt('+i+')" style="width:8px;height:8px;border-radius:50%;border:1.5px solid #000;background:'+(i===factIdx?'var(--blue)':'#ddd')+';cursor:pointer;transition:background .2s;"></div>';
-  }).join('');
-}
-function showFactAt(i){
-  factIdx = ((i % parulFacts.length) + parulFacts.length) % parulFacts.length;
-  var f = parulFacts[factIdx];
-  var el = document.getElementById('fact-text');
-  var ee = document.getElementById('fact-emoji');
-  var fn = document.getElementById('fact-num');
-  if(el){ el.className=''; void el.offsetWidth; el.className='fact-anim'; el.textContent = f.text; }
-  if(ee) ee.textContent = f.emoji;
-  if(fn) fn.textContent = factIdx + 1;
-  renderFactDots();
-}
-function showFact(dir){ showFactAt(factIdx + dir); }
-function showRandomFact(){ showFactAt(Math.floor(Math.random()*parulFacts.length)); triggerConfetti(); }
-
-/* ─── JOKE MACHINE ─── */
-var jokes = [
-  { setup: "Why did Parul hide the cake from Sakshi?", punch: "Because sharing is caring, but cake is LIFE! 🎂" },
-  { setup: "What do you call Parul on her birthday?", punch: "THE BIRTHDAY QUEEN! Bow down! 👑" },
-  { setup: "Why does Parul always win at everything?", punch: "Because she's Parulwa — the universe made a special exception for her! 🌟" },
-  { setup: "What's the difference between Parul and a superhero?", punch: "Superheroes wear capes. Parul doesn't need one. She IS the cape! 🦸‍♀️" },
-  { setup: "Sakshi: I want some cake! Parul: ...", punch: "...Nice try. MINE. ALL MINE. *runs away* 🎂💨" },
-  { setup: "Why did the birthday candles start a union?", punch: "They were tired of being blown away by Parul every year! 🕯️" },
-  { setup: "How many Paruls does it take to light up a room?", punch: "Just one. Obviously. She walks in and BOOM — party! 💡" },
-  { setup: "What's Parul's superpower?", punch: "Being absolutely iconic while eating cake and making it look glamorous. 💅" },
-  { setup: "The doctor said Parul needed to take it easy on her birthday...", punch: "So she only ate 3 pieces of cake instead of the whole thing. Responsible! 🎂" },
-  { setup: "Why did Parul get the biggest birthday gift?", punch: "Because 'biggest' isn't big enough to describe how amazing she is! 🎁" },
-];
-var jokeIdx = 0;
-var jokeStage = 0; // 0=fresh, 1=setup shown, 2=punchline shown
-function initJokes(){
-  jokeIdx = Math.floor(Math.random()*jokes.length);
-  document.getElementById('joke-setup').textContent = 'Press the button for a birthday joke! 😂';
-  document.getElementById('joke-punchline').style.display = 'none';
-}
-function jokeStep(mode){
-  if(mode === 'new') {
-    jokeIdx = (jokeIdx + 1) % jokes.length;
-    jokeStage = 0;
-    document.getElementById('joke-punchline').style.display = 'none';
-  }
-  if(jokeStage === 0){
-    document.getElementById('joke-setup').textContent = jokes[jokeIdx].setup;
-    document.getElementById('joke-btn').textContent = '🥁 ...And the answer is?';
-    jokeStage = 1;
-  } else if(jokeStage === 1){
-    var p = document.getElementById('joke-punchline');
-    p.style.display = 'block';
-    p.textContent = jokes[jokeIdx].punch;
-    p.className = 'pop-in';
-    document.getElementById('joke-btn').textContent = '😂 NEXT JOKE!';
-    jokeStage = 2;
-    spawnFirework(window.innerWidth/2, window.innerHeight/2);
-  } else {
-    jokeIdx = (jokeIdx + 1) % jokes.length;
-    jokeStage = 0;
-    document.getElementById('joke-punchline').style.display = 'none';
-    document.getElementById('joke-setup').textContent = jokes[jokeIdx].setup;
-    document.getElementById('joke-btn').textContent = '🥁 ...And the answer is?';
-    jokeStage = 1;
-  }
-}
-
-/* ─── VIDEO ↔ RADIO MUTUAL PAUSE ─── */
-function pauseRadioForVideo(){
-  if(isPlaying){
-    player.pause();
-    document.getElementById('vinyl-record').classList.remove('vinyl-spinning');
-    document.getElementById('vinyl-tonearm').classList.remove('playing');
-    document.getElementById('vinyl-tonearm').classList.add('paused');
-    document.getElementById('play-hint').style.opacity='1';
-    document.getElementById('play-hint').innerHTML='&#9654;';
-    var rpb=document.getElementById('radio-play-btn');if(rpb)rpb.innerHTML='&#9654;';
-    isPlaying=false;
-  }
-}
-
-/* ─── FAKE BREAKING NEWS GENERATOR ─── */
-var newsStories = [
-  { headline:"SAKSHI SPOTTED NEAR BIRTHDAY CAKE — POLICE CALLED", sub:"Witnesses describe a 'suspicious hand reaching' incident. Cake confirmed safe. Sakshi denies everything.", ticker:"⚡ CAKE THEFT ATTEMPT FOILED | PARUL HERO | SAKSHI: 'I WAS JUST LOOKING'" },
-  { headline:"PARUL OFFICIALLY DECLARED BEST SISTER IN RECORDED HISTORY", sub:"Scientists confirm. UN passes resolution. Sakshi lodges formal complaint. Complaint rejected.", ticker:"⚡ UN RESOLUTION 2026 | PARUL WINS | SAKSHI ABSTAINS FROM VOTE" },
-  { headline:"LOCAL BIRTHDAY GIRL EATS CAKE AT WORLD-RECORD SPEED", sub:"Officials with stopwatch confirm new national record. Sakshi's portion mysteriously also gone.", ticker:"⚡ NEW WORLD RECORD | SECONDS 0.04 | FORENSICS INVESTIGATING SAKSHI'S PLATE" },
-  { headline:"SOURCES CONFIRM: PARUL HAS NOT SHARED CAKE IN 18 YEARS", sub:"Family members corroborate story. 'She's been doing this since birth,' confirms Veer Bhaiya.", ticker:"⚡ 18 YEARS | ZERO SHARES | SAKSHI STILL TRYING" },
-  { headline:"BREAKING: BIRTHDAY WISHES POURING IN FROM ALL GALAXIES", sub:"Milky Way, Andromeda, and three unnamed galaxies all sent greetings to Parulwa today.", ticker:"⚡ INTERGALACTIC BIRTHDAY | ALIENS SAY PARUL IS GREAT | SAKSHI NOT INVITED" },
-  { headline:"VEER BHAIYA BUILDS ENTIRE WEBSITE FOR PARUL — SAKSHI GETS NOTHING", sub:"Reports of jealousy emerge. Sakshi reportedly refreshing the site repeatedly. Investigation ongoing.", ticker:"⚡ WEBSITE ONLINE | SAKSHI HIT F5 462 TIMES | PARUL SAYS 'AS EXPECTED'" },
-  { headline:"PARUL'S LAUGH DECLARED A PROTECTED HERITAGE SOUND", sub:"Ministry of Culture issues certificate. Sound now legally cannot be silenced. Especially not by Sakshi.", ticker:"⚡ LAUGH PROTECTED BY LAW | SAKSHI: 'SHE LAUGHS TOO LOUD' | COURT: 'DISMISSED'" },
-  { headline:"BIRTHDAY CANDLES REFUSE TO BLOW OUT, CITING 'PARUL IS TOO POWERFUL'", sub:"Fire brigade called. Brigade left crying with happiness. Candles eventually bribed with cake.", ticker:"⚡ CANDLE REBELLION | FIRE BRIGADE EMOTIONAL | CAKE USED AS NEGOTIATION TOOL" },
-  { headline:"SAKSHI ATTEMPTS 'SHARING IS CARING' ARGUMENT — JUDGE RULES IT INVALID", sub:"High Court agrees: Parul's birthday cake is 100% Parul's. Sakshi to submit written apology.", ticker:"⚡ COURT RULES AGAINST SAKSHI | CAKE BELONGS TO PARUL | VERDICT FINAL" },
-  { headline:"PARUL RUNS SO FAST EVEN GOOGLE MAPS CANNOT TRACK HER", sub:"Tech giant admits defeat. 'She is simply too quick,' says Silicon Valley engineer.", ticker:"⚡ GOOGLE DEFEATED | PARUL UNTRACEABLE | SAKSHI STILL 500M BEHIND" },
-  { headline:"SCIENTISTS DISCOVER PARULWA IS POWERED BY CAKE AND VIBES", sub:"Research published in Journal of Birthday Science. Control group (Sakshi) shows no such powers.", ticker:"⚡ NEW SCIENTIFIC DISCOVERY | PARULWA IS POWERED BY CAKE | SAKSHI: PLAIN TOAST ENERGY" },
-  { headline:"LOCAL WOMAN TURNS BIRTHDAY INTO 24-HOUR NATIONAL HOLIDAY", sub:"Parliament yet to ratify. However, family household has already recognised Feb 18 as public holiday.", ticker:"⚡ HOLIDAY PROPOSAL FILED | FAMILY PARLIAMENT VOTES YES | SAKSHI ABSENT FROM VOTE" },
-];
-var newsIdx = 0;
-var newsAutoTimer = null;
-var newsAutoRunning = false;
-
-function initNews(){
-  newsIdx = Math.floor(Math.random() * newsStories.length);
-  renderNews();
-}
-function renderNews(){
-  var s = newsStories[newsIdx];
-  var hl = document.getElementById('news-headline');
-  var sub = document.getElementById('news-sub');
-  var tk = document.getElementById('news-ticker-inner');
-  if(!hl) return;
-  hl.style.opacity='0';
-  setTimeout(function(){
-    hl.textContent = s.headline;
-    hl.style.transition='opacity .35s';
-    hl.style.opacity='1';
-  },180);
-  if(sub) sub.textContent = s.sub;
-  if(tk){
-    tk.style.transition='opacity .3s';
-    tk.style.opacity='0';
-    setTimeout(function(){ tk.textContent=s.ticker; tk.style.opacity='1'; },200);
-  }
-}
-function newBreakingNews(){
-  newsIdx = (newsIdx + 1) % newsStories.length;
-  renderNews();
-  spawnFirework(window.innerWidth*0.5, window.innerHeight*0.4);
-}
-function breakingNewsAuto(){
-  var btn = document.getElementById('news-auto-btn');
-  if(newsAutoRunning){
-    clearInterval(newsAutoTimer);
-    newsAutoRunning = false;
-    if(btn){ btn.textContent='⏵ AUTO'; btn.style.background='#333'; }
-  } else {
-    newsAutoRunning = true;
-    if(btn){ btn.textContent='⏹ STOP'; btn.style.background='#cc0000'; }
-    newsAutoTimer = setInterval(function(){
-      newsIdx = (newsIdx + 1) % newsStories.length;
-      renderNews();
-    }, 4000);
-  }
-}
-
-/* ─── PARUL VS SAKSHI SCOREBOARD ─── */
-var sbCategories = [
-  { cat:"🏃 Fastest Runner",           parul:10, sakshi:3,  commentary:"Parul runs on cake-powered turbo boost. Sakshi was still tying her shoelaces." },
-  { cat:"🎂 Cake Consumed Today",       parul:5,  sakshi:1,  commentary:"Sakshi had 1 slice. Parul had 5 and would like more please." },
-  { cat:"🧠 Life Decisions (Smart)",    parul:99, sakshi:12, commentary:"Parul once memorised an entire menu. Sakshi ordered wrong food 4 times." },
-  { cat:"😂 Funniest Incident Today",   parul:8,  sakshi:6,  commentary:"Close round! But Parul's reaction when Sakshi tried to steal cake was legendary." },
-  { cat:"👑 Times Called 'Queen'",      parul:47, sakshi:0,  commentary:"Self explanatory. Even Sakshi called Parul queen once, accidentally." },
-  { cat:"🎤 Loudest Birthday Scream",   parul:10, sakshi:9,  commentary:"Ultra close! Sakshi screamed when she saw the cake was already half eaten." },
-  { cat:"📸 Best Photo Taken Today",    parul:10, sakshi:2,  commentary:"Parul is photogenic at all angles including surprise angles. Sakshi was blinking." },
-  { cat:"💨 Cake Theft Attempts",       parul:0,  sakshi:11, commentary:"Parul ZERO attempts — she doesn't need to steal. It's already hers. Sakshi: 11 failed attempts." },
-  { cat:"🎁 Gifts Received",           parul:10, sakshi:0,  commentary:"It is Parul's birthday. Did you forget, Sakshi?" },
-  { cat:"⚡ Overall Birthday Energy",   parul:100,sakshi:4,  commentary:"Final score. As expected. Parul wins, Sakshi loses, cake is gone. Court adjourned." },
-];
-var sbIdx = 0;
-var sbParulTotal = 0;
-var sbSakshiTotal = 0;
-
-function initScoreboard(){
-  sbIdx = 0; sbParulTotal = 0; sbSakshiTotal = 0;
-  document.getElementById('sb-parul-score').textContent = '0';
-  document.getElementById('sb-sakshi-score').textContent = '0';
-  document.getElementById('sb-verdict').textContent = '';
-  renderScoreCategory();
-}
-function renderScoreCategory(){
-  var c = document.getElementById('sb-categories');
-  if(!c) return;
-  var shown = sbCategories.slice(0, sbIdx+1);
-  c.innerHTML = shown.map(function(r, i){
-    var total = r.parul + r.sakshi;
-    var pPct  = Math.round((r.parul/Math.max(total,1))*100);
-    var sPct  = 100 - pPct;
-    var isLatest = i === shown.length - 1;
-    return '<div style="background:'+(isLatest?'#1a1a00':'#111')+';border:2px solid '+(isLatest?'var(--orange)':'#333')+';border-radius:4px;padding:6px;'+(isLatest?'animation:popIn .4s ease;':'')+'">'
-      +'<div style="font-size:.7rem;font-weight:700;color:#fff;margin-bottom:4px;">'+r.cat+'</div>'
-      +'<div style="display:flex;gap:3px;align-items:center;height:14px;">'
-      +'<div style="flex:'+pPct+';background:var(--orange);height:100%;border-radius:3px 0 0 3px;min-width:4px;transition:flex .5s;"></div>'
-      +'<div style="flex:'+sPct+';background:#555;height:100%;border-radius:0 3px 3px 0;min-width:4px;transition:flex .5s;"></div>'
-      +'</div>'
-      +'<div style="display:flex;justify-content:space-between;font-size:.6rem;color:#aaa;margin-top:2px;">'
-      +'<span style="color:var(--orange);font-weight:900;">'+r.parul+'pts</span>'
-      +'<span style="font-size:.55rem;font-style:italic;color:#888;text-align:center;flex:1;padding:0 4px;">'+r.commentary+'</span>'
-      +'<span style="color:#888;font-weight:900;">'+r.sakshi+'pts</span>'
-      +'</div>'
-      +'</div>';
-  }).join('');
-}
-function nextScoreCategory(){
-  if(sbIdx >= sbCategories.length - 1){
-    // show final verdict
-    var v = document.getElementById('sb-verdict');
-    if(v){ v.innerHTML='🏆 FINAL VERDICT: <span style="color:var(--orange)">PARUL WINS BY A LANDSLIDE!</span> Sakshi please go home.'; }
-    triggerConfetti();
-    return;
-  }
-  sbIdx++;
-  var r = sbCategories[sbIdx];
-  sbParulTotal += r.parul;
-  sbSakshiTotal += r.sakshi;
-  // animate score counters
-  animateCounter('sb-parul-score',  sbParulTotal);
-  animateCounter('sb-sakshi-score', sbSakshiTotal);
-  renderScoreCategory();
-  if(r.parul > r.sakshi) spawnFirework(window.innerWidth*0.3, window.innerHeight*0.4);
-}
-function animateCounter(id, target){
-  var el = document.getElementById(id);
+var secretIdx = 0;
+var decodeTimer = null;
+function decodeSecret(){
+  if(decodeTimer){ clearInterval(decodeTimer); decodeTimer=null; }
+  var msg = secretMessages[secretIdx % secretMessages.length];
+  secretIdx++;
+  var el = document.getElementById('secret-display');
   if(!el) return;
-  var start = parseInt(el.textContent)||0;
-  var diff  = target - start;
-  var steps = 20;
+  var scrambleChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*'.split('');
   var i = 0;
-  var t = setInterval(function(){
+  el.style.color = '#0f0';
+  decodeTimer = setInterval(function(){
+    var decoded  = msg.substring(0, i);
+    var scramble = msg.substring(i).replace(/[A-Z]/g, function(){ return scrambleChars[Math.floor(Math.random()*26)]; });
+    el.textContent = decoded + scramble;
     i++;
-    el.textContent = Math.round(start + (diff * i/steps));
-    if(i >= steps){ el.textContent = target; clearInterval(t); }
-  }, 30);
-}
-function resetScoreboard(){
-  initScoreboard();
+    if(i > msg.length){
+      el.textContent = msg;
+      clearInterval(decodeTimer);
+      decodeTimer = null;
+      triggerConfetti();
+      spawnFirework(window.innerWidth*0.5, window.innerHeight*0.4);
+    }
+  }, 35);
 }
 
-/* ─── INIT ALL FUN FEATURES ─── */
+/* ─── INIT FUN FEATURES ─── */
 function initAllFunFeatures(){
-  initFacts();
-  initJokes();
-  initNews();
-  initScoreboard();
+  // nothing else to init — secret decoder is ready on click
 }
+
 
 
 var FB_GALLERY_URL = "https://birthday-62252-default-rtdb.firebaseio.com/gallery";
