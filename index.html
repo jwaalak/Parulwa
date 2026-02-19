@@ -2529,15 +2529,33 @@ function loadGalleryFromFirebase(){
   fetch(FB_GALLERY_URL + '.json')
     .then(function(r){ return r.json(); })
     .then(function(data){
-      if(data && Array.isArray(data) && data.length > 0){
-        photos = data;
+      if(data){
+        var loaded = null;
+        if(Array.isArray(data) && data.length > 0){
+          // Firebase returned a proper array
+          loaded = data.filter(function(item){ return item && item.src; });
+        } else if(typeof data === 'object'){
+          // Firebase returned an object with numeric/string keys — convert to array
+          var keys = Object.keys(data);
+          if(keys.length > 0){
+            loaded = keys.map(function(k){ return data[k]; }).filter(function(item){ return item && item.src; });
+          }
+        }
+        if(loaded && loaded.length > 0){
+          photos = loaded;
+        }
       }
-      // Always keep the hardcoded photos as a fallback seed if firebase is empty
       filteredPhotos = photos.slice();
+      curPhoto = 0;
       document.getElementById('photo-t').textContent = photos.length;
       updateGalleryImg();
     })
-    .catch(function(){ /* keep default photos */ });
+    .catch(function(err){
+      console.warn('Gallery load error:', err);
+      /* keep default hardcoded photos */
+      filteredPhotos = photos.slice();
+      document.getElementById('photo-t').textContent = photos.length;
+    });
 }
 
 /* ─── SAVE GALLERY TO FIREBASE ─── */
@@ -2545,10 +2563,14 @@ function saveGalleryToFirebase(callback){
   var statusEl = document.getElementById('admin-save-status');
   if(statusEl){ statusEl.style.display='block'; statusEl.style.color='#333'; statusEl.textContent='💾 Saving...'; }
 
+  // Always save as a clean array (filter out any null/undefined entries)
+  var cleanPhotos = photos.filter(function(p){ return p && p.src; });
+  photos = cleanPhotos;
+
   fetch('https://birthday-62252-default-rtdb.firebaseio.com/gallery.json', {
     method: 'PUT',
     headers: {'Content-Type':'application/json'},
-    body: JSON.stringify(photos)
+    body: JSON.stringify(cleanPhotos)
   })
   .then(function(r){
     if(!r.ok) throw new Error('HTTP '+r.status);
