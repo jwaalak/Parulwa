@@ -128,13 +128,6 @@ body{
 }
 .btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #000;}
 .btn:hover{background:linear-gradient(180deg,#fffbe0,#ffe066);}
-/* ORANGE SPLAT */
-.splat{
-  background:var(--orange);
-  clip-path:polygon(20% 0%,80% 0%,100% 20%,100% 80%,80% 100%,20% 100%,0% 80%,0% 20%);
-  animation:pulse-splat 2s infinite;
-}
-@keyframes pulse-splat{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
 @keyframes blink{50%{opacity:0}}
 .blink{animation:blink 1s step-start infinite;}
 /* RAINBOW */
@@ -325,16 +318,12 @@ body{
 <!-- ═══ START OVERLAY ═══ -->
 <style>
 @keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-@keyframes glowPulse{0%,100%{text-shadow:0 0 10px var(--green),0 0 30px var(--green)}50%{text-shadow:0 0 20px #fff,0 0 60px var(--green),0 0 80px var(--orange)}}
+
 </style>
-<div id="start-overlay" style="position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.97);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;user-select:none;overflow:hidden;">
-  <div style="text-align:center;animation:fadeInUp .8s ease both;">
-    <div class="splat" style="width:260px;height:260px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
-      <div style="text-align:center;">
-        <h1 class="fh" style="color:#fff;font-size:3rem;text-align:center;line-height:1.1;animation:glowPulse 2s infinite;">CLICK<br>TO<br>ENTER!</h1>
-      </div>
-    </div>
-    <p class="fp blink" style="color:var(--green);font-size:1.8rem;animation:glowPulse 1.5s infinite;">▶▶ HAPPY BIRTHDAY PARULWA! ◀◀</p>
+<div id="start-overlay" style="position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.97);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;user-select:none;">
+  <div style="text-align:center;">
+    <h1 class="fh" style="color:#fff;font-size:3.5rem;line-height:1.1;">CLICK<br>TO<br>ENTER!</h1>
+    <p class="fp blink" style="color:var(--green);font-size:1.8rem;margin-top:16px;">▶▶ HAPPY BIRTHDAY PARULWA! ◀◀</p>
     <p style="color:#888;font-size:.75rem;margin-top:10px;font-family:'Comic Neue',sans-serif;">Tap anywhere to enter the party 🎉</p>
   </div>
 </div>
@@ -1300,6 +1289,12 @@ body{
       <div class="fh" style="font-size:.9rem;margin-bottom:4px;color:var(--purple);">📤 UPLOAD SONGS</div>
       <div id="upload-target-label" style="font-size:.65rem;color:#555;margin-bottom:7px;">Uploading to: <strong>Default Playlist</strong></div>
       <button onclick="uploadSongToCloudinary()" class="btn fh" style="width:100%;padding:9px;font-size:.9rem;background:var(--purple);color:#fff;margin-bottom:5px;">🎵 PICK AUDIO FILE</button>
+      <div style="margin-top:6px;border-top:1px solid #ddd;padding-top:8px;">
+        <div class="fh" style="font-size:.75rem;color:#888;margin-bottom:5px;">OR ADD BY URL</div>
+        <input id="admin-song-url"  type="text" placeholder="Audio URL (.mp3 / .ogg)" style="width:100%;padding:5px;border:2px solid #000;margin-bottom:4px;font-size:.72rem;">
+        <input id="admin-song-name" type="text" placeholder="Song name" style="width:100%;padding:5px;border:2px solid #000;margin-bottom:6px;font-size:.72rem;">
+        <button onclick="adminAddSong()" class="btn fh" style="width:100%;padding:6px;font-size:.78rem;background:var(--green);">+ ADD SONG</button>
+      </div>
       <div id="admin-song-status" style="display:none;font-size:.72rem;font-weight:700;padding:6px 10px;border:2px solid #000;border-radius:3px;background:#fff;text-align:center;margin-top:5px;"></div>
     </div>
 
@@ -1380,9 +1375,8 @@ var songs=[
   {name:"Are Are Are",          url:"https://res.cloudinary.com/dmed4bf8g/video/upload/v1771341624/Are_Are_Are_Xry7b2yX2kM_hucocj.ogg"},
 ];
 /* ─── PLAYLIST STATE ─── */
-var defaultSongs = songs.slice();  // hardcoded songs saved for "Default" playlist
-var playlists    = [];             // custom playlists [{id,name,tag}] from Firebase
-var activePLId   = 'default';     // currently active playlist id
+var playlists  = [];          // [{id, name, songs:[{name,url}]}]
+var activePLId = 'default';  // currently active playlist id
 
 /* ─── GALLERY PHOTOS + VIDEOS (Line 1026) ────────────────
    HOW TO ADD PHOTOS:
@@ -2562,345 +2556,198 @@ function initAllFunFeatures(){
 var FB_GALLERY_URL   = "https://birthday-62252-default-rtdb.firebaseio.com/gallery";
 var FB_PLAYLISTS_URL = "https://birthday-62252-default-rtdb.firebaseio.com/playlists";
 
-/* ─── LOAD PLAYLISTS FROM FIREBASE ─── */
+/* ══════════════════════════════════════════════════════
+   PLAYLIST SYSTEM  — Firebase stores {id, name, songs:[{name,url}]}
+   Cloudinary stores the audio files.
+   original_filename from the widget IS the name shown in Cloudinary.
+══════════════════════════════════════════════════════ */
+
 function loadPlaylists(){
   fetch(FB_PLAYLISTS_URL + '.json')
     .then(function(r){ return r.json(); })
     .then(function(data){
-      if(data && Array.isArray(data) && data.length > 0){
-        playlists = data.filter(function(p){ return p && p.id; });
-      } else {
-        playlists = [];
-      }
+      if(data && Array.isArray(data)) playlists = data.filter(Boolean);
+      else playlists = [];
       renderPlaylistTabs();
       renderAdminPlaylistList();
     })
-    .catch(function(err){ console.warn('Playlists load error:', err); });
+    .catch(function(){ playlists = []; });
 }
 
-function savePlaylists(callback){
-  fetch(FB_PLAYLISTS_URL + '.json' + (adminIdToken ? '?auth=' + adminIdToken : ''), {
-    method: 'PUT',
-    headers: {'Content-Type':'application/json'},
+function savePlaylists(cb){
+  fetch(FB_PLAYLISTS_URL + '.json' + (adminIdToken ? '?auth='+adminIdToken : ''), {
+    method:'PUT', headers:{'Content-Type':'application/json'},
     body: JSON.stringify(playlists)
-  })
-  .then(function(r){ if(!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-  .then(function(){ if(callback) callback(); })
-  .catch(function(err){ console.error('Save playlists error:', err); if(callback) callback(); });
+  }).then(function(){ if(cb) cb(); }).catch(function(e){ console.error(e); if(cb) cb(); });
 }
 
-/* ─── SWITCH ACTIVE PLAYLIST ─── */
 function switchPlaylist(id){
   activePLId = id;
   renderPlaylistTabs();
   renderAdminPlaylistList();
-  // Update default playlist button highlight
+  // Update default button state
   var defBtn = document.getElementById('default-pl-btn');
   if(defBtn){
-    defBtn.style.background = (id === 'default') ? 'var(--purple)' : 'var(--green)';
-    defBtn.style.color       = (id === 'default') ? '#fff' : '#000';
-    defBtn.textContent        = (id === 'default') ? '✓ ACTIVE' : 'SELECT';
+    defBtn.style.background = (id==='default') ? 'var(--purple)' : 'var(--green)';
+    defBtn.style.color       = (id==='default') ? '#fff' : '#000';
+    defBtn.textContent        = (id==='default') ? '✓ ACTIVE' : 'SELECT';
   }
-  // Update upload label
+  // Update upload target label
   var lbl = document.getElementById('upload-target-label');
   if(lbl){
-    if(id === 'default'){
-      lbl.innerHTML = 'Uploading to: <strong>Default Playlist</strong>';
-    } else {
-      var pl = playlists.find(function(p){ return p.id === id; });
-      lbl.innerHTML = 'Uploading to: <strong>' + (pl ? escHtml(pl.name) : id) + '</strong>';
-    }
+    if(id==='default'){ lbl.innerHTML = 'Uploading to: <strong>Default</strong>'; }
+    else { var p=playlists.find(function(p){return p.id===id;}); lbl.innerHTML='Uploading to: <strong>'+(p?escHtml(p.name):id)+'</strong>'; }
   }
-  if(id === 'default'){
-    songs = defaultSongs.slice();
+  // Load songs for this playlist
+  if(id==='default'){
+    songs = window._defaultSongs ? window._defaultSongs.slice() : songs.slice();
     renderAdminSongList();
   } else {
-    var pl2 = playlists.find(function(p){ return p.id === id; });
-    if(pl2) loadSongsForPlaylist(pl2.tag);
+    var pl = playlists.find(function(p){ return p.id===id; });
+    songs = (pl && pl.songs) ? pl.songs.slice() : [];
+    renderAdminSongList();
   }
 }
 
-/* ─── FETCH SONGS FOR A GIVEN CLOUDINARY TAG ─── */
-function loadSongsForPlaylist(tag){
-  var CLOUD = 'dmed4bf8g';
-  fetch('https://res.cloudinary.com/' + CLOUD + '/video/list/' + tag + '.json')
-    .then(function(r){ if(!r.ok) throw new Error('Status ' + r.status); return r.json(); })
-    .then(function(data){
-      if(data && data.resources && data.resources.length > 0){
-        songs = data.resources.map(function(r){
-          return { name: parseCloudinaryName(r.public_id), url: buildCloudinaryUrl(CLOUD, r) };
-        }).reverse();
-      } else {
-        songs = [];
-      }
-      renderAdminSongList();
-    })
-    .catch(function(err){ console.warn('Playlist songs load error:', err); songs = []; renderAdminSongList(); });
-}
-
-/* ─── RENDER PLAYLIST TABS IN MUSIC PLAYER ─── */
-function renderPlaylistTabs(){
-  var container = document.getElementById('playlist-tabs');
-  if(!container) return;
-  var all = [{id:'default', name:'🎵 Default'}].concat(playlists.map(function(p){ return {id:p.id, name:'🎶 '+p.name}; }));
-  container.innerHTML = all.map(function(p){
-    var active = p.id === activePLId;
-    return '<button onclick="switchPlaylist(\''+p.id+'\')" style="padding:3px 10px;font-size:.62rem;font-family:\'Changa One\',sans-serif;border:2px solid #000;border-radius:20px;cursor:pointer;white-space:nowrap;background:'+(active?'var(--purple)':'#fff')+';color:'+(active?'#fff':'#000')+';box-shadow:2px 2px 0 #000;transition:all .1s;">'+p.name+'</button>';
-  }).join('');
-}
-
-/* ─── CREATE A NEW PLAYLIST ─── */
 function adminCreatePlaylist(){
   if(!isAdmin) return;
   var nameEl = document.getElementById('new-playlist-name');
-  var name = (nameEl ? nameEl.value.trim() : '');
+  var name   = nameEl ? nameEl.value.trim() : '';
   if(!name){ alert('Enter a playlist name!'); return; }
-  var id  = 'pl_' + Date.now();
-  var tag = 'pl_' + Date.now().toString(36);
-  playlists.push({id:id, name:name, tag:tag});
+  var id = 'pl_' + Date.now();
+  playlists.push({id:id, name:name, songs:[]});
   savePlaylists(function(){
     renderAdminPlaylistList();
     renderPlaylistTabs();
     if(nameEl) nameEl.value = '';
-    var st = document.getElementById('admin-pl-status');
-    if(st){ st.style.display='block'; st.style.color='green'; st.textContent='✅ Playlist "'+name+'" created! Select it below to upload songs to it.'; setTimeout(function(){ st.style.display='none'; }, 4000); }
+    var st=document.getElementById('admin-pl-status');
+    if(st){ st.style.display='block'; st.style.color='green'; st.textContent='✅ Playlist "'+name+'" created!'; setTimeout(function(){st.style.display='none';},3000); }
   });
 }
 
-/* ─── DELETE A PLAYLIST ─── */
 function adminDeletePlaylist(id){
   if(!isAdmin) return;
-  var pl = playlists.find(function(p){ return p.id === id; });
-  if(!pl) return;
-  if(!confirm('Delete playlist "'+pl.name+'"?\n\nThe songs in Cloudinary will NOT be deleted — only the playlist record.')) return;
-  playlists = playlists.filter(function(p){ return p.id !== id; });
+  var pl = playlists.find(function(p){ return p.id===id; });
+  if(!confirm('Delete playlist "'+pl.name+'"?')) return;
+  playlists = playlists.filter(function(p){ return p.id!==id; });
   savePlaylists(function(){
     renderAdminPlaylistList();
     renderPlaylistTabs();
-    if(activePLId === id) switchPlaylist('default');
+    if(activePLId===id) switchPlaylist('default');
   });
 }
 
-/* ─── RENDER ADMIN PLAYLIST LIST ─── */
+function renderPlaylistTabs(){
+  var c = document.getElementById('playlist-tabs');
+  if(!c) return;
+  var all = [{id:'default',name:'Default'}].concat(playlists.map(function(p){return {id:p.id,name:p.name};}));
+  var html = '';
+  for(var i=0;i<all.length;i++){
+    var p = all[i];
+    var a = (p.id === activePLId);
+    var icon = (i===0) ? '\u{1F3B5}' : '\u{1F3B6}';
+    var bg  = a ? 'var(--purple)' : '#fff';
+    var col = a ? '#fff' : '#000';
+    html += "<button onclick=\"switchPlaylist('" + p.id + "')\""
+          + " style=\"padding:3px 10px;font-size:.62rem;font-weight:900;border:2px solid #000;"
+          + "border-radius:20px;cursor:pointer;white-space:nowrap;"
+          + "background:" + bg + ";color:" + col + ";box-shadow:2px 2px 0 #000;\">"
+          + icon + ' ' + escHtml(p.name) + "</button>";
+  }
+  c.innerHTML = html;
+}
 function renderAdminPlaylistList(){
   var list = document.getElementById('admin-pl-list');
   if(!list) return;
-  if(playlists.length === 0){
-    list.innerHTML = '<div style="font-size:.7rem;color:#999;text-align:center;padding:8px;">No custom playlists yet. Create one above!</div>';
+  if(!playlists.length){
+    list.innerHTML = '<div style="font-size:.7rem;color:#999;text-align:center;padding:8px;">No custom playlists yet.</div>';
     return;
   }
-  list.innerHTML = playlists.map(function(p){
-    var active = p.id === activePLId;
-    return '<div style="background:'+(active?'#f0e8ff':'#f0f0f0')+';border:2px solid '+(active?'var(--purple)':'#000')+';padding:7px 10px;display:flex;gap:8px;align-items:center;border-radius:4px;">'
-      +'<span style="font-size:1rem;flex-shrink:0;">🎶</span>'
-      +'<div style="flex:1;font-size:.75rem;font-weight:700;">'+escHtml(p.name)+'</div>'
-      +'<button onclick="switchPlaylist(\''+p.id+'\')" style="background:'+(active?'var(--purple)':'var(--green)')+';color:'+(active?'#fff':'#000')+';border:2px solid #000;padding:3px 8px;font-size:.62rem;font-weight:900;cursor:pointer;border-radius:3px;font-family:\'Changa One\',sans-serif;">'+(active?'✓ ACTIVE':'SELECT')+'</button>'
-      +'<button onclick="adminDeletePlaylist(\''+p.id+'\')" style="background:red;color:#fff;border:2px solid #000;padding:3px 8px;font-size:.62rem;font-weight:900;cursor:pointer;border-radius:3px;">DEL</button>'
-      +'</div>';
-  }).join('');
+  var html = '';
+  for(var i=0;i<playlists.length;i++){
+    var p = playlists[i];
+    var a = (p.id === activePLId);
+    var n = (p.songs||[]).length;
+    var bg  = a ? '#f0e8ff' : '#f0f0f0';
+    var bdr = a ? 'var(--purple)' : '#000';
+    var btnBg = a ? 'var(--purple)' : 'var(--green)';
+    var btnCol = a ? '#fff' : '#000';
+    var btnTxt = a ? '\u2713 ACTIVE' : 'SELECT';
+    html += "<div style=\"background:" + bg + ";border:2px solid " + bdr + ";padding:7px 10px;display:flex;gap:8px;align-items:center;border-radius:4px;margin-bottom:4px;\">";
+    html += "<span>\u{1F3B6}</span>";
+    html += "<div style=\"flex:1;font-size:.75rem;font-weight:700;\">" + escHtml(p.name) + "<span style=\"font-size:.6rem;color:#888;margin-left:5px;\">" + n + " songs</span></div>";
+    html += "<button onclick=\"switchPlaylist('" + p.id + "')\""
+          + " style=\"background:" + btnBg + ";color:" + btnCol + ";border:2px solid #000;padding:3px 8px;font-size:.62rem;font-weight:900;cursor:pointer;border-radius:3px;\">"
+          + btnTxt + "</button>";
+    html += "<button onclick=\"adminDeletePlaylist('" + p.id + "')\""
+          + " style=\"background:red;color:#fff;border:2px solid #000;padding:3px 8px;font-size:.62rem;font-weight:900;cursor:pointer;border-radius:3px;\">DEL</button>";
+    html += "</div>";
+  }
+  list.innerHTML = html;
 }
-
-/* ─── NAME HELPER: strip Cloudinary/YouTube suffixes from public_id ─── */
-function parseCloudinaryName(publicId){
-  var raw = publicId.split('/').pop() || publicId;
-  // Strip 6-char Cloudinary upload hash at end (e.g. _ub4dpv)
-  raw = raw.replace(/_[a-z0-9]{6}$/, '');
-  // Strip 11-char YouTube video ID (alphanumeric+dash+underscore)
-  raw = raw.replace(/_[A-Za-z0-9_-]{10,12}$/, '');
-  // Replace underscores/hyphens with spaces, title-case
-  return raw.replace(/[_-]/g, ' ')
-            .replace(/\b\w/g, function(c){ return c.toUpperCase(); })
-            .trim();
-}
-
-/* ─── URL HELPER: build Cloudinary playable URL ─── */
-function buildCloudinaryUrl(cloud, res){
-  return 'https://res.cloudinary.com/' + cloud + '/video/upload/' + res.public_id + '.' + res.format;
-}
-
-/* ─── LOAD GALLERY FROM FIREBASE ON PAGE LOAD ─── */
-function loadGalleryFromFirebase(){
-  fetch(FB_GALLERY_URL + '.json')
+/* ─── LOAD SONGS FROM FIREBASE (default playlist) ─── */
+function loadSongsFromFirebase(){
+  loadPlaylists();  // always reload playlists too
+  fetch("https://birthday-62252-default-rtdb.firebaseio.com/songs.json")
     .then(function(r){ return r.json(); })
     .then(function(data){
-      if(data){
-        var loaded = null;
-        if(Array.isArray(data) && data.length > 0){
-          // Firebase returned a proper array
-          loaded = data.filter(function(item){ return item && item.src; });
-        } else if(typeof data === 'object'){
-          // Firebase returned an object with numeric/string keys — convert to array
-          var keys = Object.keys(data);
-          if(keys.length > 0){
-            loaded = keys.map(function(k){ return data[k]; }).filter(function(item){ return item && item.src; });
-          }
-        }
-        if(loaded && loaded.length > 0){
-          photos = loaded;
-        }
+      if(data && Array.isArray(data) && data.length){
+        var loaded = data.filter(function(s){ return s && s.url; });
+        window._defaultSongs = loaded;  // cache
+        if(activePLId==='default'){ songs = loaded.slice(); }
       }
-      filteredPhotos = photos.slice();
-      curPhoto = 0;
-      document.getElementById('photo-t').textContent = photos.length;
-      updateGalleryImg();
+      // else keep hardcoded songs array
     })
-    .catch(function(err){
-      console.warn('Gallery load error:', err);
-      /* keep default hardcoded photos */
-      filteredPhotos = photos.slice();
-      document.getElementById('photo-t').textContent = photos.length;
+    .catch(function(err){ console.warn('Songs load error:', err); });
+}
+
+/* ─── SAVE DEFAULT SONGS TO FIREBASE ─── */
+function saveSongsToFirebase(cb){
+  fetch("https://birthday-62252-default-rtdb.firebaseio.com/songs.json" + (adminIdToken ? '?auth='+adminIdToken : ''), {
+    method:'PUT', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(songs.filter(function(s){return s&&s.url;}))
+  }).then(function(){ if(cb) cb(); }).catch(function(e){ console.error(e); if(cb) cb(); });
+}
+
+/* ─── SAVE SONG TO ACTIVE PLAYLIST THEN REFRESH ─── */
+function saveNewSong(name, url){
+  var cleanName = (name||'').trim() || url.split('/').pop().replace(/\.[^.]+$/,'').replace(/[_-]/g,' ');
+  var entry = {name: cleanName, url: url};
+  var st = document.getElementById('admin-song-status');
+  if(activePLId==='default'){
+    songs.unshift(entry);
+    saveSongsToFirebase(function(){
+      renderAdminSongList();
+      if(st){ st.style.display='block'; st.style.color='green'; st.textContent='✅ "'+cleanName+'" saved!'; setTimeout(function(){st.style.display='none';},3000); }
     });
-}
-
-/* ─── SAVE GALLERY TO FIREBASE ─── */
-function saveGalleryToFirebase(callback){
-  var statusEl = document.getElementById('admin-save-status');
-  if(statusEl){ statusEl.style.display='block'; statusEl.style.color='#333'; statusEl.textContent='💾 Saving...'; }
-
-  // Always save as a clean array (filter out any null/undefined entries)
-  var cleanPhotos = photos.filter(function(p){ return p && p.src; });
-  photos = cleanPhotos;
-
-  fetch('https://birthday-62252-default-rtdb.firebaseio.com/gallery.json' + (adminIdToken ? '?auth=' + adminIdToken : ''), {
-    method: 'PUT',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify(cleanPhotos)
-  })
-  .then(function(r){
-    if(!r.ok) throw new Error('HTTP '+r.status);
-    return r.json();
-  })
-  .then(function(){
-    if(statusEl){ statusEl.style.color='green'; statusEl.textContent='✅ Saved! Gallery updated live.'; setTimeout(function(){ statusEl.style.display='none'; }, 3000); }
-    filteredPhotos = photos.slice();
-    document.getElementById('photo-t').textContent = photos.length;
-    if(callback) callback();
-  })
-  .catch(function(err){
-    // Save failed but still update local view
-    if(statusEl){ statusEl.style.color='red'; statusEl.textContent='❌ Save failed: '+err.message+' | Go to Firebase Console → Realtime DB → Rules → set .write:true → Publish'; }
-    filteredPhotos = photos.slice();
-    document.getElementById('photo-t').textContent = photos.length;
-    if(callback) callback();
-  });
-}
-
-/* ─── FIREBASE TEST ─── */
-function testFirebaseWrite(){
-  var statusEl = document.getElementById('admin-save-status');
-  if(statusEl){ statusEl.style.display='block'; statusEl.style.color='#333'; statusEl.textContent='🔧 Testing Firebase...'; }
-  
-  // Test 1: read
-  fetch('https://birthday-62252-default-rtdb.firebaseio.com/.json')
-  .then(function(r){ 
-    statusEl.textContent = 'READ: '+r.status+' | ';
-    // Test 2: write to gallery
-    return fetch('https://birthday-62252-default-rtdb.firebaseio.com/gallery.json' + (adminIdToken ? '?auth=' + adminIdToken : ''), {
-      method: 'PUT',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify([{test:true}])
+  } else {
+    var pl = playlists.find(function(p){ return p.id===activePLId; });
+    if(!pl) return;
+    if(!pl.songs) pl.songs=[];
+    pl.songs.unshift(entry);
+    songs = pl.songs.slice();
+    savePlaylists(function(){
+      renderAdminSongList();
+      if(st){ st.style.display='block'; st.style.color='green'; st.textContent='✅ "'+cleanName+'" saved to "'+pl.name+'"!'; setTimeout(function(){st.style.display='none';},3000); }
     });
-  })
-  .then(function(r){
-    statusEl.textContent += 'WRITE: '+r.status;
-    if(r.status === 200){ statusEl.style.color='green'; statusEl.textContent += ' ✅ Firebase works!'; }
-    else if(r.status === 401){ statusEl.style.color='red'; statusEl.textContent += ' ❌ 401 = Rules not saved. Go to Firebase → Database → Rules → Publish again'; }
-    else if(r.status === 403){ statusEl.style.color='red'; statusEl.textContent += ' ❌ 403 = Permission denied. Check rules.'; }
-    else { statusEl.style.color='orange'; statusEl.textContent += ' ⚠️ Unexpected status'; }
-  })
-  .catch(function(e){ statusEl.style.color='red'; statusEl.textContent = 'Network error: '+e.message; });
+  }
 }
 
-/* ─── ADMIN SONG MANAGER ─── */
-function showAdminSongManager(){
-  if(!isAdmin){alert('Admin access required!');return;}
-  var modal=document.getElementById('admin-song-modal');
-  modal.style.display='flex';
-  modal.style.left='50%';modal.style.top='50%';
-  modal.style.transform='translate(-50%,-50%)';
-  renderAdminPlaylistList();
-  renderAdminSongList();
-  // Refresh upload label for current state
-  switchPlaylist(activePLId);
-}
-function closeAdminSongManager(){
-  document.getElementById('admin-song-modal').style.display='none';
-}
-function renderAdminSongList(){
-  var list=document.getElementById('admin-song-list');
-  document.getElementById('admin-song-count').textContent=songs.length;
-  list.innerHTML=songs.map(function(s,idx){
-    return '<div style="background:#f0f0f0;border:2px solid #000;padding:6px 8px;display:flex;gap:6px;align-items:center;border-radius:3px;">'
-      +'<span style="font-size:1rem;flex-shrink:0;">🎵</span>'
-      +'<div style="flex:1;font-size:.68rem;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;"><strong>'+escHtml(s.name)+'</strong></div>'
-      +'<button onclick="adminPlaySongPreview('+idx+')" style="background:var(--green);color:#000;border:2px solid #000;padding:2px 7px;font-size:.62rem;font-weight:900;cursor:pointer;border-radius:3px;flex-shrink:0;font-family:\'Changa One\',sans-serif;">▶</button>'
-      +'<button onclick="adminDeleteSong('+idx+')" style="background:red;color:#fff;border:2px solid #000;padding:2px 7px;font-size:.62rem;font-weight:900;cursor:pointer;border-radius:3px;flex-shrink:0;">DEL</button>'
-      +'</div>';
-  }).join('');
-}
-function adminPlaySongPreview(idx){
-  var s=songs[idx];
-  player.src=s.url;player.volume=.5;player.load();
-  player.play().catch(function(){});
-  document.getElementById('track-name').textContent=s.name;
-  var rb=document.getElementById('radio-song-name');if(rb)rb.textContent=s.name;
-  document.getElementById('song-bubble').style.display='block';
-  document.getElementById('vinyl-record').classList.add('vinyl-spinning');
-  document.getElementById('vinyl-tonearm').classList.remove('paused');
-  document.getElementById('vinyl-tonearm').classList.add('playing');
-  document.getElementById('play-hint').style.opacity='0';
-  var rpb=document.getElementById('radio-play-btn');if(rpb)rpb.innerHTML='&#9646;&#9646;';
-  isPlaying=true;
-}
-function adminAddSong(){
-  if(!isAdmin)return;
-  var url=document.getElementById('admin-song-url').value.trim();
-  var name=document.getElementById('admin-song-name').value.trim();
-  if(!url){alert('Please enter a URL!');return;}
-  if(!name)name=url.split('/').pop().replace(/\.[^.]+$/,'').replace(/_/g,' ');
-  songs.unshift({name:name,url:url});
-  document.getElementById('admin-song-url').value='';
-  document.getElementById('admin-song-name').value='';
-  renderAdminSongList();
-  var st=document.getElementById('admin-song-status');
-  st.style.display='block';st.style.color='green';
-  st.textContent='✅ Song added to playlist! (Tip: upload via button above to store it in Cloudinary permanently)';
-  setTimeout(function(){st.style.display='none';},5000);
-}
-function adminDeleteSong(idx){
-  if(!isAdmin)return;
-  if(!confirm('Remove "'+songs[idx].name+'" from playlist?\n\n(The file stays in Cloudinary — to permanently delete it, go to your Cloudinary Media Library)'))return;
-  songs.splice(idx,1);
-  renderAdminSongList();
-  var st=document.getElementById('admin-song-status');
-  st.style.display='block';st.style.color='orange';
-  st.textContent='⚠️ Removed from playlist this session. To permanently remove, delete it in Cloudinary with the tag "parulwa_music".';
-  setTimeout(function(){st.style.display='none';},6000);
-}
+
+/* ─── UPLOAD SONG TO CLOUDINARY → name + url → Firebase ─── */
 function uploadSongToCloudinary(){
   if(!isAdmin){alert('Admin access required!');return;}
-  var st=document.getElementById('admin-song-status');
+  var st = document.getElementById('admin-song-status');
 
-  // Determine tag + folder for the active playlist
-  var tag    = 'parulwa_music';
   var folder = 'Parulwa_Music';
-  var plName = 'Default';
   if(activePLId !== 'default'){
-    var activePL = playlists.find(function(p){ return p.id === activePLId; });
-    if(activePL){
-      tag    = activePL.tag;
-      folder = 'Parulwa_Music/' + activePL.name.replace(/[^a-zA-Z0-9]/g,'_');
-      plName = activePL.name;
-    }
+    var activePL = playlists.find(function(p){ return p.id===activePLId; });
+    if(activePL) folder = 'Parulwa_Music/' + activePL.name.replace(/[^a-zA-Z0-9]/g,'_');
   }
 
-  var widget=cloudinary.createUploadWidget({
-    cloudName:'dmed4bf8g',
-    uploadPreset:'Parulwa',
-    folder: folder,
-    tags:[tag, 'parulwa_music'],
-    multiple:true,
-    resourceType:'auto',
+  var widget = cloudinary.createUploadWidget({
+    cloudName:'dmed4bf8g', uploadPreset:'Parulwa',
+    folder: folder, multiple:true, resourceType:'auto',
     sources:['local','url'],
     clientAllowedFormats:['mp3','ogg','aac','wav','flac','m4a'],
     styles:{
@@ -2910,61 +2757,80 @@ function uploadSongToCloudinary(){
         error:'#ff3355',inProgress:'var(--green)',complete:'#28c840',sourceBg:'#1a1a1a'},
       fonts:{default:null,"'Changa One', Impact":{url:'https://fonts.googleapis.com/css2?family=Changa+One',active:true}}
     }
-  },function(error,result){
-    if(!error&&result&&result.event==='success'){
-      var info=result.info;
-      var songName=parseCloudinaryName(info.public_id);
-      if(st){st.style.display='block';st.style.color='green';st.textContent='✅ "'+songName+'" uploaded to "'+plName+'"! Refreshing...';}
-      setTimeout(function(){
-        if(activePLId === 'default'){
-          loadSongsFromFirebase();
-        } else {
-          loadSongsForPlaylist(tag);
-        }
-        setTimeout(function(){ renderAdminSongList(); }, 1500);
-        if(st){ st.textContent='✅ "'+songName+'" is now live in "'+plName+'"!'; setTimeout(function(){st.style.display='none';},4000); }
-      }, 2000);
+  }, function(error, result){
+    if(!error && result && result.event==='success'){
+      var info = result.info;
+      // original_filename is the exact name shown in Cloudinary Media Library
+      var name = (info.original_filename||'').replace(/[_-]/g,' ').trim();
+      saveNewSong(name, info.secure_url);
     }
-    if(error){
-      if(st){st.style.display='block';st.style.color='red';st.textContent='❌ Upload error: '+JSON.stringify(error);}
+    if(error && st){
+      st.style.display='block'; st.style.color='red';
+      st.textContent='❌ Upload error: ' + (error.message||JSON.stringify(error));
     }
   });
   widget.open();
 }
 
-/* ─── LOAD SONGS DIRECTLY FROM CLOUDINARY (by tag: parulwa_music) ─── */
-/* Requires: Cloudinary → Settings → Security → uncheck "Resource list" */
-function loadSongsFromFirebase(){
-  // Load playlists first, then load songs for whichever playlist is active
-  loadPlaylists();
-  // Also load default (parulwa_music tag) to show immediately
-  var CLOUD = 'dmed4bf8g';
-  var TAG   = 'parulwa_music';
-  fetch('https://res.cloudinary.com/' + CLOUD + '/video/list/' + TAG + '.json')
-    .then(function(r){
-      if(!r.ok) throw new Error('Status ' + r.status);
-      return r.json();
-    })
-    .then(function(data){
-      if(data && data.resources && data.resources.length > 0){
-        var loaded = data.resources.map(function(r){
-          return { name: parseCloudinaryName(r.public_id), url: buildCloudinaryUrl(CLOUD, r) };
-        });
-        loaded.reverse();
-        defaultSongs = loaded;
-        if(activePLId === 'default') songs = defaultSongs.slice();
-        console.log('✅ Loaded ' + defaultSongs.length + ' songs from Cloudinary (parulwa_music)');
-      }
-    })
-    .catch(function(err){
-      console.warn('Cloudinary song list error (check Resource list is enabled in Cloudinary Security settings):', err);
-    });
+/* ─── SONG LIST RENDERING ─── */
+function renderAdminSongList(){
+  var list = document.getElementById('admin-song-list');
+  if(!list) return;
+  var countEl = document.getElementById('admin-song-count');
+  if(countEl) countEl.textContent = songs.length;
+  if(!songs.length){
+    list.innerHTML = '<div style="font-size:.7rem;color:#999;text-align:center;padding:8px;">No songs yet. Upload some!</div>';
+    return;
+  }
+  var html = '';
+  for(var i=0;i<songs.length;i++){
+    var s = songs[i];
+    html += '<div style="background:#f0f0f0;border:2px solid #000;padding:6px 8px;display:flex;gap:6px;align-items:center;border-radius:3px;margin-bottom:3px;">';
+    html += '<span>\u{1F3B5}</span>';
+    html += '<div style="flex:1;font-size:.75rem;font-weight:700;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">' + escHtml(s.name) + '</div>';
+    html += '<button onclick="adminPlaySongPreview(' + i + ')" style="background:var(--green);color:#000;border:2px solid #000;padding:2px 7px;font-size:.62rem;font-weight:900;cursor:pointer;border-radius:3px;">\u25BA</button>';
+    html += '<button onclick="adminDeleteSong(' + i + ')" style="background:red;color:#fff;border:2px solid #000;padding:2px 7px;font-size:.62rem;font-weight:900;cursor:pointer;border-radius:3px;">DEL</button>';
+    html += '</div>';
+  }
+  list.innerHTML = html;
+}
+function adminPlaySongPreview(idx){
+  var s = songs[idx];
+  player.src=''; player.load(); player.src=s.url; player.volume=.5; player.load();
+  player.addEventListener('canplay',function onC(){ player.removeEventListener('canplay',onC); player.play().catch(function(){}); },{once:true});
+  document.getElementById('track-name').textContent = s.name;
+  var rb=document.getElementById('radio-song-name'); if(rb) rb.textContent=s.name;
+  document.getElementById('song-bubble').style.display='block';
+  document.getElementById('vinyl-record').classList.add('vinyl-spinning');
+  document.getElementById('vinyl-tonearm').classList.remove('paused');
+  document.getElementById('vinyl-tonearm').classList.add('playing');
+  var rpb=document.getElementById('radio-play-btn'); if(rpb) rpb.innerHTML='&#9646;&#9646;';
+  isPlaying=true;
 }
 
-/* ─── NO-OP: songs are managed directly in Cloudinary, no Firebase save needed ─── */
-function saveSongsToFirebase(callback){
-  if(callback) callback();
+function adminDeleteSong(idx){
+  if(!isAdmin) return;
+  if(!confirm('Delete "'+songs[idx].name+'" from this playlist?')) return;
+  songs.splice(idx,1);
+  if(activePLId==='default'){
+    saveSongsToFirebase(function(){ renderAdminSongList(); });
+  } else {
+    var pl = playlists.find(function(p){ return p.id===activePLId; });
+    if(pl){ pl.songs = songs.slice(); savePlaylists(function(){ renderAdminSongList(); }); }
+  }
 }
+
+function adminAddSong(){
+  if(!isAdmin) return;
+  var url  = document.getElementById('admin-song-url').value.trim();
+  var name = document.getElementById('admin-song-name').value.trim();
+  if(!url){ alert('Please enter a URL!'); return; }
+  document.getElementById('admin-song-url').value='';
+  document.getElementById('admin-song-name').value='';
+  saveNewSong(name || url.split('/').pop().replace(/\.[^.]+$/,'').replace(/[_-]/g,' '), url);
+}
+
+
 
 function uploadToCloudinary(){
   if(!isAdmin){ alert('Admin access required!'); return; }
@@ -2997,6 +2863,22 @@ function uploadToCloudinary(){
     }
   });
   myWidget.open();
+}
+
+/* ─── ADMIN SONG MANAGER ─── */
+function showAdminSongManager(){
+  if(!isAdmin){ alert('Admin access required!'); return; }
+  var modal = document.getElementById('admin-song-modal');
+  modal.style.display = 'flex';
+  modal.style.left = '50%'; modal.style.top = '50%';
+  modal.style.transform = 'translate(-50%,-50%)';
+  renderAdminPlaylistList();
+  renderAdminSongList();
+  switchPlaylist(activePLId);
+}
+
+function closeAdminSongManager(){
+  document.getElementById('admin-song-modal').style.display = 'none';
 }
 
 /* ─── ADMIN PHOTO MANAGER ─── */
