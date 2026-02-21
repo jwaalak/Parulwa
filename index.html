@@ -95,6 +95,8 @@
   var fbAuth = firebase.auth();
   // Admin email — this user gets admin panel
   var ADMIN_EMAIL = 'workwithjwaalak@gmail.com';
+  // Stores the Firebase ID token after admin login — used for secure DB writes
+  var adminIdToken = null;
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Changa+One&family=Comic+Neue:wght@400;700&family=Bangers&family=VT323&family=Poiret+One&family=Abril+Fatface&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
 
@@ -841,12 +843,6 @@ body{
               <div id="np-text" style="font-size:.6rem;color:#999;font-weight:700;"></div>
             </div>
           </div>
-          <!-- ── PLAYLIST TOGGLE ── -->
-          <div style="display:flex;flex-direction:column;gap:4px;">
-            <div class="fh" style="font-size:.65rem;color:var(--purple);letter-spacing:.05em;">🎼 PLAYLIST:</div>
-            <div id="playlist-toggle-bar" style="display:flex;gap:4px;flex-wrap:wrap;"></div>
-            <div id="active-playlist-label" style="font-size:.6rem;color:#888;font-weight:700;font-family:'VT323',monospace;"></div>
-          </div>
           <!-- Seekbar -->
           <div style="display:flex;align-items:center;gap:6px;">
             <style>
@@ -1261,52 +1257,35 @@ body{
 </div>
 
 <!-- ═══ ADMIN SONG MANAGER ═══ -->
-<div id="admin-song-modal" class="gm" style="width:460px;height:640px;display:none;">
+<div id="admin-song-modal" class="gm" style="width:440px;height:580px;display:none;">
   <div style="background:var(--purple);border-bottom:2px solid #000;padding:7px 10px;display:flex;align-items:center;gap:6px;">
     <div class="wb" style="background:#ff5f57;" onclick="closeAdminSongManager()"></div>
     <div class="wb" style="background:#febc2e;"></div>
     <div class="wb" style="background:#28c840;"></div>
-    <span style="margin-left:8px;font-size:.75rem;font-weight:700;color:#fff;">🎵 ADMIN: Playlists & Songs</span>
+    <span style="margin-left:8px;font-size:.75rem;font-weight:700;color:#fff;">🎵 ADMIN: Upload Songs to Cloudinary</span>
     <button onclick="closeAdminSongManager()" style="margin-left:auto;background:#ff5f57;border:2px solid #000;color:#fff;font-size:.7rem;font-weight:900;padding:2px 8px;cursor:pointer;font-family:'Changa One',sans-serif;border-radius:3px;">CLOSE X</button>
   </div>
   <div style="background:#f5f0ff;flex:1;display:flex;flex-direction:column;padding:10px;gap:8px;overflow-y:auto;">
-
-    <!-- ── PLAYLIST SELECTOR ── -->
+    <!-- Upload Section -->
     <div style="background:#fff;border:2px solid #000;padding:10px;box-shadow:3px 3px 0 #000;">
-      <div class="fh" style="font-size:.9rem;margin-bottom:6px;color:var(--purple);">🎼 ACTIVE PLAYLIST (songs go here)</div>
-      <div style="display:flex;gap:6px;align-items:center;">
-        <select id="admin-playlist-select" onchange="adminSwitchPlaylist(this.value)"
-          style="flex:1;padding:6px;border:2px solid #000;font-family:'Changa One',sans-serif;font-size:.8rem;background:#fff;">
-        </select>
-        <button onclick="adminNewPlaylist()" class="btn fh" style="padding:6px 10px;font-size:.75rem;background:var(--orange);color:#fff;white-space:nowrap;">+ NEW</button>
-        <button onclick="adminDeletePlaylist()" class="btn fh" style="padding:6px 10px;font-size:.75rem;background:red;color:#fff;white-space:nowrap;">DEL</button>
-      </div>
+      <div class="fh" style="font-size:.95rem;margin-bottom:6px;color:var(--purple);">📤 UPLOAD MP3 / OGG AUDIO</div>
+      <button onclick="uploadSongToCloudinary()" class="btn fh" style="width:100%;padding:9px;font-size:.9rem;background:var(--purple);color:#fff;margin-bottom:5px;">🎵 PICK AUDIO FILE</button>
+      <div style="font-size:.6rem;color:#777;text-align:center;line-height:1.5;">Uploads directly to Cloudinary<br>Song is added to playlist instantly — no page reload needed!</div>
     </div>
-
-    <!-- ── UPLOAD ── -->
-    <div style="background:#fff;border:2px solid #000;padding:10px;box-shadow:3px 3px 0 #000;">
-      <div class="fh" style="font-size:.9rem;margin-bottom:6px;color:var(--purple);">📤 UPLOAD TO ACTIVE PLAYLIST</div>
-      <button onclick="uploadSongToCloudinary()" class="btn fh" style="width:100%;padding:9px;font-size:.9rem;background:var(--purple);color:#fff;margin-bottom:4px;">🎵 PICK AUDIO FILE</button>
-      <div style="font-size:.6rem;color:#777;text-align:center;line-height:1.5;">Uploads to Cloudinary & saves to selected playlist permanently</div>
-    </div>
-
-    <!-- ── STATUS ── -->
+    <!-- Status -->
     <div id="admin-song-status" style="display:none;font-size:.72rem;font-weight:700;padding:6px 10px;border:2px solid #000;border-radius:3px;background:#fff;text-align:center;"></div>
-
-    <!-- ── MANUAL URL ADD ── -->
+    <!-- Manual URL add -->
     <div style="background:#fff;border:2px solid #000;padding:10px;box-shadow:3px 3px 0 #000;">
-      <div class="fh" style="font-size:.9rem;margin-bottom:6px;color:var(--purple);">🔗 ADD BY URL TO ACTIVE PLAYLIST</div>
+      <div class="fh" style="font-size:.9rem;margin-bottom:6px;color:var(--purple);">🔗 ADD BY CLOUDINARY URL</div>
       <input id="admin-song-url"  type="text" placeholder="Cloudinary Audio URL (.mp3 or .ogg)" style="width:100%;padding:5px;border:2px solid #000;margin-bottom:5px;font-size:.72rem;">
       <input id="admin-song-name" type="text" placeholder="Song Name (e.g. Tum Jo Aaye)" style="width:100%;padding:5px;border:2px solid #000;margin-bottom:7px;font-size:.72rem;">
       <button onclick="adminAddSong()" class="btn fh" style="width:100%;padding:7px;font-size:.8rem;background:var(--green);">+ ADD SONG</button>
     </div>
-
-    <!-- ── SONG LIST ── -->
+    <!-- Current song list -->
     <div style="background:#fff;border:2px solid #000;padding:10px;box-shadow:3px 3px 0 #000;">
-      <div class="fh" style="font-size:.9rem;margin-bottom:6px;color:var(--purple);">SONGS IN THIS PLAYLIST (<span id="admin-song-count">0</span>)</div>
-      <div id="admin-song-list" style="max-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;"></div>
+      <div class="fh" style="font-size:.9rem;margin-bottom:6px;color:var(--purple);">PLAYLIST (<span id="admin-song-count">0</span> songs)</div>
+      <div id="admin-song-list" style="max-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;"></div>
     </div>
-
   </div>
 </div>
 
@@ -1393,13 +1372,7 @@ var songs=[
    The ID is the part after ?v= in the YouTube link.
    Example: youtube.com/watch?v=dQw4w9WgXcQ → ID is dQw4w9WgXcQ
 ──────────────────────────────────────────────────────── */
-/* ─── DEFAULT SEED PHOTOS (used ONLY if Firebase is empty) ───────
-   These are NEVER shown directly. On first load, if Firebase has
-   no gallery data, these get saved to Firebase automatically.
-   After that, Firebase is ALWAYS the source of truth — changing
-   this code will NOT affect what visitors see.
-──────────────────────────────────────────────────────────────── */
-var SEED_PHOTOS=[
+var photos=[
   {type:"video", src:"https://res.cloudinary.com/dmed4bf8g/video/upload/v1771337579/lv_0_20240217210316_efkuls.mp4",   caption:"🎉 Moment to remember!"},
   {type:"video", src:"https://res.cloudinary.com/dmed4bf8g/video/upload/v1771337410/VID-20250217-WA0017_xaenv4.mp4",   caption:"😂 Can't stop watching this"},
   {type:"video", src:"https://res.cloudinary.com/dmed4bf8g/video/upload/v1771337724/lv_0_20250218001835_ymwmh6.mp4",   caption:"✨ Pure vibes"},
@@ -1425,11 +1398,8 @@ var SEED_PHOTOS=[
   {src:"https://res.cloudinary.com/dmed4bf8g/image/upload/v1771337695/IMG-20250725-WA0008_eessgw.jpg",                  caption:"🌊 Good times"},
   {src:"https://res.cloudinary.com/dmed4bf8g/image/upload/v1771337695/IMG-20250217-WA0003_yc16tm.jpg",                  caption:"💃 Born to shine"},
 ];
-
-/* ─── photos is now ALWAYS loaded from Firebase ─── */
-var photos = [];
-var filteredPhotos = [];
-document.getElementById('photo-t').textContent = '...';
+var filteredPhotos=photos.slice();
+document.getElementById('photo-t').textContent=photos.length;
 
 /* ─── LIVE WISHES CONFIG - GITHUB GIST 🔥 ─────────────────────
    Using GitHub Gist for FREE live wishes storage!
@@ -1507,7 +1477,6 @@ document.getElementById('start-overlay').addEventListener('click',function(){
   loadWishes();
   startWishesAutoRefresh();
   loadGalleryFromFirebase();
-  loadPlaylistsFromFirebase();
   initAllFunFeatures();
   // Preload Cloudinary widget so it opens instantly when admin clicks upload
   setTimeout(function(){
@@ -1564,7 +1533,13 @@ function doLogin(){
     .then(function(cred){
       btn.textContent = 'LOG IN >';
       btn.disabled = false;
-      onLoginSuccess(cred.user.email);
+      // Fetch and store the Firebase ID token for secure DB writes
+      return cred.user.getIdToken().then(function(token){
+        adminIdToken = token;
+        onLoginSuccess(cred.user.email);
+      });
+    })
+    .then(function(){
     })
     .catch(function(e){
       btn.textContent = 'LOG IN >';
@@ -2231,13 +2206,14 @@ function deleteWish(timestamp){
   if(!isAdmin){alert('Admin access required!');return;}
   if(!confirm('Delete this wish?')){return;}
   document.getElementById('wishes-status-text').textContent='🗑️ Deleting...';
+  var authParam = adminIdToken ? '?auth=' + adminIdToken : '';
   fetch(FB_URL+'.json')
     .then(function(r){return r.json();})
     .then(function(data){
       if(!data)return;
       var key=Object.keys(data).find(function(k){return String(data[k].timestamp)===String(timestamp);});
       if(!key)return;
-      return fetch(FB_URL+'/'+key+'.json',{method:'DELETE'});
+      return fetch(FB_URL+'/'+key+'.json'+authParam,{method:'DELETE'});
     })
     .then(function(){
       document.getElementById('wishes-status-text').textContent='✓ Deleted';
@@ -2557,69 +2533,37 @@ function initAllFunFeatures(){
 
 var FB_GALLERY_URL = "https://birthday-62252-default-rtdb.firebaseio.com/gallery";
 
-/* ─── LOAD GALLERY FROM FIREBASE ON PAGE LOAD ───────────────────
-   Firebase is ALWAYS the source of truth.
-   If Firebase is empty (first ever load), auto-seed it with
-   SEED_PHOTOS so nothing is lost. After seeding, all future
-   code changes will never touch the gallery content again.
-──────────────────────────────────────────────────────────────── */
+/* ─── LOAD GALLERY FROM FIREBASE ON PAGE LOAD ─── */
 function loadGalleryFromFirebase(){
   fetch(FB_GALLERY_URL + '.json')
     .then(function(r){ return r.json(); })
     .then(function(data){
-      var loaded = null;
-
       if(data){
+        var loaded = null;
         if(Array.isArray(data) && data.length > 0){
-          // Firebase returned a clean array
+          // Firebase returned a proper array
           loaded = data.filter(function(item){ return item && item.src; });
         } else if(typeof data === 'object'){
-          // Firebase returned object with numeric keys — convert to array
+          // Firebase returned an object with numeric/string keys — convert to array
           var keys = Object.keys(data);
           if(keys.length > 0){
-            loaded = keys.map(function(k){ return data[k]; })
-                         .filter(function(item){ return item && item.src; });
+            loaded = keys.map(function(k){ return data[k]; }).filter(function(item){ return item && item.src; });
           }
         }
+        if(loaded && loaded.length > 0){
+          photos = loaded;
+        }
       }
-
-      if(loaded && loaded.length > 0){
-        // ✅ Firebase has content — use it, ignore code completely
-        photos = loaded;
-        filteredPhotos = photos.slice();
-        curPhoto = 0;
-        document.getElementById('photo-t').textContent = photos.length;
-        updateGalleryImg();
-      } else {
-        // 🌱 Firebase is empty — first time setup! Seed it with defaults
-        console.log('Firebase gallery empty — seeding with default photos...');
-        photos = SEED_PHOTOS.slice();
-        // Save seed to Firebase so it persists forever
-        fetch(FB_GALLERY_URL + '.json', {
-          method: 'PUT',
-          headers: {'Content-Type':'application/json'},
-          body: JSON.stringify(photos)
-        })
-        .then(function(r){
-          if(r.ok){ console.log('✅ Gallery seeded to Firebase successfully!'); }
-          else { console.warn('⚠️ Seed save failed — will show defaults locally only'); }
-        })
-        .catch(function(){ console.warn('⚠️ Seed save failed — offline?'); });
-
-        filteredPhotos = photos.slice();
-        curPhoto = 0;
-        document.getElementById('photo-t').textContent = photos.length;
-        updateGalleryImg();
-      }
-    })
-    .catch(function(err){
-      // Network error — show seed photos locally as fallback
-      console.warn('Gallery load error:', err);
-      photos = SEED_PHOTOS.slice();
       filteredPhotos = photos.slice();
       curPhoto = 0;
       document.getElementById('photo-t').textContent = photos.length;
       updateGalleryImg();
+    })
+    .catch(function(err){
+      console.warn('Gallery load error:', err);
+      /* keep default hardcoded photos */
+      filteredPhotos = photos.slice();
+      document.getElementById('photo-t').textContent = photos.length;
     });
 }
 
@@ -2632,7 +2576,7 @@ function saveGalleryToFirebase(callback){
   var cleanPhotos = photos.filter(function(p){ return p && p.src; });
   photos = cleanPhotos;
 
-  fetch('https://birthday-62252-default-rtdb.firebaseio.com/gallery.json', {
+  fetch('https://birthday-62252-default-rtdb.firebaseio.com/gallery.json' + (adminIdToken ? '?auth=' + adminIdToken : ''), {
     method: 'PUT',
     headers: {'Content-Type':'application/json'},
     body: JSON.stringify(cleanPhotos)
@@ -2666,7 +2610,7 @@ function testFirebaseWrite(){
   .then(function(r){ 
     statusEl.textContent = 'READ: '+r.status+' | ';
     // Test 2: write to gallery
-    return fetch('https://birthday-62252-default-rtdb.firebaseio.com/gallery.json', {
+    return fetch('https://birthday-62252-default-rtdb.firebaseio.com/gallery.json' + (adminIdToken ? '?auth=' + adminIdToken : ''), {
       method: 'PUT',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify([{test:true}])
@@ -2689,197 +2633,61 @@ function showAdminSongManager(){
   modal.style.display='flex';
   modal.style.left='50%';modal.style.top='50%';
   modal.style.transform='translate(-50%,-50%)';
-  renderAdminPlaylistSelect();
   renderAdminSongList();
 }
 function closeAdminSongManager(){
   document.getElementById('admin-song-modal').style.display='none';
 }
-/* ══════════════════════════════════════════════════════════════
-   PLAYLIST SYSTEM — Firebase-backed, permanent
-   Structure in Firebase:
-     /playlists/{name} = [ {name, url}, ... ]
-   "Default" playlist = the original hardcoded songs array
-══════════════════════════════════════════════════════════════ */
-var FB_PLAYLISTS_URL = "https://birthday-62252-default-rtdb.firebaseio.com/playlists";
-
-/* playlists = { "Default": [...songs], "Playlist Name": [...] } */
-var playlists = {};
-var activePlaylistName = "Default";
-
-/* Load all playlists from Firebase on start */
-function loadPlaylistsFromFirebase(){
-  fetch(FB_PLAYLISTS_URL + '.json')
-    .then(function(r){ return r.json(); })
-    .then(function(data){
-      if(data && typeof data === 'object'){
-        playlists = {};
-        Object.keys(data).forEach(function(k){
-          var val = data[k];
-          var arr = [];
-          if(Array.isArray(val)) arr = val.filter(function(s){ return s && s.url; });
-          else if(typeof val === 'object') arr = Object.values(val).filter(function(s){ return s && s.url; });
-          if(arr.length > 0) playlists[k] = arr;
-        });
-      }
-      // Always ensure "Default" exists with the hardcoded songs
-      if(!playlists['Default'] || playlists['Default'].length === 0){
-        playlists['Default'] = songs.slice();
-        savePlaylistToFirebase('Default');
-      }
-      // Set active playlist = Default if nothing else
-      if(!playlists[activePlaylistName]) activePlaylistName = 'Default';
-      songs = playlists[activePlaylistName].slice();
-      renderPlaylistToggleBar();
-      if(isAdmin) renderAdminPlaylistSelect();
-    })
-    .catch(function(){
-      playlists['Default'] = songs.slice();
-      renderPlaylistToggleBar();
-    });
-}
-
-function savePlaylistToFirebase(name, callback){
-  var cleanSongs = (playlists[name] || []).filter(function(s){ return s && s.url; });
-  playlists[name] = cleanSongs;
-  // Save entire playlists object
-  fetch(FB_PLAYLISTS_URL + '.json', {
-    method: 'PUT',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify(playlists)
-  })
-  .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
-  .then(function(){
-    if(callback) callback();
-  })
-  .catch(function(err){
-    console.warn('Playlist save failed:', err);
-    if(callback) callback();
-  });
-}
-
-/* ── PLAYLIST TOGGLE BAR (visible to everyone) ── */
-function renderPlaylistToggleBar(){
-  var bar = document.getElementById('playlist-toggle-bar');
-  var label = document.getElementById('active-playlist-label');
-  if(!bar) return;
-  var names = Object.keys(playlists);
-  if(names.length <= 1 && names[0] === 'Default'){
-    bar.innerHTML = '';
-    if(label) label.textContent = '🎵 Default — ' + (playlists['Default']||[]).length + ' songs';
-    return;
-  }
-  bar.innerHTML = names.map(function(name){
-    var isActive = name === activePlaylistName;
-    return '<button onclick="switchPlaylist(\''+escHtml(name)+'\')" class="btn fh" style="padding:4px 10px;font-size:.65rem;'
-      + (isActive ? 'background:var(--purple);color:#fff;box-shadow:2px 2px 0 #000;' : 'background:#e0d0ff;color:#000;')
-      + '">' + escHtml(name) + '</button>';
+function renderAdminSongList(){
+  var list=document.getElementById('admin-song-list');
+  document.getElementById('admin-song-count').textContent=songs.length;
+  list.innerHTML=songs.map(function(s,idx){
+    return '<div style="background:#f0f0f0;border:2px solid #000;padding:6px 8px;display:flex;gap:6px;align-items:center;border-radius:3px;">'
+      +'<span style="font-size:1rem;flex-shrink:0;">🎵</span>'
+      +'<div style="flex:1;font-size:.68rem;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;"><strong>'+escHtml(s.name)+'</strong></div>'
+      +'<button onclick="adminPlaySongPreview('+idx+')" style="background:var(--green);color:#000;border:2px solid #000;padding:2px 7px;font-size:.62rem;font-weight:900;cursor:pointer;border-radius:3px;flex-shrink:0;font-family:\'Changa One\',sans-serif;">▶</button>'
+      +'<button onclick="adminDeleteSong('+idx+')" style="background:red;color:#fff;border:2px solid #000;padding:2px 7px;font-size:.62rem;font-weight:900;cursor:pointer;border-radius:3px;flex-shrink:0;">DEL</button>'
+      +'</div>';
   }).join('');
-  if(label) label.textContent = '🎵 Now: ' + activePlaylistName + ' — ' + (playlists[activePlaylistName]||[]).length + ' songs';
 }
-
-/* Switch active playlist (everyone can do this) */
-function switchPlaylist(name){
-  if(!playlists[name]) return;
-  activePlaylistName = name;
-  songs = playlists[name].slice();
-  songHistory = []; historyIdx = -1;
-  renderPlaylistToggleBar();
-  showToast('🎼 Switched to: ' + name);
-  // If currently playing, immediately play from new playlist
-  if(isPlaying){ playRandomSong(); }
+function adminPlaySongPreview(idx){
+  var s=songs[idx];
+  player.src=s.url;player.volume=.5;player.load();
+  player.play().catch(function(){});
+  document.getElementById('track-name').textContent=s.name;
+  var rb=document.getElementById('radio-song-name');if(rb)rb.textContent=s.name;
+  document.getElementById('song-bubble').style.display='block';
+  document.getElementById('vinyl-record').classList.add('vinyl-spinning');
+  document.getElementById('vinyl-tonearm').classList.remove('paused');
+  document.getElementById('vinyl-tonearm').classList.add('playing');
+  document.getElementById('play-hint').style.opacity='0';
+  var rpb=document.getElementById('radio-play-btn');if(rpb)rpb.innerHTML='&#9646;&#9646;';
+  isPlaying=true;
 }
-
-/* ── ADMIN: Playlist select dropdown ── */
-function renderAdminPlaylistSelect(){
-  var sel = document.getElementById('admin-playlist-select');
-  if(!sel) return;
-  var names = Object.keys(playlists);
-  sel.innerHTML = names.map(function(n){
-    return '<option value="'+escHtml(n)+'"'+(n===activePlaylistName?' selected':'')+'>'+escHtml(n)+'</option>';
-  }).join('');
-  renderAdminSongList();
-}
-
-function adminSwitchPlaylist(name){
-  if(!playlists[name]) return;
-  activePlaylistName = name;
-  songs = playlists[name].slice();
-  renderAdminSongList();
-  renderPlaylistToggleBar();
-}
-
-function adminNewPlaylist(){
-  if(!isAdmin) return;
-  var name = prompt('Enter new playlist name (e.g. "Sad Songs", "Party Hits"):');
-  if(!name || !name.trim()) return;
-  name = name.trim();
-  if(playlists[name]){ alert('A playlist called "'+name+'" already exists!'); return; }
-  playlists[name] = [];
-  savePlaylistToFirebase(name, function(){
-    activePlaylistName = name;
-    songs = [];
-    renderAdminPlaylistSelect();
-    renderPlaylistToggleBar();
-    var st = document.getElementById('admin-song-status');
-    if(st){ st.style.display='block'; st.style.color='green'; st.textContent='✅ Playlist "'+name+'" created! Now upload songs to it.'; setTimeout(function(){ st.style.display='none'; }, 3500); }
-  });
-}
-
-function adminDeletePlaylist(){
-  if(!isAdmin) return;
-  var name = activePlaylistName;
-  if(name === 'Default'){ alert('Cannot delete the Default playlist!'); return; }
-  if(!confirm('Delete playlist "'+name+'" and all its songs? This cannot be undone.')){ return; }
-  delete playlists[name];
-  activePlaylistName = 'Default';
-  songs = (playlists['Default'] || []).slice();
-  savePlaylistToFirebase('Default', function(){
-    renderAdminPlaylistSelect();
-    renderPlaylistToggleBar();
-    showToast('🗑️ Playlist "'+name+'" deleted');
-  });
-}
-
 function adminAddSong(){
-  if(!isAdmin) return;
-  var url  = document.getElementById('admin-song-url').value.trim();
-  var name = document.getElementById('admin-song-name').value.trim();
-  if(!url){ alert('Please enter a URL!'); return; }
-  if(!name) name = url.split('/').pop().replace(/\.[^.]+$/,'').replace(/_/g,' ');
-  if(!playlists[activePlaylistName]) playlists[activePlaylistName] = [];
-  playlists[activePlaylistName].unshift({name:name, url:url});
-  songs = playlists[activePlaylistName].slice();
-  document.getElementById('admin-song-url').value = '';
-  document.getElementById('admin-song-name').value = '';
-  savePlaylistToFirebase(activePlaylistName, function(){
-    renderAdminSongList();
-    renderPlaylistToggleBar();
-  });
-  var st = document.getElementById('admin-song-status');
-  st.style.display='block'; st.style.color='green';
-  st.textContent = '✅ "'+name+'" added to "'+activePlaylistName+'" & saved!';
-  setTimeout(function(){ st.style.display='none'; }, 3500);
+  if(!isAdmin)return;
+  var url=document.getElementById('admin-song-url').value.trim();
+  var name=document.getElementById('admin-song-name').value.trim();
+  if(!url){alert('Please enter a URL!');return;}
+  if(!name)name=url.split('/').pop().replace(/\.[^.]+$/,'').replace(/_/g,' ');
+  songs.unshift({name:name,url:url});
+  document.getElementById('admin-song-url').value='';
+  document.getElementById('admin-song-name').value='';
+  renderAdminSongList();
+  var st=document.getElementById('admin-song-status');
+  st.style.display='block';st.style.color='green';st.textContent='✅ Song added to playlist! (Session only — add URL to songs[] in code to persist)';
+  setTimeout(function(){st.style.display='none';},4000);
 }
-
 function adminDeleteSong(idx){
-  if(!isAdmin) return;
-  var pl = playlists[activePlaylistName];
-  if(!pl) return;
-  if(!confirm('Remove "'+pl[idx].name+'" from "'+activePlaylistName+'"?')) return;
-  pl.splice(idx, 1);
-  songs = pl.slice();
-  savePlaylistToFirebase(activePlaylistName, function(){
-    renderAdminSongList();
-    renderPlaylistToggleBar();
-  });
+  if(!isAdmin)return;
+  if(!confirm('Remove "'+songs[idx].name+'" from playlist?'))return;
+  songs.splice(idx,1);
+  renderAdminSongList();
 }
-
 function uploadSongToCloudinary(){
-  if(!isAdmin){ alert('Admin access required!'); return; }
-  var st = document.getElementById('admin-song-status');
-  var targetPlaylist = activePlaylistName;
-  var widget = cloudinary.createUploadWidget({
+  if(!isAdmin){alert('Admin access required!');return;}
+  var st=document.getElementById('admin-song-status');
+  var widget=cloudinary.createUploadWidget({
     cloudName:'dmed4bf8g',
     uploadPreset:'Parulwa',
     multiple:true,
@@ -2893,41 +2701,20 @@ function uploadSongToCloudinary(){
         error:'#ff3355',inProgress:'var(--green)',complete:'#28c840',sourceBg:'#1a1a1a'},
       fonts:{default:null,"'Changa One', Impact":{url:'https://fonts.googleapis.com/css2?family=Changa+One',active:true}}
     }
-  }, function(error, result){
-    if(!error && result && result.event === 'success'){
-      var info = result.info;
-      var songName = (info.original_filename || 'New Song').replace(/_/g,' ');
-      if(!playlists[targetPlaylist]) playlists[targetPlaylist] = [];
-      playlists[targetPlaylist].unshift({name: songName, url: info.secure_url});
-      if(activePlaylistName === targetPlaylist) songs = playlists[targetPlaylist].slice();
-      savePlaylistToFirebase(targetPlaylist, function(){
-        renderAdminSongList();
-        renderPlaylistToggleBar();
-      });
-      if(st){ st.style.display='block'; st.style.color='green'; st.textContent='✅ "'+songName+'" saved to "'+targetPlaylist+'" forever!'; setTimeout(function(){ if(st) st.style.display='none'; }, 4000); }
+  },function(error,result){
+    if(!error&&result&&result.event==='success'){
+      var info=result.info;
+      var songName=(info.original_filename||'New Song').replace(/_/g,' ');
+      songs.unshift({name:songName,url:info.secure_url});
+      renderAdminSongList();
+      if(st){st.style.display='block';st.style.color='green';st.textContent='✅ "'+songName+'" uploaded & added to playlist!';}
+      setTimeout(function(){if(st)st.style.display='none';},4000);
     }
     if(error){
-      if(st){ st.style.display='block'; st.style.color='red'; st.textContent='❌ Upload error: '+JSON.stringify(error); }
+      if(st){st.style.display='block';st.style.color='red';st.textContent='❌ Upload error: '+JSON.stringify(error);}
     }
   });
   widget.open();
-}
-
-function renderAdminSongList(){
-  var list = document.getElementById('admin-song-list');
-  var pl = playlists[activePlaylistName] || [];
-  document.getElementById('admin-song-count').textContent = pl.length;
-  if(pl.length === 0){
-    list.innerHTML = '<div style="color:#999;font-size:.7rem;text-align:center;padding:8px;">No songs yet — upload some!</div>';
-    return;
-  }
-  list.innerHTML = pl.map(function(s, idx){
-    return '<div style="background:#f0f0f0;border:2px solid #000;padding:5px 8px;display:flex;gap:6px;align-items:center;border-radius:3px;">'
-      + '<span style="font-size:.85rem;">🎵</span>'
-      + '<div style="flex:1;font-size:.68rem;overflow:hidden;"><strong>'+escHtml(s.name||'')+'</strong></div>'
-      + '<button onclick="adminDeleteSong('+idx+')" style="background:red;color:#fff;border:2px solid #000;padding:2px 7px;font-size:.6rem;font-weight:900;cursor:pointer;border-radius:3px;flex-shrink:0;">DEL</button>'
-      + '</div>';
-  }).join('');
 }
 
 function uploadToCloudinary(){
