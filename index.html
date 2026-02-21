@@ -843,6 +843,10 @@ body{
               <div id="np-text" style="font-size:.6rem;color:#999;font-weight:700;"></div>
             </div>
           </div>
+          <!-- Playlist tabs -->
+          <div id="playlist-tabs" style="display:flex;gap:5px;flex-wrap:wrap;padding:2px 0;min-height:24px;">
+            <button onclick="switchPlaylist('default')" style="padding:3px 10px;font-size:.62rem;font-family:'Changa One',sans-serif;border:2px solid #000;border-radius:20px;cursor:pointer;white-space:nowrap;background:var(--purple);color:#fff;box-shadow:2px 2px 0 #000;">🎵 Default</button>
+          </div>
           <!-- Seekbar -->
           <div style="display:flex;align-items:center;gap:6px;">
             <style>
@@ -1257,35 +1261,54 @@ body{
 </div>
 
 <!-- ═══ ADMIN SONG MANAGER ═══ -->
-<div id="admin-song-modal" class="gm" style="width:440px;height:580px;display:none;">
+<div id="admin-song-modal" class="gm" style="width:460px;height:640px;display:none;">
   <div style="background:var(--purple);border-bottom:2px solid #000;padding:7px 10px;display:flex;align-items:center;gap:6px;">
     <div class="wb" style="background:#ff5f57;" onclick="closeAdminSongManager()"></div>
     <div class="wb" style="background:#febc2e;"></div>
     <div class="wb" style="background:#28c840;"></div>
-    <span style="margin-left:8px;font-size:.75rem;font-weight:700;color:#fff;">🎵 ADMIN: Upload Songs to Cloudinary</span>
+    <span style="margin-left:8px;font-size:.75rem;font-weight:700;color:#fff;">🎵 ADMIN: Playlists & Songs</span>
     <button onclick="closeAdminSongManager()" style="margin-left:auto;background:#ff5f57;border:2px solid #000;color:#fff;font-size:.7rem;font-weight:900;padding:2px 8px;cursor:pointer;font-family:'Changa One',sans-serif;border-radius:3px;">CLOSE X</button>
   </div>
   <div style="background:#f5f0ff;flex:1;display:flex;flex-direction:column;padding:10px;gap:8px;overflow-y:auto;">
-    <!-- Upload Section -->
+
+    <!-- ── CREATE PLAYLIST ── -->
     <div style="background:#fff;border:2px solid #000;padding:10px;box-shadow:3px 3px 0 #000;">
-      <div class="fh" style="font-size:.95rem;margin-bottom:6px;color:var(--purple);">📤 UPLOAD MP3 / OGG AUDIO</div>
+      <div class="fh" style="font-size:.9rem;margin-bottom:7px;color:var(--purple);">📋 CREATE NEW PLAYLIST</div>
+      <div style="display:flex;gap:6px;">
+        <input id="new-playlist-name" type="text" placeholder="Playlist name (e.g. Sad Vibes)" style="flex:1;padding:5px;border:2px solid #000;font-size:.72rem;">
+        <button onclick="adminCreatePlaylist()" class="btn fh" style="padding:5px 12px;font-size:.8rem;background:var(--purple);color:#fff;white-space:nowrap;">+ CREATE</button>
+      </div>
+    </div>
+
+    <!-- ── PLAYLIST LIST ── -->
+    <div style="background:#fff;border:2px solid #000;padding:10px;box-shadow:3px 3px 0 #000;">
+      <div class="fh" style="font-size:.85rem;margin-bottom:7px;color:var(--purple);">🎶 YOUR PLAYLISTS <span style="font-size:.65rem;font-weight:400;color:#888;">(select one to upload songs into it)</span></div>
+      <!-- Default playlist always shown -->
+      <div style="background:#f0e8ff;border:2px solid var(--purple);padding:7px 10px;display:flex;gap:8px;align-items:center;border-radius:4px;margin-bottom:5px;">
+        <span style="font-size:1rem;flex-shrink:0;">🎵</span>
+        <div style="flex:1;font-size:.75rem;font-weight:700;">Default (parulwa_music)</div>
+        <button onclick="switchPlaylist('default')" id="default-pl-btn" style="background:var(--purple);color:#fff;border:2px solid #000;padding:3px 8px;font-size:.62rem;font-weight:900;cursor:pointer;border-radius:3px;font-family:'Changa One',sans-serif;">✓ ACTIVE</button>
+      </div>
+      <div id="admin-pl-list" style="display:flex;flex-direction:column;gap:5px;"></div>
+    </div>
+
+    <!-- ── STATUS ── -->
+    <div id="admin-pl-status" style="display:none;font-size:.72rem;font-weight:700;padding:6px 10px;border:2px solid #000;border-radius:3px;background:#fff;text-align:center;"></div>
+
+    <!-- ── UPLOAD TO ACTIVE PLAYLIST ── -->
+    <div style="background:#fff;border:2px solid #000;padding:10px;box-shadow:3px 3px 0 #000;">
+      <div class="fh" style="font-size:.9rem;margin-bottom:4px;color:var(--purple);">📤 UPLOAD SONGS</div>
+      <div id="upload-target-label" style="font-size:.65rem;color:#555;margin-bottom:7px;">Uploading to: <strong>Default Playlist</strong></div>
       <button onclick="uploadSongToCloudinary()" class="btn fh" style="width:100%;padding:9px;font-size:.9rem;background:var(--purple);color:#fff;margin-bottom:5px;">🎵 PICK AUDIO FILE</button>
-      <div style="font-size:.6rem;color:#777;text-align:center;line-height:1.5;">Uploads directly to Cloudinary<br>Song is added to playlist instantly — no page reload needed!</div>
+      <div id="admin-song-status" style="display:none;font-size:.72rem;font-weight:700;padding:6px 10px;border:2px solid #000;border-radius:3px;background:#fff;text-align:center;margin-top:5px;"></div>
     </div>
-    <!-- Status -->
-    <div id="admin-song-status" style="display:none;font-size:.72rem;font-weight:700;padding:6px 10px;border:2px solid #000;border-radius:3px;background:#fff;text-align:center;"></div>
-    <!-- Manual URL add -->
+
+    <!-- ── SONGS IN ACTIVE PLAYLIST ── -->
     <div style="background:#fff;border:2px solid #000;padding:10px;box-shadow:3px 3px 0 #000;">
-      <div class="fh" style="font-size:.9rem;margin-bottom:6px;color:var(--purple);">🔗 ADD BY CLOUDINARY URL</div>
-      <input id="admin-song-url"  type="text" placeholder="Cloudinary Audio URL (.mp3 or .ogg)" style="width:100%;padding:5px;border:2px solid #000;margin-bottom:5px;font-size:.72rem;">
-      <input id="admin-song-name" type="text" placeholder="Song Name (e.g. Tum Jo Aaye)" style="width:100%;padding:5px;border:2px solid #000;margin-bottom:7px;font-size:.72rem;">
-      <button onclick="adminAddSong()" class="btn fh" style="width:100%;padding:7px;font-size:.8rem;background:var(--green);">+ ADD SONG</button>
+      <div class="fh" style="font-size:.85rem;margin-bottom:6px;color:var(--purple);">SONGS IN ACTIVE PLAYLIST (<span id="admin-song-count">0</span>)</div>
+      <div id="admin-song-list" style="max-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;"></div>
     </div>
-    <!-- Current song list -->
-    <div style="background:#fff;border:2px solid #000;padding:10px;box-shadow:3px 3px 0 #000;">
-      <div class="fh" style="font-size:.9rem;margin-bottom:6px;color:var(--purple);">PLAYLIST (<span id="admin-song-count">0</span> songs)</div>
-      <div id="admin-song-list" style="max-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;"></div>
-    </div>
+
   </div>
 </div>
 
@@ -1356,6 +1379,10 @@ var songs=[
   {name:"Abhi Kuch Dino Se",    url:"https://res.cloudinary.com/dmed4bf8g/video/upload/v1771341625/Abhi_Kuch_Dino_Se_DEatLVqGuTo_drbhct.ogg"},
   {name:"Are Are Are",          url:"https://res.cloudinary.com/dmed4bf8g/video/upload/v1771341624/Are_Are_Are_Xry7b2yX2kM_hucocj.ogg"},
 ];
+/* ─── PLAYLIST STATE ─── */
+var defaultSongs = songs.slice();  // hardcoded songs saved for "Default" playlist
+var playlists    = [];             // custom playlists [{id,name,tag}] from Firebase
+var activePLId   = 'default';     // currently active playlist id
 
 /* ─── GALLERY PHOTOS + VIDEOS (Line 1026) ────────────────
    HOW TO ADD PHOTOS:
@@ -2532,7 +2559,164 @@ function initAllFunFeatures(){
 
 
 
-var FB_GALLERY_URL = "https://birthday-62252-default-rtdb.firebaseio.com/gallery";
+var FB_GALLERY_URL   = "https://birthday-62252-default-rtdb.firebaseio.com/gallery";
+var FB_PLAYLISTS_URL = "https://birthday-62252-default-rtdb.firebaseio.com/playlists";
+
+/* ─── LOAD PLAYLISTS FROM FIREBASE ─── */
+function loadPlaylists(){
+  fetch(FB_PLAYLISTS_URL + '.json')
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if(data && Array.isArray(data) && data.length > 0){
+        playlists = data.filter(function(p){ return p && p.id; });
+      } else {
+        playlists = [];
+      }
+      renderPlaylistTabs();
+      renderAdminPlaylistList();
+    })
+    .catch(function(err){ console.warn('Playlists load error:', err); });
+}
+
+function savePlaylists(callback){
+  fetch(FB_PLAYLISTS_URL + '.json' + (adminIdToken ? '?auth=' + adminIdToken : ''), {
+    method: 'PUT',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(playlists)
+  })
+  .then(function(r){ if(!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+  .then(function(){ if(callback) callback(); })
+  .catch(function(err){ console.error('Save playlists error:', err); if(callback) callback(); });
+}
+
+/* ─── SWITCH ACTIVE PLAYLIST ─── */
+function switchPlaylist(id){
+  activePLId = id;
+  renderPlaylistTabs();
+  renderAdminPlaylistList();
+  // Update default playlist button highlight
+  var defBtn = document.getElementById('default-pl-btn');
+  if(defBtn){
+    defBtn.style.background = (id === 'default') ? 'var(--purple)' : 'var(--green)';
+    defBtn.style.color       = (id === 'default') ? '#fff' : '#000';
+    defBtn.textContent        = (id === 'default') ? '✓ ACTIVE' : 'SELECT';
+  }
+  // Update upload label
+  var lbl = document.getElementById('upload-target-label');
+  if(lbl){
+    if(id === 'default'){
+      lbl.innerHTML = 'Uploading to: <strong>Default Playlist</strong>';
+    } else {
+      var pl = playlists.find(function(p){ return p.id === id; });
+      lbl.innerHTML = 'Uploading to: <strong>' + (pl ? escHtml(pl.name) : id) + '</strong>';
+    }
+  }
+  if(id === 'default'){
+    songs = defaultSongs.slice();
+    renderAdminSongList();
+  } else {
+    var pl2 = playlists.find(function(p){ return p.id === id; });
+    if(pl2) loadSongsForPlaylist(pl2.tag);
+  }
+}
+
+/* ─── FETCH SONGS FOR A GIVEN CLOUDINARY TAG ─── */
+function loadSongsForPlaylist(tag){
+  var CLOUD = 'dmed4bf8g';
+  fetch('https://res.cloudinary.com/' + CLOUD + '/video/list/' + tag + '.json')
+    .then(function(r){ if(!r.ok) throw new Error('Status ' + r.status); return r.json(); })
+    .then(function(data){
+      if(data && data.resources && data.resources.length > 0){
+        songs = data.resources.map(function(r){
+          return { name: parseCloudinaryName(r.public_id), url: buildCloudinaryUrl(CLOUD, r) };
+        }).reverse();
+      } else {
+        songs = [];
+      }
+      renderAdminSongList();
+    })
+    .catch(function(err){ console.warn('Playlist songs load error:', err); songs = []; renderAdminSongList(); });
+}
+
+/* ─── RENDER PLAYLIST TABS IN MUSIC PLAYER ─── */
+function renderPlaylistTabs(){
+  var container = document.getElementById('playlist-tabs');
+  if(!container) return;
+  var all = [{id:'default', name:'🎵 Default'}].concat(playlists.map(function(p){ return {id:p.id, name:'🎶 '+p.name}; }));
+  container.innerHTML = all.map(function(p){
+    var active = p.id === activePLId;
+    return '<button onclick="switchPlaylist(\''+p.id+'\')" style="padding:3px 10px;font-size:.62rem;font-family:\'Changa One\',sans-serif;border:2px solid #000;border-radius:20px;cursor:pointer;white-space:nowrap;background:'+(active?'var(--purple)':'#fff')+';color:'+(active?'#fff':'#000')+';box-shadow:2px 2px 0 #000;transition:all .1s;">'+p.name+'</button>';
+  }).join('');
+}
+
+/* ─── CREATE A NEW PLAYLIST ─── */
+function adminCreatePlaylist(){
+  if(!isAdmin) return;
+  var nameEl = document.getElementById('new-playlist-name');
+  var name = (nameEl ? nameEl.value.trim() : '');
+  if(!name){ alert('Enter a playlist name!'); return; }
+  var id  = 'pl_' + Date.now();
+  var tag = 'pl_' + Date.now().toString(36);
+  playlists.push({id:id, name:name, tag:tag});
+  savePlaylists(function(){
+    renderAdminPlaylistList();
+    renderPlaylistTabs();
+    if(nameEl) nameEl.value = '';
+    var st = document.getElementById('admin-pl-status');
+    if(st){ st.style.display='block'; st.style.color='green'; st.textContent='✅ Playlist "'+name+'" created! Select it below to upload songs to it.'; setTimeout(function(){ st.style.display='none'; }, 4000); }
+  });
+}
+
+/* ─── DELETE A PLAYLIST ─── */
+function adminDeletePlaylist(id){
+  if(!isAdmin) return;
+  var pl = playlists.find(function(p){ return p.id === id; });
+  if(!pl) return;
+  if(!confirm('Delete playlist "'+pl.name+'"?\n\nThe songs in Cloudinary will NOT be deleted — only the playlist record.')) return;
+  playlists = playlists.filter(function(p){ return p.id !== id; });
+  savePlaylists(function(){
+    renderAdminPlaylistList();
+    renderPlaylistTabs();
+    if(activePLId === id) switchPlaylist('default');
+  });
+}
+
+/* ─── RENDER ADMIN PLAYLIST LIST ─── */
+function renderAdminPlaylistList(){
+  var list = document.getElementById('admin-pl-list');
+  if(!list) return;
+  if(playlists.length === 0){
+    list.innerHTML = '<div style="font-size:.7rem;color:#999;text-align:center;padding:8px;">No custom playlists yet. Create one above!</div>';
+    return;
+  }
+  list.innerHTML = playlists.map(function(p){
+    var active = p.id === activePLId;
+    return '<div style="background:'+(active?'#f0e8ff':'#f0f0f0')+';border:2px solid '+(active?'var(--purple)':'#000')+';padding:7px 10px;display:flex;gap:8px;align-items:center;border-radius:4px;">'
+      +'<span style="font-size:1rem;flex-shrink:0;">🎶</span>'
+      +'<div style="flex:1;font-size:.75rem;font-weight:700;">'+escHtml(p.name)+'</div>'
+      +'<button onclick="switchPlaylist(\''+p.id+'\')" style="background:'+(active?'var(--purple)':'var(--green)')+';color:'+(active?'#fff':'#000')+';border:2px solid #000;padding:3px 8px;font-size:.62rem;font-weight:900;cursor:pointer;border-radius:3px;font-family:\'Changa One\',sans-serif;">'+(active?'✓ ACTIVE':'SELECT')+'</button>'
+      +'<button onclick="adminDeletePlaylist(\''+p.id+'\')" style="background:red;color:#fff;border:2px solid #000;padding:3px 8px;font-size:.62rem;font-weight:900;cursor:pointer;border-radius:3px;">DEL</button>'
+      +'</div>';
+  }).join('');
+}
+
+/* ─── NAME HELPER: strip Cloudinary/YouTube suffixes from public_id ─── */
+function parseCloudinaryName(publicId){
+  var raw = publicId.split('/').pop() || publicId;
+  // Strip 6-char Cloudinary upload hash at end (e.g. _ub4dpv)
+  raw = raw.replace(/_[a-z0-9]{6}$/, '');
+  // Strip 11-char YouTube video ID (alphanumeric+dash+underscore)
+  raw = raw.replace(/_[A-Za-z0-9_-]{10,12}$/, '');
+  // Replace underscores/hyphens with spaces, title-case
+  return raw.replace(/[_-]/g, ' ')
+            .replace(/\b\w/g, function(c){ return c.toUpperCase(); })
+            .trim();
+}
+
+/* ─── URL HELPER: build Cloudinary playable URL ─── */
+function buildCloudinaryUrl(cloud, res){
+  return 'https://res.cloudinary.com/' + cloud + '/video/upload/' + res.public_id + '.' + res.format;
+}
 
 /* ─── LOAD GALLERY FROM FIREBASE ON PAGE LOAD ─── */
 function loadGalleryFromFirebase(){
@@ -2634,7 +2818,10 @@ function showAdminSongManager(){
   modal.style.display='flex';
   modal.style.left='50%';modal.style.top='50%';
   modal.style.transform='translate(-50%,-50%)';
+  renderAdminPlaylistList();
   renderAdminSongList();
+  // Refresh upload label for current state
+  switchPlaylist(activePLId);
 }
 function closeAdminSongManager(){
   document.getElementById('admin-song-modal').style.display='none';
@@ -2693,11 +2880,25 @@ function adminDeleteSong(idx){
 function uploadSongToCloudinary(){
   if(!isAdmin){alert('Admin access required!');return;}
   var st=document.getElementById('admin-song-status');
+
+  // Determine tag + folder for the active playlist
+  var tag    = 'parulwa_music';
+  var folder = 'Parulwa_Music';
+  var plName = 'Default';
+  if(activePLId !== 'default'){
+    var activePL = playlists.find(function(p){ return p.id === activePLId; });
+    if(activePL){
+      tag    = activePL.tag;
+      folder = 'Parulwa_Music/' + activePL.name.replace(/[^a-zA-Z0-9]/g,'_');
+      plName = activePL.name;
+    }
+  }
+
   var widget=cloudinary.createUploadWidget({
     cloudName:'dmed4bf8g',
     uploadPreset:'Parulwa',
-    folder:'Parulwa_Music',
-    tags:['parulwa_music'],
+    folder: folder,
+    tags:[tag, 'parulwa_music'],
     multiple:true,
     resourceType:'auto',
     sources:['local','url'],
@@ -2712,13 +2913,16 @@ function uploadSongToCloudinary(){
   },function(error,result){
     if(!error&&result&&result.event==='success'){
       var info=result.info;
-      var songName=(info.original_filename||'New Song').replace(/_/g,' ');
-      if(st){st.style.display='block';st.style.color='green';st.textContent='✅ "'+songName+'" uploaded! Refreshing playlist from Cloudinary...';}
-      // Wait a moment then reload from Cloudinary so the new song appears
+      var songName=parseCloudinaryName(info.public_id);
+      if(st){st.style.display='block';st.style.color='green';st.textContent='✅ "'+songName+'" uploaded to "'+plName+'"! Refreshing...';}
       setTimeout(function(){
-        loadSongsFromFirebase();
+        if(activePLId === 'default'){
+          loadSongsFromFirebase();
+        } else {
+          loadSongsForPlaylist(tag);
+        }
         setTimeout(function(){ renderAdminSongList(); }, 1500);
-        if(st){ st.textContent='✅ "'+songName+'" is now live in the playlist!'; setTimeout(function(){st.style.display='none';},4000); }
+        if(st){ st.textContent='✅ "'+songName+'" is now live in "'+plName+'"!'; setTimeout(function(){st.style.display='none';},4000); }
       }, 2000);
     }
     if(error){
@@ -2731,6 +2935,9 @@ function uploadSongToCloudinary(){
 /* ─── LOAD SONGS DIRECTLY FROM CLOUDINARY (by tag: parulwa_music) ─── */
 /* Requires: Cloudinary → Settings → Security → uncheck "Resource list" */
 function loadSongsFromFirebase(){
+  // Load playlists first, then load songs for whichever playlist is active
+  loadPlaylists();
+  // Also load default (parulwa_music tag) to show immediately
   var CLOUD = 'dmed4bf8g';
   var TAG   = 'parulwa_music';
   fetch('https://res.cloudinary.com/' + CLOUD + '/video/list/' + TAG + '.json')
@@ -2741,20 +2948,13 @@ function loadSongsFromFirebase(){
     .then(function(data){
       if(data && data.resources && data.resources.length > 0){
         var loaded = data.resources.map(function(r){
-          // Build the playable URL from public_id + format
-          var url = 'https://res.cloudinary.com/' + CLOUD + '/video/upload/' + r.public_id + '.' + r.format;
-          var name = (r.public_id.split('/').pop() || r.public_id)
-                      .replace(/_/g,' ').replace(/-/g,' ');
-          return { name: name, url: url };
+          return { name: parseCloudinaryName(r.public_id), url: buildCloudinaryUrl(CLOUD, r) };
         });
-        // Newest first (Cloudinary returns oldest first by default)
         loaded.reverse();
-        songs = loaded;
-        var rb = document.getElementById('radio-song-name');
-        if(rb && songs.length) rb.textContent = songs[0].name;
-        console.log('✅ Loaded ' + songs.length + ' songs from Cloudinary');
+        defaultSongs = loaded;
+        if(activePLId === 'default') songs = defaultSongs.slice();
+        console.log('✅ Loaded ' + defaultSongs.length + ' songs from Cloudinary (parulwa_music)');
       }
-      // else: keep the hardcoded default songs
     })
     .catch(function(err){
       console.warn('Cloudinary song list error (check Resource list is enabled in Cloudinary Security settings):', err);
