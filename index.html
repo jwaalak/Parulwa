@@ -1477,6 +1477,7 @@ document.getElementById('start-overlay').addEventListener('click',function(){
   loadWishes();
   startWishesAutoRefresh();
   loadGalleryFromFirebase();
+  loadSongsFromFirebase();
   initAllFunFeatures();
   // Preload Cloudinary widget so it opens instantly when admin clicks upload
   setTimeout(function(){
@@ -2675,14 +2676,19 @@ function adminAddSong(){
   document.getElementById('admin-song-name').value='';
   renderAdminSongList();
   var st=document.getElementById('admin-song-status');
-  st.style.display='block';st.style.color='green';st.textContent='✅ Song added to playlist! (Session only — add URL to songs[] in code to persist)';
-  setTimeout(function(){st.style.display='none';},4000);
+  st.style.display='block';st.style.color='green';
+  st.textContent='✅ Song added to playlist! (Tip: upload via button above to store it in Cloudinary permanently)';
+  setTimeout(function(){st.style.display='none';},5000);
 }
 function adminDeleteSong(idx){
   if(!isAdmin)return;
-  if(!confirm('Remove "'+songs[idx].name+'" from playlist?'))return;
+  if(!confirm('Remove "'+songs[idx].name+'" from playlist?\n\n(The file stays in Cloudinary — to permanently delete it, go to your Cloudinary Media Library)'))return;
   songs.splice(idx,1);
   renderAdminSongList();
+  var st=document.getElementById('admin-song-status');
+  st.style.display='block';st.style.color='orange';
+  st.textContent='⚠️ Removed from playlist this session. To permanently remove, delete it in Cloudinary with the tag "parulwa_music".';
+  setTimeout(function(){st.style.display='none';},6000);
 }
 function uploadSongToCloudinary(){
   if(!isAdmin){alert('Admin access required!');return;}
@@ -2690,6 +2696,8 @@ function uploadSongToCloudinary(){
   var widget=cloudinary.createUploadWidget({
     cloudName:'dmed4bf8g',
     uploadPreset:'Parulwa',
+    folder:'Parulwa_Music',
+    tags:['parulwa_music'],
     multiple:true,
     resourceType:'auto',
     sources:['local','url'],
@@ -2705,16 +2713,57 @@ function uploadSongToCloudinary(){
     if(!error&&result&&result.event==='success'){
       var info=result.info;
       var songName=(info.original_filename||'New Song').replace(/_/g,' ');
-      songs.unshift({name:songName,url:info.secure_url});
-      renderAdminSongList();
-      if(st){st.style.display='block';st.style.color='green';st.textContent='✅ "'+songName+'" uploaded & added to playlist!';}
-      setTimeout(function(){if(st)st.style.display='none';},4000);
+      if(st){st.style.display='block';st.style.color='green';st.textContent='✅ "'+songName+'" uploaded! Refreshing playlist from Cloudinary...';}
+      // Wait a moment then reload from Cloudinary so the new song appears
+      setTimeout(function(){
+        loadSongsFromFirebase();
+        setTimeout(function(){ renderAdminSongList(); }, 1500);
+        if(st){ st.textContent='✅ "'+songName+'" is now live in the playlist!'; setTimeout(function(){st.style.display='none';},4000); }
+      }, 2000);
     }
     if(error){
       if(st){st.style.display='block';st.style.color='red';st.textContent='❌ Upload error: '+JSON.stringify(error);}
     }
   });
   widget.open();
+}
+
+/* ─── LOAD SONGS DIRECTLY FROM CLOUDINARY (by tag: parulwa_music) ─── */
+/* Requires: Cloudinary → Settings → Security → uncheck "Resource list" */
+function loadSongsFromFirebase(){
+  var CLOUD = 'dmed4bf8g';
+  var TAG   = 'parulwa_music';
+  fetch('https://res.cloudinary.com/' + CLOUD + '/video/list/' + TAG + '.json')
+    .then(function(r){
+      if(!r.ok) throw new Error('Status ' + r.status);
+      return r.json();
+    })
+    .then(function(data){
+      if(data && data.resources && data.resources.length > 0){
+        var loaded = data.resources.map(function(r){
+          // Build the playable URL from public_id + format
+          var url = 'https://res.cloudinary.com/' + CLOUD + '/video/upload/' + r.public_id + '.' + r.format;
+          var name = (r.public_id.split('/').pop() || r.public_id)
+                      .replace(/_/g,' ').replace(/-/g,' ');
+          return { name: name, url: url };
+        });
+        // Newest first (Cloudinary returns oldest first by default)
+        loaded.reverse();
+        songs = loaded;
+        var rb = document.getElementById('radio-song-name');
+        if(rb && songs.length) rb.textContent = songs[0].name;
+        console.log('✅ Loaded ' + songs.length + ' songs from Cloudinary');
+      }
+      // else: keep the hardcoded default songs
+    })
+    .catch(function(err){
+      console.warn('Cloudinary song list error (check Resource list is enabled in Cloudinary Security settings):', err);
+    });
+}
+
+/* ─── NO-OP: songs are managed directly in Cloudinary, no Firebase save needed ─── */
+function saveSongsToFirebase(callback){
+  if(callback) callback();
 }
 
 function uploadToCloudinary(){
