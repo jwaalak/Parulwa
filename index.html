@@ -2556,6 +2556,75 @@ function initAllFunFeatures(){
 var FB_GALLERY_URL   = "https://birthday-62252-default-rtdb.firebaseio.com/gallery";
 var FB_PLAYLISTS_URL = "https://birthday-62252-default-rtdb.firebaseio.com/playlists";
 
+/* ─── LOAD GALLERY FROM FIREBASE ─── */
+function loadGalleryFromFirebase(){
+  fetch(FB_GALLERY_URL + '.json')
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if(data && Array.isArray(data) && data.length){
+        var loaded = data.filter(function(p){ return p && p.src; });
+        if(loaded.length){
+          // Merge: firebase items first (admin-uploaded), then any hardcoded ones not already in firebase
+          var fbUrls = loaded.map(function(p){ return p.src; });
+          var extras = photos.filter(function(p){ return fbUrls.indexOf(p.src) === -1; });
+          photos = loaded.concat(extras);
+          filteredPhotos = photos.slice();
+          var el = document.getElementById('photo-t');
+          if(el) el.textContent = photos.length;
+        }
+      }
+      // else keep the hardcoded photos array as fallback
+    })
+    .catch(function(err){ console.warn('Gallery load error:', err); });
+}
+
+/* ─── SAVE GALLERY TO FIREBASE ─── */
+function saveGalleryToFirebase(cb){
+  var authParam = adminIdToken ? '?auth=' + adminIdToken : '';
+  fetch(FB_GALLERY_URL + '.json' + authParam, {
+    method: 'PUT',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(photos.filter(function(p){ return p && p.src; }))
+  })
+  .then(function(r){
+    if(!r.ok) throw new Error('HTTP ' + r.status);
+    var ss = document.getElementById('admin-save-status');
+    if(ss){ ss.style.display='block'; ss.textContent='✅ Saved to Firebase!'; setTimeout(function(){ ss.style.display='none'; }, 3000); }
+    filteredPhotos = photos.slice();
+    var el = document.getElementById('photo-t');
+    if(el) el.textContent = photos.length;
+    if(cb) cb();
+  })
+  .catch(function(e){
+    console.error('Gallery save error:', e);
+    var ss = document.getElementById('admin-save-status');
+    if(ss){ ss.style.display='block'; ss.style.color='red'; ss.textContent='❌ Save failed: ' + e.message; setTimeout(function(){ ss.style.display='none'; }, 5000); }
+    if(cb) cb();
+  });
+}
+
+/* ─── TEST FIREBASE WRITE ─── */
+function testFirebaseWrite(){
+  if(!isAdmin){ alert('Admin access required!'); return; }
+  var authParam = adminIdToken ? '?auth=' + adminIdToken : '';
+  var ss = document.getElementById('admin-save-status');
+  if(ss){ ss.style.display='block'; ss.style.color='blue'; ss.textContent='🔧 Testing Firebase connection...'; }
+  fetch("https://birthday-62252-default-rtdb.firebaseio.com/test.json" + authParam, {
+    method: 'PUT',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({test: true, ts: Date.now()})
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(){
+    if(ss){ ss.style.display='block'; ss.style.color='green'; ss.textContent='✅ Firebase OK! Auth is working.'; setTimeout(function(){ ss.style.display='none'; }, 4000); }
+    alert('✅ Firebase connection successful! Admin writes are working.');
+  })
+  .catch(function(e){
+    if(ss){ ss.style.display='block'; ss.style.color='red'; ss.textContent='❌ Firebase test failed: ' + e.message; }
+    alert('❌ Firebase test FAILED: ' + e.message + '\n\nMake sure you are logged in as admin.');
+  });
+}
+
 /* ══════════════════════════════════════════════════════
    PLAYLIST SYSTEM  — Firebase stores {id, name, songs:[{name,url}]}
    Cloudinary stores the audio files.
@@ -2688,6 +2757,8 @@ function renderAdminPlaylistList(){
 /* ─── LOAD SONGS FROM FIREBASE (default playlist) ─── */
 function loadSongsFromFirebase(){
   loadPlaylists();  // always reload playlists too
+  // Always cache the hardcoded default songs so switchPlaylist can restore them
+  if(!window._defaultSongs){ window._defaultSongs = songs.slice(); }
   fetch("https://birthday-62252-default-rtdb.firebaseio.com/songs.json")
     .then(function(r){ return r.json(); })
     .then(function(data){
